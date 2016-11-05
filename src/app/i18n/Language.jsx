@@ -5,6 +5,7 @@ import * as ES from './es';
 import * as FR from './fr';
 import * as IT from './it';
 import * as RU from './ru';
+import * as PL from './pl';
 import d3 from 'd3';
 
 let fallbackTerms = EN.terms;
@@ -23,6 +24,7 @@ export function getLanguage(langCode) {
     case 'fr': lang = FR; break;
     case 'it': lang = IT; break;
     case 'ru': lang = RU; break;
+    case 'pl': lang = PL; break;
     default:
       lang = EN;
   }
@@ -82,5 +84,6 @@ export const Languages = {
   it: 'Italiano',
   es: 'Español',
   fr: 'Français',
-  ru: 'ру́сский'
+  ru: 'ру́сский',
+  pl: 'polski'
 };
