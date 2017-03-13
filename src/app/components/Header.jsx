@@ -356,7 +356,7 @@ export default class Header extends TranslatedComponent {
       let comps =  Object.keys(Persist.getComparisons()).sort();
 
       for (let name of comps) {
-        comparisons.push(<ActiveLink key={name} href={'/compare/' + name} className='block name'>{name}</ActiveLink>);
+        comparisons.push(<ActiveLink key={name} href={'/compare/' + encodeURIComponent(name)} className='block name'>{name}</ActiveLink>);
       }
     } else {
       comparisons = <span className='cap'>{translate('none created')}</span>;
