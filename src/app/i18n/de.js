@@ -15,19 +15,19 @@ export const formats = {
 
 export const terms = {
   PHRASE_ALT_ALL: 'Alt + Klick um alle Plätze zu füllen',
-  PHRASE_BACKUP_DESC: 'Export aller Coriolis-Daten, um sie zu sichern oder um sie zu einem anderen Browser/Gerät zu übertragen.', // Backup of all Coriolis data to save or transfer to another browser/device
-  PHRASE_CONFIRMATION: 'Sind Sie sicher?',  // Are You Sure?
-  PHRASE_EXPORT_DESC: 'Ein detaillierter JSON-Export Ihrer Konfiguration für die Verwendung in anderen Websites und Tools', // A detailed JSON export of your build for use in other sites and tools
-  PHRASE_FASTEST_RANGE: 'aufeinanderfolgende maximale Reichweite/Sprünge',  // Consecutive max range jumps
-  PHRASE_IMPORT: 'JSON hier einfügen oder importieren', // Paste JSON or import here
-  PHRASE_LADEN: 'Schiffsmasse + Treibstoff + Fracht', // Ship Mass + Fuel + Cargo
-  PHRASE_NO_BUILDS: 'Keine Konfigurationen zum Vergleich ausgewählt!',  // No builds added to comparison!
-  PHRASE_NO_RETROCH: 'Keine Umrüständerungen',  // No Retrofitting changes
-  PHRASE_SELECT_BUILDS: 'Ausstattung zum Vergleich auswählen',  // Select Builds to Compare
-  PHRASE_SG_RECHARGE: 'Zeit von 50% bis 100% der Ladung', // Time from 50% to 100% Charge
-  PHRASE_SG_RECOVER: 'Erneuerung (zu 50%) nach Zusammenbruch',  // Recovery (to 50%) after collapse
-  PHRASE_UNLADEN: 'Schiffsmasse ohne Treibstoff und Fracht',  // Ship Mass excluding Fuel and Cargo
-  PHRASE_UPDATE_RDY: 'Update verfügbar! Klicken zum Aktualisieren', // Update Available! Click to Refresh
+  PHRASE_BACKUP_DESC: 'Export aller Coriolis-Daten, um sie zu sichern oder um sie zu einem anderen Browser/Gerät zu übertragen.',
+  PHRASE_CONFIRMATION: 'Sind Sie sicher?',
+  PHRASE_EXPORT_DESC: 'Ein detaillierter JSON-Export Ihrer Konfiguration für die Verwendung in anderen Websites und Tools',
+  PHRASE_FASTEST_RANGE: 'aufeinanderfolgende maximale Reichweite/Sprünge',
+  PHRASE_IMPORT: 'JSON hier einfügen oder importieren',
+  PHRASE_LADEN: 'Schiffsmasse + Treibstoff + Fracht',
+  PHRASE_NO_BUILDS: 'Keine Konfigurationen zum Vergleich ausgewählt!',
+  PHRASE_NO_RETROCH: 'Keine Umrüständerungen',
+  PHRASE_SELECT_BUILDS: 'Ausstattung zum Vergleich auswählen',
+  PHRASE_SG_RECHARGE: 'Zeit von 50% bis 100% der Ladung bei vollem SYS Kondensator',
+  PHRASE_SG_RECOVER: 'Erneuerung (zu 50%) nach Zusammenbruch bei vollem SYS Kondensator',
+  PHRASE_UNLADEN: 'Schiffsmasse ohne Treibstoff und Fracht',
+  PHRASE_UPDATE_RDY: 'Update verfügbar! Klicken zum Aktualisieren', 
   PHRASE_ENGAGEMENT_RANGE: 'Die Distanz zwischen deinem Schiff und seinem Ziel',
   PHRASE_SELECT_BLUEPRINT: 'Klicken um eine Bauplan auszuwählen',
   PHRASE_BLUEPRINT_WORST: 'Schlechteste Primärwerte für diesen Bauplan',
@@ -51,49 +51,49 @@ export const terms = {
   PHRASE_TIME_TO_LOSE_ARMOUR: 'Hüllenpanzerung wird halten für',
   PHRASE_MODULE_PROTECTION_EXTERNAL: 'Modulpanzerung der Waffenaufhängung',
   PHRASE_MODULE_PROTECTION_INTERNAL: 'Modulpanzerung für alle anderen Module',
-  PHRASE_SHIELD_DAMAGE: 'Aufschlüsselung des kontinuierlichen Schadens pro Sek. gegen Schilde',
-  PHRASE_ARMOUR_DAMAGE: 'Aufschlüsselung des kontinuierlichen Schadens pro Sek. gegen Hüllenpanzerung',
+  PHRASE_SHIELD_DAMAGE: 'Aufschlüsselung des kontinuierlichen SPS gegen Schilde',
+  PHRASE_ARMOUR_DAMAGE: 'Aufschlüsselung des kontinuierlichen SPS gegen Hüllenpanzerung',
 
-  PHRASE_TIME_TO_REMOVE_SHIELDS: 'Will remove shields in',
-  TT_TIME_TO_REMOVE_SHIELDS: 'With sustained fire by all weapons',
-  PHRASE_TIME_TO_REMOVE_ARMOUR: 'Will remove armour in',
-  TT_TIME_TO_REMOVE_ARMOUR: 'With sustained fire by all weapons',
-  PHRASE_TIME_TO_DRAIN_WEP: 'Will drain WEP in',
-  TT_TIME_TO_DRAIN_WEP: 'Time to  drain WEP capacitor with all weapons firing',
-  TT_TIME_TO_LOSE_SHIELDS: 'Against sustained fire from all opponent\'s weapons',
-  TT_TIME_TO_LOSE_ARMOUR: 'Against sustained fire from all opponent\'s weapons',
-  TT_MODULE_ARMOUR: 'Armour protecting against module damage',
-  TT_MODULE_PROTECTION_EXTERNAL: 'Percentage of damage diverted from hardpoints to module reinforcement packages',
-  TT_MODULE_PROTECTION_INTERNAL: 'Percentage of damage diverted from non-hardpoint modules to module reinforcement packages',
+  PHRASE_TIME_TO_REMOVE_SHIELDS: 'Schilde werden zusammenbrechen in',
+  TT_TIME_TO_REMOVE_SHIELDS: 'Mit andauerndem Beschuss durch alle Waffen',
+  PHRASE_TIME_TO_REMOVE_ARMOUR: 'Hüllenpanzerung wird brechen in',
+  TT_TIME_TO_REMOVE_ARMOUR: 'Mit andauerndem Beschuss durch alle Waffen',
+  PHRASE_TIME_TO_DRAIN_WEP: 'Leert WAF Energie in',
+  TT_TIME_TO_DRAIN_WEP: 'Dauer um WAF Energie aufzubrauchen wenn alle Waffen gefeuert werden',
+  TT_TIME_TO_LOSE_SHIELDS: 'Gegen andauernden Beschuss durch alle Waffen des Gegners',
+  TT_TIME_TO_LOSE_ARMOUR: 'Gegen andauernden Beschuss durch alle Waffen des Gegners',
+  TT_MODULE_ARMOUR: 'ModulPanzerung für den Schutz interner Subsysteme (Module)',
+  TT_MODULE_PROTECTION_EXTERNAL: 'Prozensatz des Schadens der von den Waffenaufhängungen zu den Modulverstärkungen umgeleitet wird',
+  TT_MODULE_PROTECTION_INTERNAL: 'Prozensatz des Schadens der von den Subsystem (außer Waffen) zu den Modulverstärkungen umgeleitet wird',
 
-  TT_EFFECTIVE_SDPS_SHIELDS: 'Actual sustained DPS whilst WEP capacitor is not empty',
-  TT_EFFECTIVENESS_SHIELDS: 'Effectivness compared to hitting a 0-resistance target with 0 pips to SYS at 0m',
-  TT_EFFECTIVE_SDPS_ARMOUR: 'Actual sustained DPS whilst WEP capacitor is not empty',
-  TT_EFFECTIVENESS_ARMOUR: 'Effectivness compared to hitting a 0-resistance target at 0m',
+  TT_EFFECTIVE_SDPS_SHIELDS: 'Effektiver SPS solange die Waffenenergie nicht aufgebraucht wurde',
+  TT_EFFECTIVENESS_SHIELDS: 'Effektivität im Vergleich zu einem Ziel ohne Widerstände mit 0 PIPS in SYS bei 0m',
+  TT_EFFECTIVE_SDPS_ARMOUR: 'Effektiver kontinuierlicher Schaden solange der WAF Kondensator nicht aufgebraucht wurde',
+  TT_EFFECTIVENESS_ARMOUR: 'Effektivität im Vergleich zu einem Ziel ohne Widerstände bei 0m',
 
-  PHRASE_EFFECTIVE_SDPS_SHIELDS: 'SDPS against shields',
-  PHRASE_EFFECTIVE_SDPS_ARMOUR: 'SDPS against armour',
+  PHRASE_EFFECTIVE_SDPS_SHIELDS: 'Effektiver kontinuierlicher SPS gegen Schilde',
+  PHRASE_EFFECTIVE_SDPS_ARMOUR: 'Effektiver kontinuierlicher SPS gegen Hüllenpanzerung',
 
-  TT_SUMMARY_SPEED: 'With full fuel tank and 4 pips to ENG',
-  TT_SUMMARY_SPEED_NONFUNCTIONAL: 'Thrusters powered off or over maximum mass',
-  TT_SUMMARY_BOOST: 'With full fuel tank and 4 pips to ENG',
-  TT_SUMMARY_BOOST_NONFUNCTIONAL: 'Power distributor not able to supply enough power to boost',
-  TT_SUMMARY_SHIELDS: 'Raw shield strength, including boosters',
-  TT_SUMMARY_SHIELDS_NONFUNCTIONAL: 'No shield generator or shield generator powered off',
-  TT_SUMMARY_INTEGRITY: 'Ship integrity, including bulkheads and hull reinforcement packages',
-  TT_SUMMARY_HULL_MASS: 'Mass of the hull prior to any modules being installed',
-  TT_SUMMARY_UNLADEN_MASS: 'Mass of the hull and modules prior to any fuel or cargo',
-  TT_SUMMARY_LADEN_MASS: 'Mass of the hull and modules with full fuel and cargo',
-  TT_SUMMARY_DPS: 'Damage per second with all weapons firing',
-  TT_SUMMARY_EPS: 'WEP capacitor consumed per second with all weapons firing',
-  TT_SUMMARY_TTD: 'Time to drain WEP capacitor with all weapons firing and 4 pips to WEP',
-  TT_SUMMARY_MAX_SINGLE_JUMP: 'Farthest possible jump range with no cargo and only enough fuel for the jump itself',
-  TT_SUMMARY_UNLADEN_SINGLE_JUMP: 'Farthest possible jump range with no cargo and a full fuel tank',
-  TT_SUMMARY_LADEN_SINGLE_JUMP: 'Farthest possible jump range with full cargo and a full fuel tank',
-  TT_SUMMARY_UNLADEN_TOTAL_JUMP: 'Farthest possible range with no cargo, a full fuel tank, and jumping as far as possible each time',
-  TT_SUMMARY_LADEN_TOTAL_JUMP: 'Farthest possible range with full cargo, a full fuel tank, and jumping as far as possible each time',
+  TT_SUMMARY_SPEED: 'Mit vollem Tank und 4 PIPS in WAF',
+  TT_SUMMARY_SPEED_NONFUNCTIONAL: 'Schubdüsen deaktiviert oder maximale Masse überschritten',
+  TT_SUMMARY_BOOST: 'Mit vollem Tank und 4 PIPS in ANT',
+  TT_SUMMARY_BOOST_NONFUNCTIONAL: 'Energieverteiler kann nicht genügend Energie für den Boost liefern',
+  TT_SUMMARY_SHIELDS: 'Rohe Schildstärke, inklusive Schildverstärker',
+  TT_SUMMARY_SHIELDS_NONFUNCTIONAL: 'Keine Schildgenerator oder Schilde deaktiviert',
+  TT_SUMMARY_INTEGRITY: 'Schiffsintegrität, einschließlich Hüllenpanzerung und Rumpfhüllenverstärkung',
+  TT_SUMMARY_HULL_MASS: 'Hüllenmasse, bevor jegliche Module installiert wurde',
+  TT_SUMMARY_UNLADEN_MASS: 'Hüllenmasse ohne Ladung und Treibstoff',
+  TT_SUMMARY_LADEN_MASS: 'Hüllenmasse, einschließlich Treibstoff und Ladung',
+  TT_SUMMARY_DPS: 'Schaden pro Sekunde wenn alle Waffen feuern',
+  TT_SUMMARY_EPS: 'WAF Kondensator Verbrauch pro Sekunde wenn alle Waffen feuern',
+  TT_SUMMARY_TTD: 'Zeit um den WAF Kondensator aufzubrauchen wenn alle Waffen feuern und 4 PIPS auf dem WAF Kondesator',
+  TT_SUMMARY_MAX_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung und nur genügend Treibstoff für den Sprung selbst',
+  TT_SUMMARY_UNLADEN_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung unf einem vollen Tank',
+  TT_SUMMARY_LADEN_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite mit voller Ladung und einem vollen Tank',
+  TT_SUMMARY_UNLADEN_TOTAL_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung, einem vollen Tank und der weitest möglichen Sprungreichweite bei jedem Sprung',
+  TT_SUMMARY_LADEN_TOTAL_JUMP: 'Weitest mögliche Sprungreichweite mit maximaler Ladung, einem vollen Tank und der weitest möglichen Sprungreichweite bei jedem Sprung',
 
-  HELP_MODIFICATIONS_MENU: 'Click on a number to enter a new value, or drag along the bar for small changes',
+  HELP_MODIFICATIONS_MENU: 'Klicke auf eine Zahl um einen neuen Wert einzutragen oder bewege den Regler',
 
   // Other languages fallback to these  values
   // Only Translate to other languages if the name is different in-game
@@ -191,7 +191,7 @@ export const terms = {
   'recovery': 'Erholung',
   'recharge': 'Auflaung',
   'engine pips': 'Schubpriorität',
-  '4b': 'Priorität 4 und Boost',
+  '4b': '4 PIPS und Boost',
   'speed': 'Geschwindigkeit',
   'pitch': 'Kippen',
   'roll': 'Rollen',
@@ -289,9 +289,9 @@ export const terms = {
   // Help text
   HELP_TEXT: `
 <h1>Einführung</h1>
-Coriolis is a ship builder for Elite: Dangerous.  This help file provides you with the information you need to use Coriolis.
+Coriolis ist ein Schiffskonfigurator für Elite:Dangerous. Diese Hilfedatei versorgt dich mit allen Informationen die du benötigst um Coriolis zu benutzen.
 
-<h1>Importing Your Ship Into Coriolis</h1>
+<h1>Importiere dein Schiff nach Coriolis</h1>
 Often, you will want to start with your existing ship in Coriolis and see how particular changes might affect it, for example upgrading your FSD.  There are a number of tools that can be used to import your ship without you having to create it manually.  This has the added benefit of copying over any engineering modifications that have taken place as well. </p>
 
 <h2>Importiere dein Schiff von EDDI</h2>
@@ -443,9 +443,9 @@ This graph shows the effective armour for each damage type, found by dividing th
 <dt>Ctrl-h</dt><dd>Öffne den Hilfedialog</dd>
 <dt>Ctrl-i</dt><dd>Öffne den Importdialog</dd>
 <dt>Ctrl-o</dt><dd>Öffne den Kurzlinkdialog</dd>
-<dt>Ctrl-left-arrow</dt><dd>Erhöhe den Systemkondensator</dd>
-<dt>Ctrl-up-arrow</dt><dd>Erhöhe den Antriebskondensator</dd>
-<dt>Ctrl-right-arrow</dt><dd>Erhöhr den Waffenkondensator</dd>
+<dt>Ctrl-left-arrow</dt><dd>Erhöhe den SYS Kondensator</dd>
+<dt>Ctrl-up-arrow</dt><dd>Erhöhe den ANT Kondensator</dd>
+<dt>Ctrl-right-arrow</dt><dd>Erhöhe den WAF Kondensator</dd>
 <dt>Ctrl-down-arrow</dt><dd>Setze den Energieverteiler zurück</dd>
 <dt>Esc</dt><dd>Schließe jeden offenen Dialog</dd>
 </dl>
