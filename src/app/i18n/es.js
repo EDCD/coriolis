@@ -46,7 +46,7 @@ export const terms = {
   'cr': 'Compartimento de carga',
   'cs': 'Esc\u00e1ner de carga',
   'cells': 'celdas',
-  'Chaff Launcher': 'Lanzador de birutas',
+  'Chaff Launcher': 'Lanzador de Virutas',
   'close': 'Cerrar',
   'cc': 'Controlador de Drones de Recogida',
   'compare': 'Comparar',
