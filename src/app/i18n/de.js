@@ -88,7 +88,7 @@ export const terms = {
   TT_SUMMARY_EPS: 'WAF Kondensator Verbrauch pro Sekunde wenn alle Waffen feuern',
   TT_SUMMARY_TTD: 'Zeit um den WAF Kondensator aufzubrauchen wenn alle Waffen feuern und 4 PIPS auf dem WAF Kondesator',
   TT_SUMMARY_MAX_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung und nur genügend Treibstoff für den Sprung selbst',
-  TT_SUMMARY_UNLADEN_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung unf einem vollen Tank',
+  TT_SUMMARY_UNLADEN_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung und einem vollen Tank',
   TT_SUMMARY_LADEN_SINGLE_JUMP: 'Weitest mögliche Sprungreichweite mit voller Ladung und einem vollen Tank',
   TT_SUMMARY_UNLADEN_TOTAL_JUMP: 'Weitest mögliche Sprungreichweite ohne Ladung, einem vollen Tank und der weitest möglichen Sprungreichweite bei jedem Sprung',
   TT_SUMMARY_LADEN_TOTAL_JUMP: 'Weitest mögliche Sprungreichweite mit maximaler Ladung, einem vollen Tank und der weitest möglichen Sprungreichweite bei jedem Sprung',
@@ -142,7 +142,7 @@ export const terms = {
   rg: 'Schienenkanone',
   s: 'Sensoren',
   sb: 'Schildverstärker',
-  sc: 'Aufklärungsscanner',
+  sc: 'Himmelskörperscanner',
   scb: 'Schildzellenbatterie',
   sg: 'Schildgenerator',
   ss: 'Oberflächensensor',
@@ -150,6 +150,7 @@ export const terms = {
   tp: 'Torpedopylone',
   ul: 'Salvenlaser',
   ws: 'Frameshiftwolkenscanner',
+  hrd: 'Hüllenhärte',
 
   // Items on the outfitting page
   // Notification of restricted slot
@@ -192,7 +193,7 @@ export const terms = {
   'recharge': 'Auflaung',
   'engine pips': 'Schubpriorität',
   '4b': '4 PIPS und Boost',
-  'speed': 'Geschwindigkeit',
+  'speed': 'Tempo',
   'pitch': 'Kippen',
   'roll': 'Rollen',
   'yaw': 'Gieren',
@@ -220,7 +221,7 @@ export const terms = {
   hullreinforcement: 'Hüllenverstärkung',
   integrity: 'Integrität',
   jitter: 'Schwankungsbreite',
-  kinres: 'Kinetischer Widerstabd',
+  kinres: 'Kinetischer Widerstand',
   maxfuel: 'Maximaler Treibstoff pro Sprung',
   mass: 'Masse',
   optmass: 'Optimale Masse',
@@ -284,7 +285,155 @@ export const terms = {
 
   // Armour sources
   bulkheads: 'Hüllenpanzerung',
-  reinforcement: 'Hüllenverstärkung',
+  reinforcement: 'Hüllenverstärkung',  
+    
+  // Optional module groups (only these, that are not in the list with the short terms)
+  'hangars': 'Hangars',
+  'limpet controllers': 'Drohnensteuerung',
+  'passenger cabins': 'Passagierkabinen',
+  'structural reinforcement': 'Strukturverstärkungen',
+  
+  // Hardpoint module groups
+  'lasers': 'Laser',
+  'projectiles': 'Projektilwaffen',
+  'ordnance': 'Artillerie',
+  
+  // Armour modules
+  'Lightweight Alloy': 'leichte Legierung',
+  'Reinforced Alloy': 'verstärkte Legierung',
+  'Military Grade Composite': 'Militär-Komposit',
+  'Mirrored Surface Composite': 'Gespiegelte-Oberfläche-Komposit',
+  'Reactive Surface Composite': 'Reaktive-Oberfläche-Komposit',
+  
+  // Scanner modules
+  'scanners': 'Scanner',
+  'Basic Discovery Scanner': 'Aufklärungsscanner (einf.)',
+  'Advanced Discovery Scanner': 'Aufklärungsscanner (fortgeschr.)',
+  'Detailed Surface Scanner': 'Detail-Oberflächenscanner',
+  'Intermedia Discovery Scanner': 'Intermedia Discovery Scanner',
+  
+  // Docking modules
+  'Standard Docking Computer': 'Standard-Landecomputer',
+  
+  // Point defence modules
+  'Point Defence': 'Punktverteidigung',
+  
+  // Chaff launcher modules
+  'Chaff Launcher': 'Düppel-Werfer',
+  
+  // Heat sink launcher modules
+  'Heat Sink Launcher': 'Kühlkörperwerfer',
+  
+  // Panel headings and subheadings
+  'power and costs': 'Energie und Kosten',
+  'costs': 'Kosten',
+  'retrofit costs': 'Umrüstkosten',
+  'reload costs': 'Nachladekosten',
+  'profiles': 'Profile',
+  'engine profile': 'Antriebsprofil',
+  'fsd profile': 'Frameshit Antriebsprofil',
+  'movement profile': 'Bewegungsprofil',
+  'damage to opponent\'s shields': 'Gegnerischer Schildschaden',
+  'damage to opponent\'s hull': 'Gegnerischer Hüllenschaden',
+  'offence': 'Offensiv',
+  'defence': 'Defensiv',
+  'shield metrics': 'Schildwerte',
+  'raw shield strength': 'Pure Schildstärke',
+  'shield sources': 'Schildzusammensetzung',
+  'damage taken': 'Erhaltener Schaden',
+  'effective shield': 'Effektiver Schildwert',
+  'armour metrics': 'Panzerungswerte',
+  'raw armour strength': 'Pure Panzerungsstärke',
+  'armour sources': 'Panzerungszusammensetzung',
+  'raw module armour': 'Pure Modulpanzerung',
+  'effective armour': 'Effektive Panzerung',
+  'offence metrics': 'Offensivwerte',
+  'defence metrics': 'Defensivwerte',
+  
+  // internal module panel header
+  'Maximize Jump Range': 'Sprungreichweite maximieren',
+  'roles': 'Rollen',
+  'Multi-purpose': 'Allrounder',
+  'Combat': 'Kampf',
+  'Trader': 'Handel',
+  'Shielded Trader': 'Handel (mit Schild)',
+  'Explorer': 'Entdecker',
+  'Planetary Explorer': 'Planetenentdecker',
+  'Miner': 'Erzabbau',
+  'Shielded Miner': 'Erzabbau (mit Schild)',
+  'Racer': 'Geschwindigkeit',
+  
+  // Misc items
+  'fuel carried': 'geladener Treibstoff',
+  'cargo carried': 'geladene Fracht',
+  'ship control': 'Energieverteilung',
+  'opponent': 'Gegner',
+  'opponent\'s shields': 'Gegnerische Schilde',
+  'opponent\'s armour': 'Gegenerische Panzerung',
+  'shield damage sources': 'Schadensquellen (Schild)',
+  'armour damage sources': 'Schadensquellen (Panzerung)',
+  'never': 'Niemals',
+  'stock': 'Standard',
+  'boost': 'Boost',
+  'ship': 'Schiff',
+  'laden': 'Beladen',
+  'unladen': 'Leer',
+  'jump range': 'Sprungreichweite',
+  'total laden': 'gesamt beladen',
+  'total unladen': 'gesamt leer',
+  'cargo': 'Fracht',
+  'hull': 'Hülle',
+  'Enter Name': 'Name eingeben',
+  'fuel': 'Tank',
+  
+  // Items on the ship list page
+  // Ship list
+  'manufacturer': 'Hersteller',
+  'cost': 'Preis',
+  'size': 'Größe',
+  'small': 'Klein',
+  'medium': 'Mittel',
+  'large': 'Groß',
+  'agility': 'MNV',
+  'base': 'Basis',
+  'armour': 'Panzerung',
+  'shields': 'Schilde',
+  'jump': 'Sprung',
+  'core module classes': 'Basismodulklassen',
+  'Power Plant': 'Kraftwerk',
+  th: 'Schubdüsen',
+  fsd: 'Frameshiftantrieb',
+  ls: 'Lebenserhaltung',
+  pd: 'Energieverteiler',
+  s: 'Sensoren',
+  'hardpoints': 'Aufhängungen',
+  'internal compartments': 'Optionale Modulklassen',
+  
+  // Menu items
+  'ships': 'Schiffe',
+  'builds': 'eigene builds',
+  'compare': 'Vergleiche',
+  'compare all': 'Alle vergleichen',
+  'create new': 'Neu anlegen',
+  'none created': 'Keine angelegt',
+  'insurance': 'Versicherung',
+  'discount': 'Nachlass',
+  'settings': 'Einstellungen',
+  'module resistances': 'Modulwiderstände',
+  'comparisons': 'Vergleiche',
+  'backup': 'Sichern',
+  'detailed export': 'Detaillierter Export',
+  'import': 'Importieren',
+  'delete all': 'Alles löschen',
+  'about': 'Über',
+ 
+  
+  // Items on the outfitting page
+  'core internal': 'Intern (basis)',
+  'optional internal': 'Intern (optional)',
+  'utility mounts': 'Werkzeug-Steckplätze',
+  'empty': 'leer',
+  'empty all': 'Alles leeren',
 
   // Help text
   HELP_TEXT: `
