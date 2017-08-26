@@ -88,13 +88,16 @@ select {
     cursor: pointer;
     line-height:@optionSpacing;
     color: @primary-disabled;
-    stroke-width: 0.5em;
     stroke: @primary-disabled;
 
     .no-touch &:hover {
       border-color: @primary;
       color: @primary;
       stroke: @primary;
+    }
+
+    svg {
+      stroke-width: 0.5em;
     }
   }
 
