@@ -1,6 +1,6 @@
 {
   "name": "coriolis_shipyard",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/EDCD/coriolis"
@@ -8,7 +8,7 @@
   "homepage": "https://coriolis.edcd.io",
   "bugs": "https://github.com/EDCD/coriolis/issues",
   "private": true,
-  "engine": "node >= 4.0.0",
+  "engine": "node >= 4.8.1",
   "license": "MIT",
   "scripts": {
     "prepublish": "rollup -c && uglifyjs d3.js -c -m -o d3.min.js",
@@ -84,7 +84,8 @@
     "style-loader": "^0.16.1",
     "url-loader": "^0.5.8",
     "webpack": "^2.4.1",
-    "webpack-dev-server": "^2.4.4"
+    "webpack-dev-server": "^2.4.4",
+    "uglify-js": "^2.4.11"
   },
   "dependencies": {
     "babel-polyfill": "*",

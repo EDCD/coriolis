@@ -10,6 +10,11 @@ Coriolis was created using assets and imagery from Elite: Dangerous, with the pe
 
 Please [submit issues](https://github.com/EDCD/coriolis/issues), or better yet [pull requests](https://github.com/EDCD/coriolis/pulls) for any corrections or additions to the database or the code.
 
+### Translations
+
+Please use the OneSky translation site to suggest new translations: http://edcd-coriolis.oneskyapp.com  
+These will be merged regularly by the project manager.
+
 ### Feature Requests, Suggestions & Bugs
 
 Chat to us on [Discord](https://discord.gg/0uwCh6R62aPRjk9w)!

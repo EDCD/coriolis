@@ -62,7 +62,7 @@ export default class HardpointSlot extends Slot {
         );
       }
 
-      const className = cn('details', enabled ? '' : 'disabled')
+      const className = cn('details', enabled ? '' : 'disabled');
       return <div className={className} draggable='true' onDragStart={drag} onDragEnd={drop}>
         <div className={'cb'}>
           <div className={'l'}>

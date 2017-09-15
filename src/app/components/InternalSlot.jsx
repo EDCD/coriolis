@@ -43,7 +43,7 @@ export default class InternalSlot extends Slot {
 
       let mass = m.getMass() || m.cargo || m.fuel || 0;
 
-      const className = cn('details', enabled ? '' : 'disabled')
+      const className = cn('details', enabled ? '' : 'disabled');
       return <div className={className} draggable='true' onDragStart={drag} onDragEnd={drop}>
         <div className={'cb'}>
           <div className={'l'}>{classRating} {translate(m.name || m.grp)}{m.mods && Object.keys(m.mods).length > 0 ? <span onMouseOver={termtip.bind(null, modTT)} onMouseOut={tooltip.bind(null, null)}><Modified /></span> : ''}</div>

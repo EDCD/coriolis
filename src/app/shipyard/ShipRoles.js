@@ -279,8 +279,7 @@ export function miner(ship, shielded) {
   // 0 if we only have 1 cargo slot, otherwise minium of 1 and maximum of 6 (excluding size modifier)
   const sizeModifier = ship.class == 2 ? 1.2 : ship.class == 3 ? 1.5 : 1;
   let collectorLimpetsRequired = potentialCargo.length == 1 ? 0 : Math.ceil(sizeModifier * Math.min(6, Math.floor(miningLaserDps / 1.25)));
-  console.log(`${collectorLimpetsRequired}`);
-
+  
   if (collectorLimpetsRequired > 0) {
     const collectorOrder = [1, 2, 3, 4, 5, 6, 7, 8];
     const collectorInternals = ship.internal.filter(a => usedSlots.indexOf(a) == -1)
@@ -303,7 +302,7 @@ export function miner(ship, shielded) {
                                           .reduce(function(a, b) {
                                             return a + b.m.getEps();
                                           }, 0);
-  standardOpts.pd = ship.getAvailableModules().matchingPowerDist({weprate: wepRateRequired}).id;
+  standardOpts.pd = ship.getAvailableModules().matchingPowerDist({ weprate: wepRateRequired }).id;
 
   // Fill the empty internals with cargo racks
   for (let i = ship.internal.length; i--;) {

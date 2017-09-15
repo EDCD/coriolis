@@ -1,3 +1,11 @@
+#2.3.7
+  * Fixed Travis test issues
+  * Bumped NodeJS version to provide better compatability and support
+  * Added updated German Translation
+  * Fixed issues with Safari
+  * Use coriolis-data 2.3.7
+    * Fixed Orca mass-lock
+
 #2.3.6
   * Update miner role to provide better defaults
   * Fix issue where torpedo special effects were not showing

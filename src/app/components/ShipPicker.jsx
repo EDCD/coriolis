@@ -23,11 +23,11 @@ export default class ShipPicker extends TranslatedComponent {
   }
 
   /**
-   * Constructor
-   * @param  {Object} props   React Component properties
-   * @param  {Object} context   React Component context
+   * constructor
+   * @param {object} props  Properties react
+   * @param {object} context   react context
    */
-  constructor(props, context) {
+  constructor(props, context) { // eslint-disable-line
     super(props);
 
     this.shipOrder = Object.keys(Ships).sort();
@@ -39,8 +39,8 @@ export default class ShipPicker extends TranslatedComponent {
 
   /**
    * Update ship
-   * @param  {object} ship  the ship
-   * @param  {string} build   the build, if present
+   * @param {object} ship  the ship
+   * @param {string} build   the build, if present
    */
   _shipChange(ship, build) {
     this._closeMenu();

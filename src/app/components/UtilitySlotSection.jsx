@@ -74,7 +74,6 @@ export default class UtilitySlotSection extends SlotSection {
           dragOver={this._dragOverSlot.bind(this, h)}
           drop={this._drop}
           dropClass={this._dropClass(h, originSlot, targetSlot)}
-          enabled={h.enabled}
           ship={ship}
           m={h.m}
           enabled={h.enabled ? true : false}

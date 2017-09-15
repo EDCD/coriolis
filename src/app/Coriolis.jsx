@@ -124,6 +124,13 @@ export default class Coriolis extends React.Component {
    */
   _onError(msg, scriptUrl, line, col, errObj) {
     console && console.error && console.error(arguments); // eslint-disable-line no-console
+    if (errObj) {
+      if (errObj instanceof Error) {
+        Bugsnag.notifyException(errObj) // eslint-disable-line
+      } else if (errObj instanceof String) {
+        Bugsnag.notify(msg, errObj) // eslint-disable-line
+      }
+    }
     this.setState({
       error: <ErrorDetails error={{ message: msg, details: { scriptUrl, line, col, error: JSON.stringify(errObj) } }}/>,
       page: null,

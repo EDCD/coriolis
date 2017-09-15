@@ -3,7 +3,7 @@ notifications:
   email: false
 sudo: false
 node_js:
-  - "4.2.6"
+  - "4.8.1"
 cache:
   directories:
     - node_modules
