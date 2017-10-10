@@ -20,7 +20,7 @@ import ComparisonPage from './pages/ComparisonPage';
 import ShipyardPage from './pages/ShipyardPage';
 import ErrorDetails from './pages/ErrorDetails';
 
-const zlib = require('zlib');
+const zlib = require('pako');
 
 /**
  * Coriolis App
@@ -90,7 +90,7 @@ export default class Coriolis extends React.Component {
   _importBuild(r) {
     try {
       // Need to decode and gunzip the data, then build the ship
-      const data = zlib.gunzipSync(new Buffer(r.params.data, 'base64'));
+      const data = zlib.inflate(new Buffer(r.params.data, 'base64'), { to: 'string' });
       const json = JSON.parse(data);
       const ship = CompanionApiUtils.shipFromJson(json);
       r.params.ship = ship.id;
