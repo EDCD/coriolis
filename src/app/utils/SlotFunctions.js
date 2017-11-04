@@ -220,7 +220,7 @@ export function diffDetails(language, m, mm) {
 
   let mCost = m.cost || 0;
   let mmCost = mm ? mm.cost : 0;
-  if (mCost != mmCost) propDiffs.push(<div key='cost'>{translate('cost')}: <span className={diffClass(mCost, mmCost, true) }>{mCost ? Math.round(mCost * (1 - Persist.getModuleDiscount())) : 0}{units.CR}</span></div>);
+  if (mCost != mmCost) propDiffs.push(<div key='cost'>{translate('cost')}: <span className={diffClass(mCost, mmCost, true) }>{mCost ? formats.int(Math.round(mCost * (1 - Persist.getModuleDiscount()))) : 0}{units.CR}</span></div>);
 
   let mMass = m.mass || 0;
   let mmMass = mm ? mm.getMass() : 0;
