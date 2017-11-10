@@ -22,14 +22,23 @@ export default class EngagementRange extends TranslatedComponent {
    */
   constructor(props, context) {
     super(props);
+    this._rangeChange = this._rangeChange.bind(this);
 
     const { ship } = props;
-
     const maxRange = this._calcMaxRange(ship);
 
     this.state = {
       maxRange
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { ship } = nextProps;
+    const maxRange = this._calcMaxRange(ship);
+
+    this.setState({
+      maxRange
+    });
   }
 
   /**
@@ -38,17 +47,13 @@ export default class EngagementRange extends TranslatedComponent {
    * @returns {int}              The maximum range, in metres
    */
   _calcMaxRange(ship) {
-    let maxRange = 1000;
-    for (let i = 0; i < ship.hardpoints.length; i++) {
-      if (ship.hardpoints[i].maxClass > 0 && ship.hardpoints[i].m && ship.hardpoints[i].enabled) {
-        const thisRange = ship.hardpoints[i].m.getRange();
-        if (thisRange > maxRange) {
-          maxRange = thisRange;
-        }
+    return ship.hardpoints.reduce((maxRange, hardpoint) => {
+      if(hardpoint.maxClass > 0 && hardpoint.m && hardpoint.enabled) {
+        const hardpointRange = hardpoint.m.getRange();
+        return (hardpointRange > maxRange) ? hardpointRange : maxRange;
       }
-    }
-
-    return maxRange;
+      return maxRange;
+    }, 1000);
   }
 
   /**
@@ -85,7 +90,7 @@ export default class EngagementRange extends TranslatedComponent {
               <td>
                 <Slider
                   axis={true}
-                  onChange={this._rangeChange.bind(this)}
+                  onChange={this._rangeChange}
                   axisUnit={translate('m')}
                   percent={engagementRange / maxRange}
                   max={maxRange}
