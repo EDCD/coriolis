@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TranslatedComponent from './TranslatedComponent';
 import { Ships } from 'coriolis-data/dist';
 import Slider from '../components/Slider';
+import { shallowEqual } from '../utils/UtilityFunctions';
 
 /**
  * Engagement range slider
@@ -34,11 +35,13 @@ export default class EngagementRange extends TranslatedComponent {
 
   componentWillReceiveProps(nextProps) {
     const { ship } = nextProps;
-    const maxRange = this._calcMaxRange(ship);
+    if(!shallowEqual(ship, this.props.ship)) {
+      const maxRange = this._calcMaxRange(ship);
 
-    this.setState({
-      maxRange
-    });
+      this.setState({
+        maxRange
+      });
+    }
   }
 
   /**
