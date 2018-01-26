@@ -36,6 +36,7 @@ const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'Type7': 'type_7_transport',
   'Type9': 'type_9_heavy',
   'Type9_Military': 'type_10_defender',
+  'TypeX': 'alliance_chieftain',
   'Viper': 'viper',
   'Viper_MkIV': 'viper_mk_iv',
   'Vulture': 'vulture'
@@ -315,8 +316,6 @@ export function shipFromJson(json) {
  */
 function _addModifications(module, modifiers, blueprint, grade, specialModifications) {
   if (!modifiers) return;
-  console.log(module);
-  console.log(modifiers);
   let special;
   if (specialModifications) {
     special = Modifications.specials[Object.keys(specialModifications)[0]]
