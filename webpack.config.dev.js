@@ -4,6 +4,7 @@ var webpack = require('webpack');
 var pkgJson = require('./package');
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var WebpackNotifierPlugin = require('webpack-notifier');
 
 function CopyDirPlugin(source, destination) {
   this.source = source;
@@ -51,6 +52,7 @@ module.exports = {
         disable: false,
         allChunks: true
     }),
+    new WebpackNotifierPlugin({alwaysNotify: true}),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ],

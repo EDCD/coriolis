@@ -115,7 +115,7 @@ function _shipModelFromEDName(edName) {
  * @return {string} the Coriolis model of the ship
  */
 export function shipModelFromJson(json) {
-  return _shipModelFromEDName(json.name);
+  return _shipModelFromEDName(json.name || json.Ship);
 }
 
 /**
@@ -145,7 +145,7 @@ export function shipFromJson(json) {
   }
 
   let rootModule;
-  
+
   // Add the bulkheads
   const armourJson = json.modules.Armour.module;
   if (armourJson.name.endsWith('_Armour_Grade1')) {

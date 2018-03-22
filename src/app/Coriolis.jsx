@@ -12,6 +12,7 @@ import ModalHelp from './components/ModalHelp';
 import ModalImport from './components/ModalImport';
 import ModalPermalink from './components/ModalPermalink';
 import * as CompanionApiUtils from './utils/CompanionApiUtils';
+import * as JournalUtils from './utils/JournalUtils';
 
 import AboutPage from './pages/AboutPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -92,7 +93,14 @@ export default class Coriolis extends React.Component {
       // Need to decode and gunzip the data, then build the ship
       const data = zlib.inflate(new Buffer(r.params.data, 'base64'), { to: 'string' });
       const json = JSON.parse(data);
-      const ship = CompanionApiUtils.shipFromJson(json);
+      console.log('Ship import data: ');
+      console.log(json);
+      let ship;
+      if (json && json.modules) {
+        ship = CompanionApiUtils.shipFromJson(json);
+      } else if (json && json.Modules) {
+        ship = JournalUtils.shipFromLoadoutJSON(json);
+      }
       r.params.ship = ship.id;
       r.params.code = ship.toString();
       this._setPage(OutfittingPage, r);
