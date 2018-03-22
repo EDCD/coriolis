@@ -616,7 +616,7 @@ export default class Ship {
       standard[i].cat = 0;
       standard[i].priority = priorities && priorities[i + 1] ? priorities[i + 1] * 1 : 0;
       standard[i].type = 'SYS';
-      standard[i].m = null; // Resetting 'old' modul if there was one
+      standard[i].m = null; // Resetting 'old' module if there was one
       standard[i].discountedCost = 0;
       if (comps) {
         let module = ModuleUtils.standard(i, comps.standard[i]);

@@ -73,13 +73,10 @@ export default class OutfittingPage extends Page {
     let buildName = params.bn;
     let data = Ships[shipId];   // Retrieve the basic ship properties, slots and defaults
     let savedCode = Persist.getBuild(shipId, buildName);
-
     if (!data) {
       return { error: { message: 'Ship not found: ' + shipId } };
     }
-
     let ship = new Ship(shipId, data.properties, data.slots);          // Create a new Ship instance
-
     if (code) {
       ship.buildFrom(code);  // Populate modules from serialized 'code' URL param
     } else {

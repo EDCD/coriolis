@@ -43,7 +43,7 @@ const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
 };
 
 // Mapping from hardpoint class to name in companion API
-const HARDPOINT_NUM_TO_CLASS = {
+export const HARDPOINT_NUM_TO_CLASS = {
   0: 'Tiny',
   1: 'Small',
   2: 'Medium',
