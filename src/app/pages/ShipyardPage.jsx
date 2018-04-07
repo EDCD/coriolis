@@ -370,7 +370,7 @@ export default class ShipyardPage extends Page {
                 <th className='sortable' onMouseEnter={termtip.bind(null, 'life support')} onMouseLeave={hide} onClick={sortShips('standard', 3)}>{'ls'}</th>
                 <th className='sortable' onMouseEnter={termtip.bind(null, 'power distriubtor')} onMouseLeave={hide} onClick={sortShips('standard', 4)}>{'pd'}</th>
                 <th className='sortable' onMouseEnter={termtip.bind(null, 'sensors')} onMouseLeave={hide} onClick={sortShips('standard', 5)}>{'s'}</th>
-                <th className='sortable' onMouseEnter={termtip.bind(null, 'fueltank')} onMouseLeave={hide} onClick={sortShips('standard', 6)}>{'f'}</th>
+                <th className='sortable' onMouseEnter={termtip.bind(null, 'fuel tank')} onMouseLeave={hide} onClick={sortShips('standard', 6)}>{'ft'}</th>
                 <th className='sortable lft' onClick={sortShips('hp',1)}>{translate('S')}</th>
                 <th className='sortable' onClick={sortShips('hp', 2)}>{translate('M')}</th>
                 <th className='sortable' onClick={sortShips('hp', 3)}>{translate('L')}</th>
