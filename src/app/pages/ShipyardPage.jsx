@@ -194,6 +194,7 @@ export default class ShipyardPage extends Page {
       <td className='cn'>{s.standard[3]}</td>
       <td className='cn'>{s.standard[4]}</td>
       <td className='cn'>{s.standard[5]}</td>
+      <td className='cn'>{s.standard[6]}</td>
       <td className={cn({ disabled: !s.hp[1] })}>{s.hp[1]}</td>
       <td className={cn({ disabled: !s.hp[2] })}>{s.hp[2]}</td>
       <td className={cn({ disabled: !s.hp[3] })}>{s.hp[3]}</td>
@@ -329,7 +330,7 @@ export default class ShipyardPage extends Page {
                 <th>&nbsp;</th>
                 <th colSpan={4}>{translate('base')}</th>
                 <th colSpan={5}>{translate('max')}</th>
-                <th className='lft' colSpan={6}></th>
+                <th className='lft' colSpan={7}></th>
                 <th className='lft' colSpan={5}></th>
                 <th className='lft' colSpan={8}></th>
               </tr>
@@ -347,7 +348,7 @@ export default class ShipyardPage extends Page {
                 <th className='sortable' onClick={sortShips('maxCargo')}>{translate('cargo')}</th>
                 <th className='sortable' onClick={sortShips('maxPassengers')}>{translate('passengers')}</th>
 
-                <th className='lft' colSpan={6}>{translate('core module classes')}</th>
+                <th className='lft' colSpan={7}>{translate('core module classes')}</th>
                 <th colSpan={5} className='sortable lft' onClick={sortShips('hpCount')}>{translate('hardpoints')}</th>
                 <th colSpan={8} className='sortable lft' onClick={sortShips('intCount')}>{translate('internal compartments')}</th>
               </tr>
@@ -369,7 +370,7 @@ export default class ShipyardPage extends Page {
                 <th className='sortable' onMouseEnter={termtip.bind(null, 'life support')} onMouseLeave={hide} onClick={sortShips('standard', 3)}>{'ls'}</th>
                 <th className='sortable' onMouseEnter={termtip.bind(null, 'power distriubtor')} onMouseLeave={hide} onClick={sortShips('standard', 4)}>{'pd'}</th>
                 <th className='sortable' onMouseEnter={termtip.bind(null, 'sensors')} onMouseLeave={hide} onClick={sortShips('standard', 5)}>{'s'}</th>
-
+                <th className='sortable' onMouseEnter={termtip.bind(null, 'fueltank')} onMouseLeave={hide} onClick={sortShips('standard', 6)}>{'f'}</th>
                 <th className='sortable lft' onClick={sortShips('hp',1)}>{translate('S')}</th>
                 <th className='sortable' onClick={sortShips('hp', 2)}>{translate('M')}</th>
                 <th className='sortable' onClick={sortShips('hp', 3)}>{translate('L')}</th>
