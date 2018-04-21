@@ -185,8 +185,19 @@ export default class Slider extends React.Component {
 
 }
  class TextInputBox extends React.Component {
+  constructor(props) {
+    super(props);
+      this.inputStyle = {
+      opacity:0,
+      height:'1px',
+      width:'1px',
+      top:0,
+      left:0,
+      position:'absolute'
+      }
+    }
     render() {
-      return <div><input type="text" ref={(ip) => this.sliderVal = ip}/></div>;
+      return <div><input style={this.inputStyle} type="text" ref={(ip) => this.sliderVal = ip}/></div>;
     }
  }
 
