@@ -69,6 +69,12 @@ export default class Slider extends React.Component {
    * @param  {Event} event  DOM Event
    */
   _up(event) {
+    /*
+    console.log("event key: " + event.key);
+    console.log("svgElement? %O", this.node);
+    this.node.focus();
+    alert("slider has focus");
+    */
     event.preventDefault();
     this.left = null;
     this.width = null;
@@ -117,6 +123,8 @@ export default class Slider extends React.Component {
    * Trigger DOM updates on mount
    */
   componentDidMount() {
+    console.log("slider? %O", this.node);
+
     this._updateDimensions();
   }
 
@@ -151,7 +159,8 @@ export default class Slider extends React.Component {
     let width = outerWidth - (margin * 2);
     let pctPos = width * this.props.percent;
 
-    return <svg onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchEnd={this._up} style={style} ref={node => this.node = node} tabIndex="0">
+    return <svg 
+      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchEnd={this._up} onKeyUp={this._up} style={style} ref={node => this.node = node} tabIndex="0">
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
       <rect className='primary-disabled' x={margin} y='0.45em' rx='0.15em' ry='0.15em' width={pctPos} height='0.3em' />
       <circle className='primary' r={margin} cy='0.6em' cx={pctPos + margin} />
