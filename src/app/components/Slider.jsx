@@ -69,16 +69,24 @@ export default class Slider extends React.Component {
    * @param  {Event} event  DOM Event
    */
   _up(event) {
-    /*
-    console.log("event key: " + event.key);
-    console.log("svgElement? %O", this.node);
-    this.node.focus();
-    alert("slider has focus");
-    */
+    
     event.preventDefault();
     this.left = null;
     this.width = null;
   }
+
+  /**
+   * Key up handler
+   * @param  {Event} event  DOM Event
+   * This is a placeholder for proof-of-concept to get mobile keyboard to open for the sliders
+   */
+  _keyup(event) {
+    
+    this.sliderInputBox.sliderVal.focus();
+    
+  }
+
+
 
   /**
    * Determine if the user is still dragging
@@ -123,9 +131,8 @@ export default class Slider extends React.Component {
    * Trigger DOM updates on mount
    */
   componentDidMount() {
-    console.log("slider? %O", this.node);
-
     this._updateDimensions();
+    
   }
 
   /**
@@ -159,8 +166,9 @@ export default class Slider extends React.Component {
     let width = outerWidth - (margin * 2);
     let pctPos = width * this.props.percent;
 
-    return <svg 
-      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchEnd={this._up} onKeyUp={this._up} style={style} ref={node => this.node = node} tabIndex="0">
+    return <div><svg 
+      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchEnd={this._keyup.bind(this)}  style={style} ref={node => this.node = node} tabIndex="0">
+       {/*onTouchEnd={this._up}  onKeyUp={this._keyup.bind(this)} */}
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
       <rect className='primary-disabled' x={margin} y='0.45em' rx='0.15em' ry='0.15em' width={pctPos} height='0.3em' />
       <circle className='primary' r={margin} cy='0.6em' cx={pctPos + margin} />
@@ -170,6 +178,15 @@ export default class Slider extends React.Component {
         <text className='primary-disabled' y='3em' x='50%' style={{ textAnchor: 'middle' }}>{(min + max / 2) + axisUnit}</text>
         <text className='primary-disabled' y='3em' x='100%' style={{ textAnchor: 'end' }}>{max + axisUnit}</text>
       </g>}
-    </svg>;
+    </svg>
+    <TextInputBox ref={(tb) => this.sliderInputBox = tb}/>
+   </div>;
   }
+
 }
+ class TextInputBox extends React.Component {
+    render() {
+      return <div><input type="text" ref={(ip) => this.sliderVal = ip}/></div>;
+    }
+ }
+
