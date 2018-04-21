@@ -148,15 +148,15 @@ export function shipFromJson(json) {
 
   // Add the bulkheads
   const armourJson = json.modules.Armour.module;
-  if (armourJson.name.endsWith('_Armour_Grade1')) {
+  if (armourJson.name.toLowerCase().endsWith('_armour_grade1')) {
     ship.useBulkhead(0, true);
-  } else if (armourJson.name.endsWith('_Armour_Grade2')) {
+  } else if (armourJson.name.toLowerCase().endsWith('_armour_grade2')) {
     ship.useBulkhead(1, true);
-  } else if (armourJson.name.endsWith('_Armour_Grade3')) {
+  } else if (armourJson.name.toLowerCase().endsWith('_armour_grade3')) {
     ship.useBulkhead(2, true);
-  } else if (armourJson.name.endsWith('_Armour_Mirrored')) {
+  } else if (armourJson.name.toLowerCase().endsWith('_armour_mirrored')) {
     ship.useBulkhead(3, true);
-  } else if (armourJson.name.endsWith('_Armour_Reactive')) {
+  } else if (armourJson.name.toLowerCase().endsWith('_armour_reactive')) {
     ship.useBulkhead(4, true);
   } else {
     throw 'Unknown bulkheads "' + armourJson.name + '"';

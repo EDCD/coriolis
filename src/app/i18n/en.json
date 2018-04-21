@@ -16,6 +16,8 @@
     "PHRASE_ENGAGEMENT_RANGE": "The distance between your ship and its target",
     "PHRASE_SELECT_BLUEPRINT": "Click to select a blueprint",
     "PHRASE_BLUEPRINT_WORST": "Worst primary values for this blueprint",
+    "PHRASE_BLUEPRINT_FIFTY": "50% of full values for this blueprint",
+    "PHRASE_BLUEPRINT_SEVEN_FIVE": "75% of full values for this blueprint",
     "PHRASE_BLUEPRINT_RANDOM": "Random selection between worst and best primary values for this blueprint",
     "PHRASE_BLUEPRINT_BEST": "Best primary values for this blueprint",
     "PHRASE_BLUEPRINT_EXTREME": "Best beneficial and worst detrimental primary values for this blueprint",
