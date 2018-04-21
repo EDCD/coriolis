@@ -199,7 +199,7 @@ export default class Slider extends React.Component {
       }
     }
     render() {
-      return <div style={this.divStyle}><input style={this.inputStyle} type="text" ref={(ip) => this.sliderVal = ip}/></div>;
+      return <div style={this.divStyle}><input style={this.inputStyle} type="tel" ref={(ip) => this.sliderVal = ip}/></div>;
     }
  }
 
