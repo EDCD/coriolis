@@ -35,6 +35,7 @@ export default class Slider extends React.Component {
     this._down = this._down.bind(this);
     this._move = this._move.bind(this);
     this._up = this._up.bind(this);
+    this._keyup = this._keyup.bind(this);
     this._updatePercent = this._updatePercent.bind(this);
     this._updateDimensions = this._updateDimensions.bind(this);
 
@@ -81,12 +82,8 @@ export default class Slider extends React.Component {
    * This is a placeholder for proof-of-concept to get mobile keyboard to open for the sliders
    */
   _keyup(event) {
-    
     this.sliderInputBox.sliderVal.focus();
-    
   }
-
-
 
   /**
    * Determine if the user is still dragging
@@ -167,8 +164,7 @@ export default class Slider extends React.Component {
     let pctPos = width * this.props.percent;
 
     return <div><svg 
-      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchEnd={this._keyup.bind(this)}  style={style} ref={node => this.node = node} tabIndex="0">
-       {/*onTouchEnd={this._up}  onKeyUp={this._keyup.bind(this)} */}
+      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchStart={this._keyup}  style={style} ref={node => this.node = node} tabIndex="0">
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
       <rect className='primary-disabled' x={margin} y='0.45em' rx='0.15em' ry='0.15em' width={pctPos} height='0.3em' />
       <circle className='primary' r={margin} cy='0.6em' cx={pctPos + margin} />
@@ -189,15 +185,21 @@ export default class Slider extends React.Component {
     super(props);
       this.inputStyle = {
       opacity:0,
-      height:'1px',
-      width:'1px',
+      height:'0',
+      width:'0',
       top:0,
       left:0,
-      position:'absolute'
+      position:'relative'
+      }
+      this.divStyle = {
+        top:'-50px',
+        height:'0',
+        width:'0',
+        position:'relative'
       }
     }
     render() {
-      return <div><input style={this.inputStyle} type="text" ref={(ip) => this.sliderVal = ip}/></div>;
+      return <div style={this.divStyle}><input style={this.inputStyle} type="text" ref={(ip) => this.sliderVal = ip}/></div>;
     }
  }
 
