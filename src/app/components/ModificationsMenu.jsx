@@ -33,7 +33,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     this._rollFifty = this._rollFifty.bind(this);
     this._rollRandom = this._rollRandom.bind(this);
     this._rollBest = this._rollBest.bind(this);
-    this._rollSevenFive = this._rollSevenFive.bind(this);
+    this._rollWorst = this._rollWorst.bind(this);
     this._reset = this._reset.bind(this);
 
     this.state = {
@@ -136,6 +136,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     const blueprint = getBlueprint(fdname, m);
     blueprint.grade = grade;
     ship.setModuleBlueprint(m, blueprint);
+    setPercent(ship, m, 100);
 
     this.setState({ blueprintMenuOpened: false });
     this.props.onChange();
@@ -195,11 +196,11 @@ export default class ModificationsMenu extends TranslatedComponent {
   }
 
   /**
-   * Provide an '75%' roll within the information we have
+   * Provide a 'worst' roll within the information we have
    */
-  _rollSevenFive() {
+  _rollWorst() {
     const { m, ship } = this.props;
-    setPercent(ship, m, 75);
+    setPercent(ship, m, 0);
     this.props.onChange();
   }
 
@@ -227,7 +228,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     const _toggleBlueprintsMenu = this._toggleBlueprintsMenu;
     const _toggleSpecialsMenu = this._toggleSpecialsMenu;
     const _rollFull = this._rollBest;
-    const _rollSevenFive = this._rollSevenFive;
+    const _rollWorst = this._rollWorst;
     const _rollFifty = this._rollFifty;
     const _rollRandom = this._rollRandom;
     const _reset = this._reset;
@@ -275,8 +276,8 @@ export default class ModificationsMenu extends TranslatedComponent {
           { showRolls ?
                 <tr>
                   <td> { translate('roll') }: </td>
+                  <td style={{ cursor: 'pointer' }} onClick={_rollWorst} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_WORST')} onMouseOut={tooltip.bind(null, null)}> { translate('0%') } </td>
                   <td style={{ cursor: 'pointer' }} onClick={_rollFifty} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_FIFTY')} onMouseOut={tooltip.bind(null, null)}> { translate('50%') } </td>
-                  <td style={{ cursor: 'pointer' }} onClick={_rollSevenFive} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_SEVEN_FIVE')} onMouseOut={tooltip.bind(null, null)}> { translate('75%') } </td>
                   <td style={{ cursor: 'pointer' }} onClick={_rollFull} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_BEST')} onMouseOut={tooltip.bind(null, null)}> { translate('100%') } </td>
                   <td style={{ cursor: 'pointer' }} onClick={_rollRandom} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_RANDOM')} onMouseOut={tooltip.bind(null, null)}> { translate('random') } </td>
                 </tr> : null }

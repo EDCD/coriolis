@@ -253,34 +253,15 @@ export function getBlueprint(name, module) {
 }
 
 /**
- * Provide 'worst' primary modifications
+ * Provide 'percent' primary modifications
  * @param {Object}      ship      The ship for which to perform the modifications
  * @param {Object}      m         The module for which to perform the modifications
  * @param {Number} percent The percent to set values to of full.
  */
 export function setPercent(ship, m, percent) {
   ship.clearModifications(m);
-  const features = m.blueprint.grades[m.blueprint.grade].features;
-  for (const featureName in features) {
-    const value = features[featureName][0];
-    const featureIsBeneficial = isBeneficial(featureName, features[featureName]);
-    if (featureIsBeneficial === true) {
-      _setValue(ship, m, featureName, (percent / 100) * value);
-    } else {
-      _setValue(ship, m, featureName, value);
-    }
-  }
-}
-
-/**
- * Provide 'random' primary modifications
- * @param {Object}      ship      The ship for which to perform the modifications
- * @param {Object}      m         The module for which to perform the modifications
- */
-export function setRandom(ship, m) {
-  ship.clearModifications(m);
-  // Pick a single value for our randomness
-  const mult = Math.random();
+  // Pick given value as multiplier
+  const mult = percent / 100;
   const features = m.blueprint.grades[m.blueprint.grade].features;
   for (const featureName in features) {
     let value;
@@ -302,6 +283,16 @@ export function setRandom(ship, m) {
 
     _setValue(ship, m, featureName, value);
   }
+}
+
+/**
+ * Provide 'random' primary modifications
+ * @param {Object}      ship      The ship for which to perform the modifications
+ * @param {Object}      m         The module for which to perform the modifications
+ */
+export function setRandom(ship, m) {
+  // Pick a single value for our randomness
+  setPercent(ship, m, Math.random() * 100);
 }
 
 /**
