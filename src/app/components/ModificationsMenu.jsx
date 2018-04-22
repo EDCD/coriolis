@@ -37,7 +37,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     this._reset = this._reset.bind(this);
 
     this.state = {
-      blueprintMenuOpened: false,
+      blueprintMenuOpened: !(props.m.blueprint && props.m.blueprint.name),
       specialMenuOpened: false
     };
   }
@@ -91,10 +91,13 @@ export default class ModificationsMenu extends TranslatedComponent {
     const specialsId = m.missile && Modifications.modules[m.grp]['specials_' + m.missile] ? 'specials_' + m.missile : 'specials';
     if (Modifications.modules[m.grp][specialsId] && Modifications.modules[m.grp][specialsId].length > 0) {
       const close = this._specialSelected.bind(this, null);
-      specials.push(<div style={{ cursor: 'pointer' }} key={ 'none' } onClick={ close }>{translate('PHRASE_NO_SPECIAL')}</div>);
+      specials.push(<div style={{ cursor: 'pointer', fontWeight: 'bold' }} className={ 'button-inline-menu warning' } key={ 'none' } onClick={ close }>{translate('PHRASE_NO_SPECIAL')}</div>);
       for (const specialName of Modifications.modules[m.grp][specialsId]) {
+        const classes = cn('button-inline-menu', {
+          active: m.blueprint && m.blueprint.special && m.blueprint.special.edname == specialName 
+        });
         const close = this._specialSelected.bind(this, specialName);
-        specials.push(<div style={{ cursor: 'pointer' }} key={ specialName } onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
+        specials.push(<div style={{ cursor: 'pointer' }} className={classes} key={ specialName } onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
       }
     }
     return specials;
@@ -138,7 +141,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     ship.setModuleBlueprint(m, blueprint);
     setPercent(ship, m, 100);
 
-    this.setState({ blueprintMenuOpened: false });
+    this.setState({ blueprintMenuOpened: false, specialMenuOpened: true });
     this.props.onChange();
   }
 
@@ -264,11 +267,11 @@ export default class ModificationsMenu extends TranslatedComponent {
           onClick={(e) => e.stopPropagation() }
           onContextMenu={stopCtxPropagation}
       >
-        { showBlueprintsMenu ? '' : haveBlueprint ? 
-          <div className={ cn('section-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={termtip.bind(null, blueprintTt)} onMouseOut={tooltip.bind(null, null)} onClick={_toggleBlueprintsMenu}>{blueprintLabel}</div> : 
-          <div className={ cn('section-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleBlueprintsMenu}>{translate('PHRASE_SELECT_BLUEPRINT')}</div> }
+        { showBlueprintsMenu | showSpecialsMenu ? '' : haveBlueprint ? 
+          <div className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={termtip.bind(null, blueprintTt)} onMouseOut={tooltip.bind(null, null)} onClick={_toggleBlueprintsMenu}>{blueprintLabel}</div> : 
+          <div className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleBlueprintsMenu}>{translate('PHRASE_SELECT_BLUEPRINT')}</div> }
         { showBlueprintsMenu ? this._renderBlueprints(this.props, this.context) : null }
-        { showSpecial ? <div className={ cn('section-menu', { selected: specialMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleSpecialsMenu}>{specialLabel}</div> : null }
+        { showSpecial & !showSpecialsMenu ? <div className={ cn('section-menu button-inline-menu', { selected: specialMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleSpecialsMenu}>{specialLabel}</div> : null }
         { showSpecialsMenu ? specials : null }
         { showRolls || showReset ?
             <table style={{ width: '100%', backgroundColor: 'transparent' }}>

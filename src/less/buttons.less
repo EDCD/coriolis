@@ -31,6 +31,50 @@ button {
   }
 }
 
+.button-inline-menu {
+    white-space: nowrap;
+    line-height: 1.5em;
+    text-align: center;
+    margin: 0.5em 0;
+    padding-left: 5px;
+    border-top: 1px solid @primary-disabled;
+    border-bottom: 1px solid @primary-disabled;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: @primary-bg;
+
+   &.warning {
+      border-color: @warning-disabled;
+      color: @warning-disabled;
+      stroke: @warning-disabled;
+
+      .no-touch &:hover {
+        border-color: @warning;
+        color: @warning;
+        stroke: @warning;
+      }
+    }
+
+    &.disabled, &.disabled:hover {
+      cursor: not-allowed;
+      border-color: @disabled;
+      color: @disabled;
+      stroke: @disabled;
+    }
+
+    &.active {
+      border-color: @secondary;
+      color: @secondary;
+      stroke: @secondary;
+    }
+
+	&:hover {
+      border-color: @primary;
+      color: @primary;
+      stroke: @primary;
+    }
+  }
+
 .button-lbl {
   margin-left: 0.5em;
 
