@@ -180,26 +180,57 @@ export default class Slider extends React.Component {
   }
 
 }
+/**
+ * TODO: Add tap/hold check for keyboard and hold/drag check for slider
+ **/
+
  class TextInputBox extends React.Component {
   constructor(props) {
     super(props);
-      this.inputStyle = {
-      opacity:0,
-      height:'0',
-      width:'0',
-      top:0,
-      left:0,
-      position:'relative'
-      }
-      this.divStyle = {
-        top:'-50px',
-        height:'0',
-        width:'0',
-        position:'relative'
+      this._handleFocus = this._handleFocus.bind(this);
+      this._handleBlur = this._handleBlur.bind(this);
+      this.state = this._getInitialState();
+    }
+    _getInitialState() {
+      return {
+        divStyle: {
+          top:'-44px',
+          left:'10px',
+          height:'0',
+          width:'0',
+          position:'relative'
+        },
+        inputStyle: {
+          opacity:0,
+          height:0,
+          width:0
+        },
+        maxLength:5,
+        size:5,
+        tabIndex:-1,
+        type:'tel'
       }
     }
+    _handleFocus() {
+      this.setState({
+        divStyle: {
+          top: 'auto',
+          height: 'auto',
+          width: 'auto'
+        },
+        inputStyle: {
+          opacity: 1,
+          top: 'auto',
+          height: 'auto',
+          width: 'auto'
+        }
+      });
+    }
+    _handleBlur() {
+      this.setState(this._getInitialState());
+    }
     render() {
-      return <div style={this.divStyle}><input style={this.inputStyle} type="tel" ref={(ip) => this.sliderVal = ip}/></div>;
+      return <div style={this.state.divStyle}><input style={this.state.inputStyle} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur()}} onFocus={() => {this._handleFocus()}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/></div>;
     }
  }
 
