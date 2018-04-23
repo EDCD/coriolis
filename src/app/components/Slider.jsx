@@ -36,6 +36,7 @@ export default class Slider extends React.Component {
     this._move = this._move.bind(this);
     this._up = this._up.bind(this);
     this._touchstart = this._touchstart.bind(this);
+    this._touchend = this._touchend.bind(this);
     this._updatePercent = this._updatePercent.bind(this);
     this._updateDimensions = this._updateDimensions.bind(this);
 
@@ -77,12 +78,20 @@ export default class Slider extends React.Component {
   }
 
   /**
-   * Key up handler
+   * Touch start handler
    * @param  {Event} event  DOM Event
-   * This is a placeholder for proof-of-concept to get mobile keyboard to open for the sliders
+   * 
    */
   _touchstart(event) {
-    this.sliderInputBox.sliderVal.focus();
+    
+    //currently not working completely with iPhone - text box will appear, but cannot set focus to it. 
+    // works perfectly on Android. May need some tricks in TextInputBox component
+
+    this.touchStartTimer = setTimeout(() => this.sliderInputBox.sliderVal.focus(), 1500);
+  }
+
+  _touchend() {
+    clearTimeout(this.touchStartTimer);
   }
 
   /**
@@ -164,7 +173,7 @@ export default class Slider extends React.Component {
     let pctPos = width * this.props.percent;
 
     return <div><svg 
-      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchStart={this._touchstart}  style={style} ref={node => this.node = node} tabIndex="0">
+      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchStart={this._touchstart} onTouchEnd={this._touchend} style={style} ref={node => this.node = node} tabIndex="0">
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
       <rect className='primary-disabled' x={margin} y='0.45em' rx='0.15em' ry='0.15em' width={pctPos} height='0.3em' />
       <circle className='primary' r={margin} cy='0.6em' cx={pctPos + margin} />
@@ -261,7 +270,7 @@ export default class Slider extends React.Component {
         labelStyle: {
           opacity: 1
         },
-        inputValue:''
+        inputValue:this._getValue()
       });
     }
     _handleBlur() {
