@@ -17,12 +17,12 @@ export default class Slider extends React.Component {
 
   static propTypes = {
     axis: PropTypes.bool,
-    axisUnit: PropTypes.string,
+    axisUnit: PropTypes.string,//units (T, M, etc.)
     max: PropTypes.number,
     min: PropTypes.number,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,// function which determins percent value
     onResize: PropTypes.func,
-    percent: PropTypes.number.isRequired,
+    percent: PropTypes.number.isRequired,//value of slider
     scale: PropTypes.number
   };
 
@@ -35,6 +35,8 @@ export default class Slider extends React.Component {
     this._down = this._down.bind(this);
     this._move = this._move.bind(this);
     this._up = this._up.bind(this);
+    this._touchstart = this._touchstart.bind(this);
+    this._touchend = this._touchend.bind(this);
     this._updatePercent = this._updatePercent.bind(this);
     this._updateDimensions = this._updateDimensions.bind(this);
 
@@ -69,9 +71,27 @@ export default class Slider extends React.Component {
    * @param  {Event} event  DOM Event
    */
   _up(event) {
+    
     event.preventDefault();
     this.left = null;
     this.width = null;
+  }
+
+  /**
+   * Touch start handler
+   * @param  {Event} event  DOM Event
+   * 
+   */
+  _touchstart(event) {
+    
+    //currently not working completely with iPhone - text box will appear, but cannot set focus to it. 
+    // works perfectly on Android. May need some tricks in TextInputBox component
+
+    this.touchStartTimer = setTimeout(() => this.sliderInputBox.sliderVal.focus(), 1500);
+  }
+
+  _touchend() {
+    clearTimeout(this.touchStartTimer);
   }
 
   /**
@@ -118,6 +138,7 @@ export default class Slider extends React.Component {
    */
   componentDidMount() {
     this._updateDimensions();
+    
   }
 
   /**
@@ -151,7 +172,8 @@ export default class Slider extends React.Component {
     let width = outerWidth - (margin * 2);
     let pctPos = width * this.props.percent;
 
-    return <svg onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchEnd={this._up} style={style} ref={node => this.node = node}>
+    return <div><svg 
+      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchStart={this._touchstart} onTouchEnd={this._touchend} style={style} ref={node => this.node = node} tabIndex="0">
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
       <rect className='primary-disabled' x={margin} y='0.45em' rx='0.15em' ry='0.15em' width={pctPos} height='0.3em' />
       <circle className='primary' r={margin} cy='0.6em' cx={pctPos + margin} />
@@ -161,6 +183,122 @@ export default class Slider extends React.Component {
         <text className='primary-disabled' y='3em' x='50%' style={{ textAnchor: 'middle' }}>{(min + max / 2) + axisUnit}</text>
         <text className='primary-disabled' y='3em' x='100%' style={{ textAnchor: 'end' }}>{max + axisUnit}</text>
       </g>}
-    </svg>;
+    </svg>
+    <TextInputBox ref={(tb) => this.sliderInputBox = tb}
+      onChange={this.props.onChange}
+      percent={this.props.percent}
+      axisUnit={this.props.axisUnit}
+      scale={this.props.scale}
+      max={this.props.max}
+    
+    />
+   </div>;
   }
+
 }
+/**
+ * TODO: Add tap/hold check for keyboard and hold/drag check for slider
+ **/
+ class TextInputBox extends React.Component {
+  static propTypes = {
+    axisUnit: PropTypes.string,//units (T, M, etc.)
+    max: PropTypes.number,
+    onChange: PropTypes.func.isRequired,// function which determins percent value
+
+    percent: PropTypes.number.isRequired,//value of slider
+    scale: PropTypes.number
+  };
+
+
+  constructor(props) {
+    super(props);
+      this._handleFocus = this._handleFocus.bind(this);
+      this._handleBlur = this._handleBlur.bind(this);
+      this._handleChange = this._handleChange.bind(this);
+      this.state = this._getInitialState();
+      this.percent = this.props.percent;
+      this.max = this.props.max;
+      this.state.inputValue = this.percent * this.max;
+    }
+
+    componentWillReceiveProps(nextProps) {
+      // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
+      if (nextProps.percent !== this.state.percent) {
+        this.setState({ inputValue: nextProps.percent * this.max });
+      }
+    }
+
+    _getInitialState() {
+      return {
+        divStyle: {
+          top:'-44px',
+          left:'10px',
+          height:'0',
+          width:'0',
+          position:'relative'
+        },
+        inputStyle: {
+          opacity:0,
+          height:0,
+          width:0
+        },
+        labelStyle: {
+          marginLeft: '.1em',
+          opacity:0  
+        },
+        maxLength:5,
+        size:5,
+        tabIndex:-1,
+        type:'number',
+        readOnly: true
+      }
+    }
+    _handleFocus() {
+      this.setState({
+        divStyle: {
+          top: 'auto',
+          height: 'auto',
+          width: 'auto'
+        },
+        inputStyle: {
+          opacity: 1,
+          top: 'auto',
+          height: 'auto',
+          //width: 'auto'
+          width:'4em'
+        },
+        labelStyle: {
+          opacity: 1
+        },
+        inputValue:this._getValue()
+      });
+    }
+    _handleBlur() {
+      this.setState(this._getInitialState());
+      if (this.state.inputValue !== '') {
+        this.props.onChange(this.state.inputValue/this.props.max);
+      } else {
+        this.state.inputValue = this.props.percent * this.props.max;
+      }
+      
+    }
+    _getValue() {
+      return this.state.inputValue;
+    }
+
+    _handleChange(event) {
+      
+      if (event.target.value <= this.props.max)  {
+        this.setState({inputValue: event.target.value});
+      } else {
+        this.setState({inputValue: this.props.max});
+      }
+        
+      
+    }
+    render() {
+      let {  axisUnit, onChange, percent, scale } = this.props;
+      return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} onChange={this._handleChange} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur()}} onFocus={() => {this._handleFocus()}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><text className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</text></div>;
+    }
+ }
+
