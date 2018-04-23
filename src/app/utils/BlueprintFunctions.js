@@ -2,6 +2,67 @@ import React from 'react';
 import { Modifications } from 'coriolis-data/dist';
 
 /**
+ * Generate a tooltip with details of a blueprint's specials
+ * @param   {Object}  translate   The translate object
+ * @param   {Object}  blueprint   The blueprint at the required grade
+ * @param   {string}  grp         The group of the module
+ * @param   {Object}  m           The module to compare with
+ * @param specialName
+ * @returns {Object}              The react components
+ */
+export function specialToolTip(translate, blueprint, grp, m, specialName) {
+  const effects = [];
+  if (!blueprint || !blueprint.features) {
+    return undefined;
+  }
+  if (m) {
+    // We also add in any benefits from specials that aren't covered above
+    if (m.blueprint) {
+        for (const feature in Modifications.modifierActions[specialName]) {
+          // if (!blueprint.features[feature] && !m.mods.feature) {
+            const featureDef = Modifications.modifications[feature];
+            if (featureDef && !featureDef.hidden) {
+              let symbol = '';
+              if (feature === 'jitter') {
+                symbol = '°';
+              } else if (featureDef.type === 'percentage') {
+                symbol = '%';
+              }
+              let current = m.getModValue(feature) - m.getModValue(feature, true);
+              if (featureDef.type === 'percentage') {
+                current = Math.round(current / 10) / 10;
+              } else if (featureDef.type === 'numeric') {
+                current /= 100;
+              }
+                const currentIsBeneficial = isValueBeneficial(feature, current);
+
+                effects.push(
+                  <tr key={feature + '_specialTT'}>
+                    <td style={{textAlign: 'left'}}>{translate(feature, grp)}</td>
+                    <td>&nbsp;</td>
+                    <td className={current === 0 ? '' : currentIsBeneficial ? 'secondary' : 'warning'}
+                        style={{textAlign: 'right'}}>{current}{symbol}</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                );
+            }
+      }
+
+    }
+  }
+
+  return (
+    <div>
+      <table width='100%'>
+        <tbody>
+        {effects}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/**
  * Generate a tooltip with details of a blueprint's effects
  * @param   {Object}  translate   The translate object
  * @param   {Object}  blueprint   The blueprint at the required grade
@@ -309,5 +370,62 @@ function _setValue(ship, m, featureName, value) {
     ship.setModification(m, featureName, value * 100);
   } else {
     ship.setModification(m, featureName, value);
+  }
+}
+
+/**
+ * Provide 'percent' primary query
+ * @param {Object}      m         The module for which to perform the query
+ * @returns {Number} percent The percentage indicator of current applied values.
+ */
+export function getPercent(m) {
+  let result = null;
+  const features = m.blueprint.grades[m.blueprint.grade].features;
+  for (const featureName in features) {
+    
+	if (features[featureName][0] === features[featureName][1]) {
+		continue;
+	}
+	
+	let value = _getValue(m, featureName);
+	let mult;
+    if (Modifications.modifications[featureName].higherbetter) {
+      // Higher is better, but is this making it better or worse?
+      if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
+		mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
+      } else {
+		mult = Math.round((value - features[featureName][0]) / (features[featureName][1] - features[featureName][0]) * 100);        
+      }
+    } else {
+      // Higher is worse, but is this making it better or worse?
+      if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
+		mult = Math.round((value - features[featureName][0]) / (features[featureName][1] - features[featureName][0]) * 100);
+      } else {
+		mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
+      }
+    }
+	
+	if (result && result != mult) {
+		return null;
+	} else if (result != mult) {
+		result = mult;
+	}
+  }
+  
+  return result;
+}
+
+/**
+ * Query a feature value
+ * @param {Object}      m             The module for which to perform the query
+ * @param {string}      featureName   The feature being queried
+ */
+function _getValue(m, featureName) {
+  if (Modifications.modifications[featureName].type == 'percentage') {
+    return m.getModValue(featureName) / 10000;
+  } else if (Modifications.modifications[featureName].type == 'numeric') {
+    return m.getModValue(featureName) / 100;
+  } else {
+    return m.getModValue(featureName);
   }
 }

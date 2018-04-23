@@ -6,7 +6,14 @@ import { isEmpty, stopCtxPropagation } from '../utils/UtilityFunctions';
 import cn from 'classnames';
 import { Modifications } from 'coriolis-data/dist';
 import Modification from './Modification';
-import { getBlueprint, blueprintTooltip, setPercent, setRandom } from '../utils/BlueprintFunctions';
+import {
+  getBlueprint,
+  blueprintTooltip,
+  setPercent,
+  getPercent,
+  setRandom,
+  specialToolTip
+} from '../utils/BlueprintFunctions'
 
 /**
  * Modifications menu
@@ -86,18 +93,33 @@ export default class ModificationsMenu extends TranslatedComponent {
     const { m } = props;
     const { language, tooltip, termtip } = context;
     const translate = language.translate;
-
     const specials = [];
     const specialsId = m.missile && Modifications.modules[m.grp]['specials_' + m.missile] ? 'specials_' + m.missile : 'specials';
     if (Modifications.modules[m.grp][specialsId] && Modifications.modules[m.grp][specialsId].length > 0) {
       const close = this._specialSelected.bind(this, null);
       specials.push(<div style={{ cursor: 'pointer', fontWeight: 'bold' }} className={ 'button-inline-menu warning' } key={ 'none' } onClick={ close }>{translate('PHRASE_NO_SPECIAL')}</div>);
       for (const specialName of Modifications.modules[m.grp][specialsId]) {
+        if (Modifications.specials[specialName].name.search('Legacy') >= 0) {
+          continue;
+        }
         const classes = cn('button-inline-menu', {
           active: m.blueprint && m.blueprint.special && m.blueprint.special.edname == specialName 
         });
         const close = this._specialSelected.bind(this, specialName);
-        specials.push(<div style={{ cursor: 'pointer' }} className={classes} key={ specialName } onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
+        if (m.blueprint && m.blueprint.name) {
+          let tmp = {};
+          if (m.blueprint.special) {
+            tmp = m.blueprint.special;
+          } else {
+            tmp = undefined;
+          }
+          m.blueprint.special = Modifications.specials[specialName];
+          let specialTt = specialToolTip(translate, m.blueprint.grades[m.blueprint.grade], m.grp, m, specialName);
+          m.blueprint.special = tmp;
+          specials.push(<div style={{ cursor: 'pointer' }} className={classes} key={ specialName } onMouseOver={termtip.bind(null, specialTt)} onMouseOut={tooltip.bind(null, null)} onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
+        } else {
+          specials.push(<div style={{ cursor: 'pointer' }} className={classes} key={ specialName } onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
+        }
       }
     }
     return specials;
@@ -239,15 +261,19 @@ export default class ModificationsMenu extends TranslatedComponent {
     let blueprintLabel;
     let haveBlueprint = false;
     let blueprintTt;
+    let blueprintCv;
     if (m.blueprint && m.blueprint.name) {
       blueprintLabel = translate(m.blueprint.name) + ' ' + translate('grade') + ' ' + m.blueprint.grade;
       haveBlueprint = true;
       blueprintTt  = blueprintTooltip(translate, m.blueprint.grades[m.blueprint.grade], Modifications.modules[m.grp].blueprints[m.blueprint.fdname].grades[m.blueprint.grade].engineers, m.grp);
+      blueprintCv = getPercent(m);
     }
 
     let specialLabel;
+    let specialTt;
     if (m.blueprint && m.blueprint.special) {
       specialLabel = m.blueprint.special.name;
+      specialTt = specialToolTip(translate, m.blueprint.grades[m.blueprint.grade], m.grp, m, m.blueprint.special.edname);
     } else {
       specialLabel = translate('PHRASE_SELECT_SPECIAL');
     }
@@ -258,8 +284,8 @@ export default class ModificationsMenu extends TranslatedComponent {
     const showSpecial = haveBlueprint && specials.length && !blueprintMenuOpened;
     const showSpecialsMenu = specialMenuOpened;
     const showRolls = haveBlueprint && !blueprintMenuOpened && !specialMenuOpened;
-    const showReset = !blueprintMenuOpened && !specialMenuOpened;
-    const showMods = !blueprintMenuOpened && !specialMenuOpened;
+    const showReset = !blueprintMenuOpened && !specialMenuOpened && haveBlueprint;
+    const showMods = !blueprintMenuOpened && !specialMenuOpened && haveBlueprint;
 
     return (
       <div
@@ -271,25 +297,24 @@ export default class ModificationsMenu extends TranslatedComponent {
           <div className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={termtip.bind(null, blueprintTt)} onMouseOut={tooltip.bind(null, null)} onClick={_toggleBlueprintsMenu}>{blueprintLabel}</div> : 
           <div className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleBlueprintsMenu}>{translate('PHRASE_SELECT_BLUEPRINT')}</div> }
         { showBlueprintsMenu ? this._renderBlueprints(this.props, this.context) : null }
-        { showSpecial & !showSpecialsMenu ? <div className={ cn('section-menu button-inline-menu', { selected: specialMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleSpecialsMenu}>{specialLabel}</div> : null }
+        { showSpecial & !showSpecialsMenu ? <div className={ cn('section-menu button-inline-menu', { selected: specialMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={specialTt ? termtip.bind(null, specialTt) : null} onMouseOut={specialTt ? tooltip.bind(null, null) : null}  onClick={_toggleSpecialsMenu}>{specialLabel}</div> : null }
         { showSpecialsMenu ? specials : null }
-        { showRolls || showReset ?
+        { showReset ? <div className={'section-menu button-inline-menu warning'} style={{ cursor: 'pointer' }} onClick={_reset} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_RESET')} onMouseOut={tooltip.bind(null, null)}> { translate('reset') } </div> : null }
+		{ showRolls ?
+            
             <table style={{ width: '100%', backgroundColor: 'transparent' }}>
               <tbody>
           { showRolls ?
                 <tr>
-                  <td> { translate('roll') }: </td>
-                  <td style={{ cursor: 'pointer' }} onClick={_rollWorst} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_WORST')} onMouseOut={tooltip.bind(null, null)}> { translate('0%') } </td>
-                  <td style={{ cursor: 'pointer' }} onClick={_rollFifty} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_FIFTY')} onMouseOut={tooltip.bind(null, null)}> { translate('50%') } </td>
-                  <td style={{ cursor: 'pointer' }} onClick={_rollFull} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_BEST')} onMouseOut={tooltip.bind(null, null)}> { translate('100%') } </td>
-                  <td style={{ cursor: 'pointer' }} onClick={_rollRandom} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_RANDOM')} onMouseOut={tooltip.bind(null, null)}> { translate('random') } </td>
-                </tr> : null }
-          { showReset ?
-                <tr>
-                  <td colSpan={'5'} style={{ cursor: 'pointer' }} onClick={_reset}onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_RESET')} onMouseOut={tooltip.bind(null, null)}> { translate('reset') } </td>
+                  <td className={ cn('section-menu button-inline-menu', {active: false})}> { translate('roll') }: </td>
+                  <td className={ cn('section-menu button-inline-menu', { active: blueprintCv ===    0 })} style={{ cursor: 'pointer' }} onClick={_rollWorst} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_WORST')} onMouseOut={tooltip.bind(null, null)}> { translate('0%') } </td>
+                  <td className={ cn('section-menu button-inline-menu', { active: blueprintCv ===   50 })} style={{ cursor: 'pointer' }} onClick={_rollFifty} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_FIFTY')} onMouseOut={tooltip.bind(null, null)}> { translate('50%') } </td>
+                  <td className={ cn('section-menu button-inline-menu', { active: blueprintCv ===  100 })} style={{ cursor: 'pointer' }} onClick={_rollFull} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_BEST')} onMouseOut={tooltip.bind(null, null)}> { translate('100%') } </td>
+                  <td className={ cn('section-menu button-inline-menu', { active: blueprintCv === null || blueprintCv % 50 != 0 })} style={{ cursor: 'pointer' }} onClick={_rollRandom} onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_RANDOM')} onMouseOut={tooltip.bind(null, null)}> { translate('random') } </td>
                 </tr> : null }
               </tbody>
           </table> : null }
+        { showMods ? <hr /> : null }
         { showMods ?
           <span onMouseOver={termtip.bind(null, 'HELP_MODIFICATIONS_MENU')} onMouseOut={tooltip.bind(null, null)} >
             { this._renderModifications(this.props) }
