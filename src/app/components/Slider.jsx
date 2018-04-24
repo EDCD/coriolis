@@ -48,6 +48,7 @@ export default class Slider extends React.Component {
    * @param  {SyntheticEvent} event Event
    */
   _down(event) {
+    this.touchStartTimer = setTimeout(() => this.sliderInputBox._setDisplay('block'), 1500);
     let rect = event.currentTarget.getBoundingClientRect();
     this.left = rect.left;
     this.width = rect.width;
@@ -71,7 +72,7 @@ export default class Slider extends React.Component {
    * @param  {Event} event  DOM Event
    */
   _up(event) {
-    
+    clearTimeout(this.touchStartTimer);
     event.preventDefault();
     this.left = null;
     this.width = null;
@@ -83,14 +84,12 @@ export default class Slider extends React.Component {
    * 
    */
   _touchstart(event) {
-    
     //currently not working completely with iPhone - text box will appear, but cannot set focus to it. 
     // works perfectly on Android. May need some tricks in TextInputBox component
-
-    this.touchStartTimer = setTimeout(() => this.sliderInputBox.sliderVal.focus(), 1500);
+    this.touchStartTimer = setTimeout(() => this.sliderInputBox._setDisplay('block'), 1500);
   }
 
-  _touchend() {
+  _touchend(event) {
     clearTimeout(this.touchStartTimer);
   }
 
@@ -173,11 +172,11 @@ export default class Slider extends React.Component {
     let pctPos = width * this.props.percent;
 
     return <div><svg 
-      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onTouchStart={this._touchstart} onTouchEnd={this._touchend} style={style} ref={node => this.node = node} tabIndex="0">
+      onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} style={style} ref={node => this.node = node} tabIndex="0">
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
       <rect className='primary-disabled' x={margin} y='0.45em' rx='0.15em' ry='0.15em' width={pctPos} height='0.3em' />
       <circle className='primary' r={margin} cy='0.6em' cx={pctPos + margin} />
-      <rect x={margin} width={width} height='100%' fillOpacity='0' style={{ cursor: 'col-resize' }} onMouseDown={this._down} onTouchMove={this._move} onTouchStart={this._down} />
+      <rect x={margin} width={width} height='100%' fillOpacity='0' style={{ cursor: 'col-resize' }} onMouseDown={this._down} onTouchMove={this._move} onTouchStart={this._down} onTouchEnd={this._touchend} />
       {axis && <g style={{ fontSize: '.7em' }}>
         <text className='primary-disabled' y='3em' x={margin} style={{ textAnchor: 'middle' }}>{min + axisUnit}</text>
         <text className='primary-disabled' y='3em' x='50%' style={{ textAnchor: 'middle' }}>{(min + max / 2) + axisUnit}</text>
@@ -227,24 +226,23 @@ export default class Slider extends React.Component {
         this.setState({ inputValue: nextProps.percent * this.max });
       }
     }
-
+    componentDidUpdate(prevProps,prevState) {
+      if (this.state.divStyle.display == 'block' && prevState.divStyle.display == 'none') {
+        this.sliderVal.focus();
+        console.log("component updated. current display: " + this.state.divStyle.display + " - previous display value: " + prevState.divStyle.display);
+      }
+      
+    }
     _getInitialState() {
       return {
         divStyle: {
-          top:'-44px',
-          left:'10px',
-          height:'0',
-          width:'0',
-          position:'relative'
+          display:'none'
         },
         inputStyle: {
-          opacity:0,
-          height:0,
-          width:0
+          width:'4em'
         },
         labelStyle: {
           marginLeft: '.1em',
-          opacity:0  
         },
         maxLength:5,
         size:5,
@@ -253,23 +251,11 @@ export default class Slider extends React.Component {
         readOnly: true
       }
     }
+    _setDisplay(val) {
+      this.setState({divStyle:{display:val}});
+    }
     _handleFocus() {
       this.setState({
-        divStyle: {
-          top: 'auto',
-          height: 'auto',
-          width: 'auto'
-        },
-        inputStyle: {
-          opacity: 1,
-          top: 'auto',
-          height: 'auto',
-          //width: 'auto'
-          width:'4em'
-        },
-        labelStyle: {
-          opacity: 1
-        },
         inputValue:this._getValue()
       });
     }
