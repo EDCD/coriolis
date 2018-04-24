@@ -422,10 +422,10 @@ export function getPercent(m) {
  */
 function _getValue(m, featureName) {
   if (Modifications.modifications[featureName].type == 'percentage') {
-    return m.getModValue(featureName) / 10000;
+    return m.getModValue(featureName, true) / 10000;
   } else if (Modifications.modifications[featureName].type == 'numeric') {
-    return m.getModValue(featureName) / 100;
+    return m.getModValue(featureName, true) / 100;
   } else {
-    return m.getModValue(featureName);
+    return m.getModValue(featureName, true);
   }
 }
