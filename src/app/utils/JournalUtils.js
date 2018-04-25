@@ -73,14 +73,14 @@ export function shipFromLoadoutJSON (json) {
   let opts = [];
 
   for (const module of json.Modules) {
-    switch (module.Slot) {
+    switch (module.Slot.toLowerCase()) {
       // Cargo Hatch.
-      case 'CargoHatch':
+      case 'cargohatch':
         ship.cargoHatch.enabled = module.On
         ship.cargoHatch.priority = module.Priority
         break
       // Add the bulkheads
-      case 'Armour':
+      case 'armour':
         if (module.Item.toLowerCase().endsWith('_armour_grade1')) {
           ship.useBulkhead(0, true)
         } else if (module.Item.toLowerCase().endsWith('_armour_grade2')) {
@@ -97,49 +97,49 @@ export function shipFromLoadoutJSON (json) {
         ship.bulkheads.enabled = true
         if (module.Engineering) _addModifications(ship.bulkheads.m, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'PowerPlant':
+      case 'powerplant':
         const powerplant = _moduleFromFdName(module.Item)
         ship.use(ship.standard[0], powerplant, true)
         ship.standard[0].enabled = module.On
         ship.standard[0].priority = module.Priority
         if (module.Engineering) _addModifications(powerplant, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'MainEngines':
+      case 'mainengines':
         const thrusters = _moduleFromFdName(module.Item)
         ship.use(ship.standard[1], thrusters, true)
         ship.standard[1].enabled = module.On
         ship.standard[1].priority = module.Priority
         if (module.Engineering) _addModifications(thrusters, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'FrameShiftDrive':
+      case 'frameshiftdrive':
         const frameshiftdrive = _moduleFromFdName(module.Item)
         ship.use(ship.standard[2], frameshiftdrive, true)
         ship.standard[2].enabled = module.On
         ship.standard[2].priority = module.Priority
         if (module.Engineering)  _addModifications(frameshiftdrive, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'LifeSupport':
+      case 'lifesupport':
         const lifesupport = _moduleFromFdName(module.Item)
         ship.use(ship.standard[3], lifesupport, true)
         ship.standard[3].enabled = module.On === true
         ship.standard[3].priority = module.Priority
         if (module.Engineering) _addModifications(lifesupport, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'PowerDistributor':
+      case 'powerdistributor':
         const powerdistributor = _moduleFromFdName(module.Item)
         ship.use(ship.standard[4], powerdistributor, true)
         ship.standard[4].enabled = module.On
         ship.standard[4].priority = module.Priority
         if (module.Engineering) _addModifications(powerdistributor, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'Radar':
+      case 'radar':
         const sensors = _moduleFromFdName(module.Item)
         ship.use(ship.standard[5], sensors, true)
         ship.standard[5].enabled = module.On
         ship.standard[5].priority = module.Priority
         if (module.Engineering) _addModifications(sensors, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level)
         break
-      case 'FuelTank':
+      case 'fueltank':
         const fueltank = _moduleFromFdName(module.Item)
         ship.use(ship.standard[6], fueltank, true)
         ship.standard[6].enabled = true
@@ -148,7 +148,7 @@ export function shipFromLoadoutJSON (json) {
       default:
     }
     for (const module of json.Modules) {
-      if (module.Slot.search(/Hardpoint/) !== -1) {
+      if (module.Slot.toLowerCase().search(/hardpoint/) !== -1) {
         // Add hardpoints
         let hardpoint;
         let hardpointClassNum = -1
@@ -166,7 +166,7 @@ export function shipFromLoadoutJSON (json) {
 
           // Now that we know what we're looking for, find it
           const hardpointName = HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + 'Hardpoint' + hardpointSlotNum
-          const hardpointSlot = json.Modules.find(elem => elem.Slot === hardpointName)
+          const hardpointSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === hardpointName.toLowerCase())
           if (!hardpointSlot) {
             // This can happen with old imports that don't contain new hardpoints
           } else if (!hardpointSlot) {
@@ -181,17 +181,17 @@ export function shipFromLoadoutJSON (json) {
           hardpointArrayNum++
         }
       }
-      if (module.Slot.search(/Slot\d/) !== -1) {
+      if (module.Slot.toLowerCase().search(/slot\d/) !== -1) {
         let internalSlotNum = 1
         let militarySlotNum = 1
         for (let i in shipTemplate.slots.internal) {
-          const isMilitary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name = 'Military' : false
+          const isMilitary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name = 'military' : false
 
           // The internal slot might be a standard or a military slot.  Military slots have a different naming system
           let internalSlot = null
           if (isMilitary) {
             const internalName = 'Military0' + militarySlotNum
-            internalSlot = json.Modules.find(elem => elem.Slot === internalName)
+            internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase())
             militarySlotNum++
           } else {
             // Slot numbers are not contiguous so handle skips.
@@ -199,8 +199,8 @@ export function shipFromLoadoutJSON (json) {
               // Slot sizes have no relationship to the actual size, either, so check all possibilities
               for (let slotsize = 0; slotsize < 9; slotsize++) {
                 const internalName = 'Slot' + (internalSlotNum <= 9 ? '0' : '') + internalSlotNum + '_Size' + slotsize
-                if (json.Modules.find(elem => elem.Slot === internalName)) {
-                  internalSlot = json.Modules.find(elem => elem.Slot === internalName);
+                if (json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase())) {
+                  internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
                   break
                 }
               }

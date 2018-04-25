@@ -9,12 +9,16 @@ export const StandardArray = [
   'pd', // Power Distributor
   's',  // Sensors
   'ft', // Fuel Tank
+  'gpp', // Guardian Hybrid Power Plant
+  'gpd' // Guardian Hybrid Power Distributor
 ];
 
 // Map to lookup group labels/names for component grp, used for JSON Serialization
 export const ModuleGroupToName = {
   // Standard
   pp: 'Power Plant',
+  gpp: 'Guardian Hybrid Power Plant',
+  gpd: 'Guardian Hybrid Power Distributor',
   t: 'Thrusters',
   fsd: 'Frame Shift Drive',
   ls: 'Life Support',
@@ -75,7 +79,9 @@ export const ModuleGroupToName = {
   sb: 'Shield Booster',
   tp: 'Torpedo Pylon',
   sfn: 'Shutdown Field Neutraliser',
-  xs: 'Xeno Scanner'
+  xs: 'Xeno Scanner',
+  gpc: 'Guardian Plasma Charger',
+  ggc: 'Guardian Gauss Cannon',
 };
 
 let GrpNameToCodeMap = {};

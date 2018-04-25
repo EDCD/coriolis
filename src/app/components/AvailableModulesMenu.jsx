@@ -56,7 +56,11 @@ const GRPCAT = {
   'ch': 'defence',
   'po': 'defence',
   'ec': 'defence',
-  'sfn': 'defence'
+  'sfn': 'defence',
+  // Standard
+  'gpp': 'guardian',
+  'gpc': 'guardian',
+  'ggc': 'guardian'
 };
 // Order here is the order in which items will be shown in the modules menu
 const CATEGORIES = {
@@ -82,7 +86,10 @@ const CATEGORIES = {
   'defence': ['ch', 'po', 'ec'],
   'scanners': ['sc', 'ss', 'cs', 'kw', 'ws'], // Overloaded with internal scanners
   // Experimental
-  'experimental': ['axmc', 'axmr', 'rfl', 'xs', 'sfn']
+  'experimental': ['axmc', 'axmr', 'rfl', 'xs', 'sfn'],
+
+  // Guardian
+  'guardian': ['gpp', 'gpc', 'ggc']
 };
 
 /**
@@ -199,8 +206,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
   /**
    * Generate React Components for Module Group
    * @param  {Function} translate   Translate function
-   * @param  {Objecy} mountedModule Mounted Module
-   * @param  {Funciton} warningFunc Warning function
+   * @param  {Object} mountedModule Mounted Module
+   * @param  {Function} warningFunc Warning function
    * @param  {number} mass          Mass
    * @param  {function} onSelect    Select/Mount callback
    * @param  {string} grp           Group name
@@ -208,7 +215,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @return {React.Component}      Available Module Group contents
    */
   _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules) {
-    let prevClass = null, prevRating = null;
+    let prevClass = null, prevRating = null, prevName;
     let elems = [];
 
     const sortedModules = modules.sort(this._moduleOrder);
@@ -223,6 +230,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       let m = sortedModules[i];
       let mount = null;
       let disabled = false;
+      prevName = m.name
       if (ModuleUtils.isShieldGenerator(m.grp)) {
         // Shield generators care about maximum hull mass
         disabled = mass > m.maxmass;
@@ -258,7 +266,10 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         case 'G': mount = <MountGimballed className={'lg'}/>; break;
         case 'T': mount = <MountTurret className={'lg'}/>; break;
       }
-
+      if (m.name && m.name === prevName) {
+        // elems.push(<br key={'b' + m.grp + i} />);
+        itemsOnThisRow = 0;
+      }
       if (itemsOnThisRow == 6 || i > 0 && sortedModules.length > 3 && itemsPerClass > 2 && m.class != prevClass && (m.rating != prevRating || m.mount)) {
         elems.push(<br key={'b' + m.grp + i} />);
         itemsOnThisRow = 0;
@@ -273,6 +284,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       itemsOnThisRow++;
       prevClass = m.class;
       prevRating = m.rating;
+      prevName = m.name;
     }
 
     return <ul key={'modules' + grp} >{elems}</ul>;

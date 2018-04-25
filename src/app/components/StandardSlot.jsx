@@ -48,7 +48,7 @@ export default class StandardSlot extends TranslatedComponent {
     let m = slot.m;
     let classRating = m.class + m.rating;
     let menu;
-    let validMods = m == null ? [] : (Modifications.modules[m.grp].modifications || []);
+    let validMods = m == null || !Modifications.modules[m.grp] ? [] : (Modifications.modules[m.grp].modifications || []);
     let showModuleResistances = Persist.showModuleResistances();
     let mass = m.getMass() || m.cargo || m.fuel || 0;
 
