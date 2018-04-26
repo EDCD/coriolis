@@ -464,7 +464,17 @@ export default class Ship {
     if (m.blueprint) {
       m.blueprint.special = special;
     }
-    this.recalculateDps().recalculateHps().recalculateEps();
+    this.updatePowerGenerated()
+      .updatePowerUsed()
+      .recalculateMass()
+      .updateJumpStats()
+      .recalculateShield()
+      .recalculateShieldCells()
+      .recalculateArmour()
+      .recalculateDps()
+      .recalculateEps()
+      .recalculateHps()
+      .updateMovement();
   }
 
   /**
