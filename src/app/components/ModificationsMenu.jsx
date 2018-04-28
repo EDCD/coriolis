@@ -262,7 +262,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     let haveBlueprint = false;
     let blueprintTt;
     let blueprintCv;
-    if (m.blueprint && m.blueprint.name) {
+    if (m.blueprint && m.blueprint.name && Modifications.modules[m.grp].blueprints[m.blueprint.fdname].grades[m.blueprint.grade]) {
       blueprintLabel = translate(m.blueprint.name) + ' ' + translate('grade') + ' ' + m.blueprint.grade;
       haveBlueprint = true;
       blueprintTt  = blueprintTooltip(translate, m.blueprint.grades[m.blueprint.grade], Modifications.modules[m.grp].blueprints[m.blueprint.fdname].grades[m.blueprint.grade].engineers, m.grp);

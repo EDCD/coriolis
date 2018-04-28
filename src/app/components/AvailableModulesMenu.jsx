@@ -44,6 +44,7 @@ const GRPCAT = {
   'rg': 'projectiles',
   'mr': 'ordnance',
   'axmr': 'experimental',
+  'rcpl': 'experimental',
   'tp': 'ordnance',
   'nl': 'ordnance',
   'sc': 'scanners',
@@ -86,7 +87,7 @@ const CATEGORIES = {
   'defence': ['ch', 'po', 'ec'],
   'scanners': ['sc', 'ss', 'cs', 'kw', 'ws'], // Overloaded with internal scanners
   // Experimental
-  'experimental': ['axmc', 'axmr', 'rfl', 'xs', 'sfn'],
+  'experimental': ['axmc', 'axmr', 'rfl', 'xs', 'sfn', 'rcpl'],
 
   // Guardian
   'guardian': ['gpp', 'gpc', 'ggc']

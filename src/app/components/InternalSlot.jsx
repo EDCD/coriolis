@@ -70,6 +70,7 @@ export default class InternalSlot extends Slot {
           { m.getRange() ? <div className={'l'}>{translate('range')} {formats.f2(m.getRange())}{u.km}</div> : null }
           { m.getRangeT() ? <div className={'l'}>{translate('ranget')} {formats.f1(m.getRangeT())}{u.s}</div> : null }
           { m.getTime() ? <div className={'l'}>{translate('time')}: {formats.time(m.getTime())}</div> : null }
+          { m.getHackTime() ? <div className={'l'}>{translate('hacktime')}: {formats.time(m.getHackTime())}</div> : null }
           { m.maximum ? <div className={'l'}>{translate('max')}: {(m.maximum)}</div> : null }
           { m.rangeLS ? <div className={'l'}>{translate('range')}: {m.rangeLS}{u.Ls}</div> : null }
           { m.rangeLS === null ? <div className={'l'}>∞{u.Ls}</div> : null }

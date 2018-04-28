@@ -722,4 +722,13 @@ export default class Module {
   getTime() {
     return this._getModifiedValue('time');
   }
+
+  /**
+   * Get the hack time for this module, taking in to account modifications
+   * @return {string} the time for this module
+   */
+  getHackTime() {
+    return this._getModifiedValue('hacktime');
+  }
+
 }

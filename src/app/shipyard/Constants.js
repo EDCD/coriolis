@@ -80,6 +80,7 @@ export const ModuleGroupToName = {
   tp: 'Torpedo Pylon',
   sfn: 'Shutdown Field Neutraliser',
   xs: 'Xeno Scanner',
+  rcpl: 'Recon Limpet Controller',
   gpc: 'Guardian Plasma Charger',
   ggc: 'Guardian Gauss Cannon',
 };
