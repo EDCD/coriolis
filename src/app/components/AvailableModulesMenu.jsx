@@ -275,9 +275,12 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         elems.push(<br key={'b' + m.grp + i} />);
         itemsOnThisRow = 0;
       }
-
+      /**
+       *  Todo: add Tab and Enter keyUp handlers, make sure focus wraps back to top/bottom of open menu element on Tab and shift-Tab but
+       *  remains inside open menu until closed or a selection is made
+       */
       elems.push(
-        <li key={m.id} className={classes} {...eventHandlers}>
+        <li key={m.id} className={classes} {...eventHandlers} tabIndex="0">
           {mount}
           {(mount ? ' ' : '') + m.class + m.rating + (m.missile ? '/' + m.missile : '') + (m.name ? ' ' + translate(m.name) : '')}
         </li>
