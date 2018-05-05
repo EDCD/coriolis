@@ -120,6 +120,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     super(props);
     this._hideDiff = this._hideDiff.bind(this);
     this.state = this._initState(props, context);
+    this.slotItems = [];// Array to hold keys for <li> refs. To be used to manipulate focus through the <li>s
   }
 
   /**
@@ -276,11 +277,16 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         itemsOnThisRow = 0;
       }
       /**
-       *  Todo: add Tab and Enter keyUp handlers, make sure focus wraps back to top/bottom of open menu element on Tab and shift-Tab but
-       *  remains inside open menu until closed or a selection is made
+       * 
+       *  Added new "slotItems" ref array to allow us to move focus from one <li> to the next.
+       * 
+       *  Todo: add Tab, Enter, and possibly Esc keyUp handlers.
+       *  Make sure focus wraps back to top/bottom of open menu element on Tab   and shift-Tab but
+       *  remains inside open menu until closed (with Esc key) or a selection is made
+       * 
        */
       elems.push(
-        <li key={m.id} className={classes} {...eventHandlers} tabIndex="0">
+        <li key={m.id} className={classes} {...eventHandlers} tabIndex="0" ref={slotItem => this.slotItems[m.id] = slotItem}>
           {mount}
           {(mount ? ' ' : '') + m.class + m.rating + (m.missile ? '/' + m.missile : '') + (m.name ? ' ' + translate(m.name) : '')}
         </li>
@@ -398,6 +404,19 @@ export default class AvailableModulesMenu extends TranslatedComponent {
   componentDidMount() {
     if (this.groupElem) {  // Scroll to currently selected group
       this.node.scrollTop = this.groupElem.offsetTop;
+    }
+
+    /** 
+     * Set up array of keys for each slot <li> element.
+     *  Will use this to set focus as Tab key is pressed
+     *  and to keep focus inside the slot <ul> until 
+     *  Enter key is pressed (indicating a selection) or 
+     *  Esc key is pressed (to close the slot)
+     */
+    if (this.slotItems) {
+      var slotKeys = Object.keys(this.slotItems);// Gives us an array with the keys for each slot item
+      // to focus on nth slot item:
+      // this.slotItems[slotKeys[n]].focus();
     }
   }
 
