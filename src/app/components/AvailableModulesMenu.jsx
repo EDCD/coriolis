@@ -120,7 +120,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     super(props);
     this._hideDiff = this._hideDiff.bind(this);
     this.state = this._initState(props, context);
-    this.slotItems = [];// Array to hold keys for <li> refs. To be used to manipulate focus through the <li>s
+    this.slotItems = [];// Array to hold <li> refs.
+    this.slotKeys = []; //Array to hold keys for <li> refs.  To be used to manipulate focus through the <li>s
   }
 
   /**
@@ -249,7 +250,11 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       let eventHandlers;
 
       if (disabled || active) {
-        eventHandlers = {};
+        eventHandlers = {
+          onKeyDown: this._keyDown.bind(this, null),
+          onKeyUp: this._keyUp.bind(this, null)
+
+        };
       } else {
         let showDiff = this._showDiff.bind(this, mountedModule, m);
         let select = onSelect.bind(null, m);
@@ -259,7 +264,9 @@ export default class AvailableModulesMenu extends TranslatedComponent {
           onTouchStart: this._touchStart.bind(this, showDiff),
           onTouchEnd: this._touchEnd.bind(this, select),
           onMouseLeave: this._hideDiff,
-          onClick: select
+          onClick: select,
+          onKeyDown: this._keyDown.bind(this, select),
+          onKeyUp: this._keyUp.bind(this, select)
         };
       }
 
@@ -280,13 +287,13 @@ export default class AvailableModulesMenu extends TranslatedComponent {
        * 
        *  Added new "slotItems" ref array to allow us to move focus from one <li> to the next.
        * 
-       *  Todo: add Tab, Enter, and possibly Esc keyUp handlers.
+       *  Todo: add Tab, Enter, and possibly Esc keyDown handlers.
        *  Make sure focus wraps back to top/bottom of open menu element on Tab   and shift-Tab but
        *  remains inside open menu until closed (with Esc key) or a selection is made
        * 
        */
       elems.push(
-        <li key={m.id} className={classes} {...eventHandlers} tabIndex="0" ref={slotItem => this.slotItems[m.id] = slotItem}>
+        <li key={m.id} data-id={m.id} className={classes} {...eventHandlers} tabIndex="0" ref={slotItem => this.slotItems[m.id] = slotItem}>
           {mount}
           {(mount ? ' ' : '') + m.class + m.rating + (m.missile ? '/' + m.missile : '') + (m.name ? ' ' + translate(m.name) : '')}
         </li>
@@ -346,6 +353,46 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       select();
     }
     this._hideDiff();
+  }
+
+  /**
+   * Key down - select module on Enter key, move to next/previous module on Tab/Shift-Tab, close on Esc
+   * @param  {Function} select Select module callback
+   * @param  {SyntheticEvent} event Event
+   */
+
+  _keyDown(select, event) {
+    var className = event.currentTarget.attributes['class'].value;
+    if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
+      select();
+      return
+    }
+    if (event.key == 'Tab') {
+      console.log("shift key pressed? " + event.shiftKey);
+      if (className.indexOf('disabled') < 0) {
+        var elemId = event.currentTarget.attributes['data-id'].value;
+        var elemArrIdx = this.slotKeys.indexOf(elemId);
+        var slotKeysLength = this.slotKeys.length - 1;
+        var firstSlotId = this.slotKeys[0];
+        var lastSlotId = this.slotKeys[this.slotKeys.length - 1];
+        console.log("index of " + event.currentTarget.attributes['data-id'].value + " in slotKeys: " + elemArrIdx);
+        /** 
+         * Todo: put in check for next element's classname - if NEXT element is disabled, prevent default
+         * Also need checks for first and last non-disabled elements. 
+         */
+      } else {
+        event.preventDefault();
+      }
+    }
+    
+  }
+
+  /**
+   * Key Up
+   * 
+   */
+  _keyUp(select,event) {
+    //nothing here yet
   }
 
   /**
@@ -414,7 +461,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
      *  Esc key is pressed (to close the slot)
      */
     if (this.slotItems) {
-      var slotKeys = Object.keys(this.slotItems);// Gives us an array with the keys for each slot item
+      this.slotKeys = Object.keys(this.slotItems);// Gives us an array with the keys for each slot item
       // to focus on nth slot item:
       // this.slotItems[slotKeys[n]].focus();
     }
