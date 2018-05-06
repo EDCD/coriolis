@@ -104,7 +104,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     diffDetails: PropTypes.func,
     m: PropTypes.object,
     shipMass: PropTypes.number,
-    warning: PropTypes.func
+    warning: PropTypes.func,
+    firstSlotId: PropTypes.string
   };
 
   static defaultProps = {
@@ -122,6 +123,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     this.state = this._initState(props, context);
     this.slotItems = [];// Array to hold <li> refs.
     this.slotKeys = []; //Array to hold keys for <li> refs.  To be used to manipulate focus through the <li>s
+    //this.firstSlotId = null;
   }
 
   /**
@@ -132,8 +134,9 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    */
   _initState(props, context) {
     let translate = context.language.translate;
-    let { m, warning, shipMass, onSelect, modules } = props;
+    let { m, warning, shipMass, onSelect, modules, firstSlotId } = props;
     let list, currentGroup;
+    
     let buildGroup = this._buildGroup.bind(
       this,
       translate,
@@ -144,8 +147,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         this._hideDiff(event);
         onSelect(m);
       }
-    );
-
+   );
+   
     if (modules instanceof Array) {
       list = buildGroup(modules[0].grp, modules);
     } else {
@@ -202,8 +205,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         }
       }
     }
-
-    return { list, currentGroup };
+    let trackingFocus = false;
+    return { list, currentGroup, trackingFocus};
   }
 
   /**
@@ -217,23 +220,30 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @param  {Array} modules        Available modules
    * @return {React.Component}      Available Module Group contents
    */
-  _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules) {
+  _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules, firstSlotId) {
     let prevClass = null, prevRating = null, prevName;
     let elems = [];
-
+    
     const sortedModules = modules.sort(this._moduleOrder);
-
+    
+    
     // Calculate the number of items per class.  Used so we don't have long lists with only a few items in each row
     const tmp = sortedModules.map((v, i) => v['class']).reduce((count, cls) => { count[cls] = ++count[cls] || 1; return count; }, {});
     const itemsPerClass = Math.max.apply(null, Object.keys(tmp).map(key => tmp[key]));
 
     let itemsOnThisRow = 0;
-
+    console.log("sorted modules[grp] %O", sortedModules);
+    if (this.firstSlotId == null) {
+      this.firstSlotId = sortedModules[0].id;
+      console.log("firstSlotId " + this.firstSlotId);
+    }
     for (let i = 0; i < sortedModules.length; i++) {
       let m = sortedModules[i];
       let mount = null;
       let disabled = false;
       prevName = m.name
+      
+      
       if (ModuleUtils.isShieldGenerator(m.grp)) {
         // Shield generators care about maximum hull mass
         disabled = mass > m.maxmass;
@@ -292,19 +302,26 @@ export default class AvailableModulesMenu extends TranslatedComponent {
        *  remains inside open menu until closed (with Esc key) or a selection is made
        * 
        */
-      elems.push(
-        <li key={m.id} data-id={m.id} className={classes} {...eventHandlers} tabIndex="0" ref={slotItem => this.slotItems[m.id] = slotItem}>
+       let tbIdx = (classes.indexOf('disabled') < 0 && classes.indexOf('active') < 0) ? 0 : undefined;
+
+      
+
+
+      
+       elems.push(
+        <li key={m.id} data-id={m.id} className={classes} {...eventHandlers} tabIndex={tbIdx} ref={slotItem => this.slotItems[m.id] = slotItem}>
           {mount}
           {(mount ? ' ' : '') + m.class + m.rating + (m.missile ? '/' + m.missile : '') + (m.name ? ' ' + translate(m.name) : '')}
         </li>
       );
+      
       itemsOnThisRow++;
       prevClass = m.class;
       prevRating = m.rating;
       prevName = m.name;
     }
-
-    return <ul key={'modules' + grp} >{elems}</ul>;
+    
+    return <ul key={'modules' + grp}>{elems}</ul>;
   }
 
   /**
@@ -362,6 +379,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    */
 
   _keyDown(select, event) {
+    console.log("KeyDown. Are we tracking focus? " + this.state.trackingFocus);
     var className = event.currentTarget.attributes['class'].value;
     if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
       select();
@@ -373,7 +391,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         var elemId = event.currentTarget.attributes['data-id'].value;
         var elemArrIdx = this.slotKeys.indexOf(elemId);
         var slotKeysLength = this.slotKeys.length - 1;
-        var firstSlotId = this.slotKeys[0];
+        //var firstSlotId = this.slotKeys[0];
         var lastSlotId = this.slotKeys[this.slotKeys.length - 1];
         console.log("index of " + event.currentTarget.attributes['data-id'].value + " in slotKeys: " + elemArrIdx);
         /** 
@@ -445,9 +463,14 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     return 0;
   }
 
+
+  
+
   /**
    * Scroll to mounted (if it exists) module group on mount
    */
+
+
   componentDidMount() {
     if (this.groupElem) {  // Scroll to currently selected group
       this.node.scrollTop = this.groupElem.offsetTop;
@@ -460,11 +483,29 @@ export default class AvailableModulesMenu extends TranslatedComponent {
      *  Enter key is pressed (indicating a selection) or 
      *  Esc key is pressed (to close the slot)
      */
+    
     if (this.slotItems) {
+      console.log("got first slotID? %O", this.firstSlotId);
+      
       this.slotKeys = Object.keys(this.slotItems);// Gives us an array with the keys for each slot item
-      // to focus on nth slot item:
-      // this.slotItems[slotKeys[n]].focus();
+      console.log("slot items: %O", this.slotItems);
+      
+      // to focus on first slot item:
+      //this.slotItems[this.firstSlotId].focus();
+
+      //to focus on last slot item:
+      //this.slotItems[this.slotKeys[this.slotKeys.length - 1]].focus();
+      
+      
+
     }
+
+    // Begin tracking focus inside slot selection div. Will try to use this to keep tab and shift/tab inside the element until it is closed
+    this.state.trackingFocus = true;
+  }
+
+  componentWillUnmount() {
+    this.state.trackingFocus = false;
   }
 
   /**
@@ -481,6 +522,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @return {React.Component} List
    */
   render() {
+    console.log("Tracking focus? " + this.state.trackingFocus);
     return (
       <div ref={node => this.node = node}
           className={cn('select', this.props.className)}
