@@ -35,6 +35,13 @@ export default class StandardSlot extends TranslatedComponent {
   constructor(props) {
     super(props);
     this._modificationsSelected = false;
+    this._keyDown = this._keyDown.bind(this);
+  }
+
+  _keyDown(event) {
+    if (event.key == 'Enter') {
+      this.props.onOpen(event);
+    }
   }
 
   /**
@@ -97,7 +104,7 @@ export default class StandardSlot extends TranslatedComponent {
     }
 
     return (
-      <div className={cn('slot', { selected: this.props.selected })} onClick={this.props.onOpen} onContextMenu={stopCtxPropagation} tabIndex="0">
+      <div className={cn('slot', { selected: this.props.selected })} onClick={this.props.onOpen} onKeyDown={this._keyDown} onContextMenu={stopCtxPropagation} tabIndex="0">
         <div className={cn('details-container', { warning: warning && warning(slot.m), disabled: m.grp !== 'bh' && !slot.enabled })}>
           <div className={'sz'}>{m.grp == 'bh' ? m.name.charAt(0) : slot.maxClass}</div>
           <div>

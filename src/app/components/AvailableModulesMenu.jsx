@@ -105,7 +105,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     m: PropTypes.object,
     shipMass: PropTypes.number,
     warning: PropTypes.func,
-    firstSlotId: PropTypes.string
+    firstSlotId: PropTypes.string,
+    lastSlotId: PropTypes.string,
   };
 
   static defaultProps = {
@@ -122,8 +123,6 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     this._hideDiff = this._hideDiff.bind(this);
     this.state = this._initState(props, context);
     this.slotItems = [];// Array to hold <li> refs.
-    this.slotKeys = []; //Array to hold keys for <li> refs.  To be used to manipulate focus through the <li>s
-    //this.firstSlotId = null;
   }
 
   /**
@@ -134,7 +133,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    */
   _initState(props, context) {
     let translate = context.language.translate;
-    let { m, warning, shipMass, onSelect, modules, firstSlotId } = props;
+    let { m, warning, shipMass, onSelect, modules, firstSlotId, lastSlotId } = props;
     let list, currentGroup;
     
     let buildGroup = this._buildGroup.bind(
@@ -220,7 +219,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @param  {Array} modules        Available modules
    * @return {React.Component}      Available Module Group contents
    */
-  _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules, firstSlotId) {
+  _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules, firstSlotId, lastSlotId) {
     let prevClass = null, prevRating = null, prevName;
     let elems = [];
     
@@ -232,18 +231,11 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     const itemsPerClass = Math.max.apply(null, Object.keys(tmp).map(key => tmp[key]));
 
     let itemsOnThisRow = 0;
-    console.log("sorted modules[grp] %O", sortedModules);
-    if (this.firstSlotId == null) {
-      this.firstSlotId = sortedModules[0].id;
-      console.log("firstSlotId " + this.firstSlotId);
-    }
     for (let i = 0; i < sortedModules.length; i++) {
       let m = sortedModules[i];
       let mount = null;
       let disabled = false;
       prevName = m.name
-      
-      
       if (ModuleUtils.isShieldGenerator(m.grp)) {
         // Shield generators care about maximum hull mass
         disabled = mass > m.maxmass;
@@ -260,12 +252,23 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       let eventHandlers;
 
       if (disabled || active) {
+        /** 
+         * ToDo: possibly create an "activeSlotId" variable to allow 
+         * focus to be set on active slot when slot menu is opened
+         */  
         eventHandlers = {
           onKeyDown: this._keyDown.bind(this, null),
           onKeyUp: this._keyUp.bind(this, null)
 
         };
       } else {
+        /**
+         * Get the ids of the first and last <li> elements in the <ul> that are focusable (i.e. are not active or disabled)
+         * Will be used to keep focus inside the <ul> on Tab and Shift-Tab while it is visible
+         */
+        if (this.firstSlotId == null) this.firstSlotId = sortedModules[i].id;
+        this.lastSlotId = sortedModules[i].id;
+
         let showDiff = this._showDiff.bind(this, mountedModule, m);
         let select = onSelect.bind(null, m);
 
@@ -293,21 +296,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         elems.push(<br key={'b' + m.grp + i} />);
         itemsOnThisRow = 0;
       }
-      /**
-       * 
-       *  Added new "slotItems" ref array to allow us to move focus from one <li> to the next.
-       * 
-       *  Todo: add Tab, Enter, and possibly Esc keyDown handlers.
-       *  Make sure focus wraps back to top/bottom of open menu element on Tab   and shift-Tab but
-       *  remains inside open menu until closed (with Esc key) or a selection is made
-       * 
-       */
        let tbIdx = (classes.indexOf('disabled') < 0 && classes.indexOf('active') < 0) ? 0 : undefined;
-
-      
-
-
-      
        elems.push(
         <li key={m.id} data-id={m.id} className={classes} {...eventHandlers} tabIndex={tbIdx} ref={slotItem => this.slotItems[m.id] = slotItem}>
           {mount}
@@ -320,7 +309,6 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       prevRating = m.rating;
       prevName = m.name;
     }
-    
     return <ul key={'modules' + grp}>{elems}</ul>;
   }
 
@@ -379,30 +367,25 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    */
 
   _keyDown(select, event) {
-    console.log("KeyDown. Are we tracking focus? " + this.state.trackingFocus);
+    //console.log("KeyDown. Are we tracking focus? " + this.state.trackingFocus);
     var className = event.currentTarget.attributes['class'].value;
     if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
       select();
       return
     }
-    if (event.key == 'Tab') {
-      console.log("shift key pressed? " + event.shiftKey);
-      if (className.indexOf('disabled') < 0) {
-        var elemId = event.currentTarget.attributes['data-id'].value;
-        var elemArrIdx = this.slotKeys.indexOf(elemId);
-        var slotKeysLength = this.slotKeys.length - 1;
-        //var firstSlotId = this.slotKeys[0];
-        var lastSlotId = this.slotKeys[this.slotKeys.length - 1];
-        console.log("index of " + event.currentTarget.attributes['data-id'].value + " in slotKeys: " + elemArrIdx);
-        /** 
-         * Todo: put in check for next element's classname - if NEXT element is disabled, prevent default
-         * Also need checks for first and last non-disabled elements. 
-         */
-      } else {
+    var elemId = event.currentTarget.attributes['data-id'].value;
+    if (className.indexOf('disabled') < 0 && event.key == 'Tab') {
+      if (event.shiftKey && elemId == this.firstSlotId) {
         event.preventDefault();
+        this.slotItems[this.lastSlotId].focus();
+        return;        
+      }
+      if (!event.shiftKey && elemId == this.lastSlotId) {
+        event.preventDefault();
+        this.slotItems[this.firstSlotId].focus();        
+        return;
       }
     }
-    
   }
 
   /**
@@ -463,49 +446,22 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     return 0;
   }
 
-
-  
-
   /**
    * Scroll to mounted (if it exists) module group on mount
    */
-
 
   componentDidMount() {
     if (this.groupElem) {  // Scroll to currently selected group
       this.node.scrollTop = this.groupElem.offsetTop;
     }
 
-    /** 
-     * Set up array of keys for each slot <li> element.
-     *  Will use this to set focus as Tab key is pressed
-     *  and to keep focus inside the slot <ul> until 
-     *  Enter key is pressed (indicating a selection) or 
-     *  Esc key is pressed (to close the slot)
-     */
-    
     if (this.slotItems) {
-      console.log("got first slotID? %O", this.firstSlotId);
-      
-      this.slotKeys = Object.keys(this.slotItems);// Gives us an array with the keys for each slot item
-      console.log("slot items: %O", this.slotItems);
-      
-      // to focus on first slot item:
-      //this.slotItems[this.firstSlotId].focus();
-
-      //to focus on last slot item:
-      //this.slotItems[this.slotKeys[this.slotKeys.length - 1]].focus();
-      
-      
-
+      /**
+       * Set focus on first focusable slot <li> after component mounts. May want to consider
+       * changing this to the Active item instead.
+       */
+      this.slotItems[this.firstSlotId].focus();
     }
-
-    // Begin tracking focus inside slot selection div. Will try to use this to keep tab and shift/tab inside the element until it is closed
-    this.state.trackingFocus = true;
-  }
-
-  componentWillUnmount() {
-    this.state.trackingFocus = false;
   }
 
   /**

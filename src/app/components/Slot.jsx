@@ -40,6 +40,7 @@ export default class Slot extends TranslatedComponent {
 
     this._contextMenu = wrapCtxMenu(this._contextMenu.bind(this));
     this._getMaxClassLabel = this._getMaxClassLabel.bind(this);
+    this._keyDown = this._keyDown.bind(this);
   }
 
   // Must be implemented by subclasses:
@@ -72,7 +73,11 @@ export default class Slot extends TranslatedComponent {
     event.preventDefault();
     this.props.onSelect(null,null);
   }
-
+  _keyDown(event) {
+    if (event.key == 'Enter') {
+      this.props.onOpen(event);
+    }
+  }
   /**
    * Render the slot
    * @return {React.Component} The slot
@@ -121,7 +126,7 @@ export default class Slot extends TranslatedComponent {
     // TODO: implement touch dragging
 
     return (
-      <div className={cn('slot', dropClass, { selected })} onClick={onOpen} onContextMenu={this._contextMenu} onDragOver={dragOver} tabIndex="0">
+      <div className={cn('slot', dropClass, { selected })} onClick={onOpen} onKeyDown={this._keyDown} onContextMenu={this._contextMenu} onDragOver={dragOver} tabIndex="0">
         <div className='details-container'>
           <div className='sz'>{this._getMaxClassLabel(translate)}</div>
             {slotDetails}
