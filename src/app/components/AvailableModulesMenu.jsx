@@ -154,7 +154,10 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       list = [];
       // At present time slots with grouped options (Hardpoints and Internal) can be empty
       if (m) {
-        list.push(<div className='empty-c upp' key='empty' onClick={onSelect.bind(null, null)} >{translate('empty')}</div>);
+        let emptyId = 'empty';
+        if(this.firstSlotId == null) this.firstSlotId = emptyId;
+        let keyDown = this._keyDown.bind(this, onSelect);
+        list.push(<div className='empty-c upp' key={emptyId} data-id={emptyId} onClick={onSelect.bind(null, null)} onKeyDown={keyDown} tabIndex="0" ref={slotItem => this.slotItems[emptyId] = slotItem} >{translate('empty')}</div>);
       }
 
       // Need to regroup the modules by our own categorisation
@@ -367,13 +370,16 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    */
 
   _keyDown(select, event) {
+    
     //console.log("KeyDown. Are we tracking focus? " + this.state.trackingFocus);
     var className = event.currentTarget.attributes['class'].value;
+    
     if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
       select();
       return
     }
     var elemId = event.currentTarget.attributes['data-id'].value;
+    
     if (className.indexOf('disabled') < 0 && event.key == 'Tab') {
       if (event.shiftKey && elemId == this.firstSlotId) {
         event.preventDefault();
@@ -381,6 +387,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         return;        
       }
       if (!event.shiftKey && elemId == this.lastSlotId) {
+        console.log("shift/tab. slotItems: %O", this.slotItems[this.firstSlotId]);
         event.preventDefault();
         this.slotItems[this.firstSlotId].focus();        
         return;
