@@ -128,7 +128,7 @@ export default class StandardSlot extends TranslatedComponent {
                 { showModuleResistances && m.getKineticResistance() ? <div className='l'>{translate('kinres')}: {formats.pct(m.getKineticResistance())}</div> : null }
                 { showModuleResistances && m.getThermalResistance() ? <div className='l'>{translate('thermres')}: {formats.pct(m.getThermalResistance())}</div> : null }
                 { m.getIntegrity() ? <div className='l'>{translate('integrity')}: {formats.int(m.getIntegrity())}</div> : null }
-	        { validMods.length > 0 ? <div className='r' ><button onClick={this._toggleModifications.bind(this)} onContextMenu={stopCtxPropagation} onMouseOver={termtip.bind(null, 'modifications')} onMouseOut={tooltip.bind(null, null)}><ListModifications /></button></div> : null }
+	        { validMods.length > 0 ? <div className='r' tabIndex="0" onKeyDown={this.keyDown.bind(this)}><button  tabIndex="-1" onClick={this._toggleModifications.bind(this)} onContextMenu={stopCtxPropagation} onMouseOver={termtip.bind(null, 'modifications')} onMouseOut={tooltip.bind(null, null)}><ListModifications /></button></div> : null }
             </div>
           </div>
         </div>
@@ -137,10 +137,25 @@ export default class StandardSlot extends TranslatedComponent {
     );
   }
 
+    /** Key Down handler
+   *  @param {SyntheticEvent} event Event
+   *  ToDo: see if this can be moved up
+   *  we do more or less the same thing
+   *  in every section when Enter key is pressed
+   *  on a focusable item
+   * 
+   */
+  keyDown(event) {
+    if (event.key == 'Enter') {
+      this._toggleModifications();
+    }
+  }
+
   /**
    * Toggle the modifications flag when selecting the modifications icon
    */
   _toggleModifications() {
+
     this._modificationsSelected = !this._modificationsSelected;
   }
 }

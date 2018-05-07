@@ -73,8 +73,18 @@ export default class Slot extends TranslatedComponent {
     event.preventDefault();
     this.props.onSelect(null,null);
   }
+
+  /** Key Down handler
+   *  @param {SyntheticEvent} event Event
+   *  ToDo: see if this can be moved up
+   *  we do more or less the same thing
+   *  in every section when Enter key is pressed
+   *  on a focusable item
+   * 
+   */
   _keyDown(event) {
     if (event.key == 'Enter') {
+      console.log("Enter key pressed. Event target: %O", event.currentTarget);
       this.props.onOpen(event);
     }
   }
@@ -136,6 +146,7 @@ export default class Slot extends TranslatedComponent {
     );
   }
 
+  
   /**
    * Toggle the modifications flag when selecting the modifications icon
    */
