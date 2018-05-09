@@ -24,7 +24,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     ship: PropTypes.object.isRequired,
     m: PropTypes.object.isRequired,
     marker: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   /**
@@ -43,6 +43,12 @@ export default class ModificationsMenu extends TranslatedComponent {
     this._rollWorst = this._rollWorst.bind(this);
     this._reset = this._reset.bind(this);
 
+    this._keyDown = this._keyDown.bind(this);
+
+    this.modItems = [];// Array to hold <li> refs.
+    this.firstModId = null;
+    this.lastModId = null;
+
     this.state = {
       blueprintMenuOpened: !(props.m.blueprint && props.m.blueprint.name),
       specialMenuOpened: false
@@ -59,7 +65,6 @@ export default class ModificationsMenu extends TranslatedComponent {
     const { m } = props;
     const { language, tooltip, termtip } = context;
     const translate = language.translate;
-
     const blueprints = [];
     for (const blueprintName in Modifications.modules[m.grp].blueprints) {
       const blueprint = getBlueprint(blueprintName, m);
@@ -73,15 +78,46 @@ export default class ModificationsMenu extends TranslatedComponent {
         const close = this._blueprintSelected.bind(this, blueprintName, grade);
         const key = blueprintName + ':' + grade;
         const tooltipContent = blueprintTooltip(translate, blueprint.grades[grade], Modifications.modules[m.grp].blueprints[blueprintName].grades[grade].engineers, m.grp);
-        blueprintGrades.unshift(<li key={key} className={classes} style={{ width: '2em' }} onMouseOver={termtip.bind(null, tooltipContent)} onMouseOut={tooltip.bind(null, null)} onClick={close}>{grade}</li>);
+        
+        
+        blueprintGrades.unshift(<li key={key} tabIndex="0" data-id={key} className={classes} style={{ width: '2em' }} onMouseOver={termtip.bind(null, tooltipContent)} onMouseOut={tooltip.bind(null, null)} onClick={close} onKeyDown={this._keyDown} ref={modItem => this.modItems[key] = modItem}>{grade}</li>);
       }
       if (blueprintGrades) {
+        const thisLen = blueprintGrades.length;
+        if (this.firstModId == null) this.firstModId = blueprintGrades[0].key;
+        this.lastModId = blueprintGrades[thisLen-1].key;
         blueprints.push(<div key={blueprint.name} className={'select-group cap'}>{translate(blueprint.name)}</div>);
         blueprints.push(<ul key={blueprintName}>{blueprintGrades}</ul>);
       }
     }
     return blueprints;
   }
+
+/**
+   * Key down - select module on Enter key, move to next/previous module on Tab/Shift-Tab, close on Esc
+   * @param  {Function} select Select module callback
+   * @param  {SyntheticEvent} event Event
+   */
+
+  _keyDown(event) {
+    var className = event.currentTarget.attributes['class'].value;
+    var elemId = event.currentTarget.attributes['data-id'].value;
+    if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
+      this.modItems[elemId].click();
+      return
+    }
+    if (event.shiftKey && elemId == this.firstModId) {
+      event.preventDefault();
+      this.modItems[this.lastModId].focus();
+      return;        
+    }
+    if (!event.shiftKey && elemId == this.lastModId) {
+      event.preventDefault();
+      this.modItems[this.firstModId].focus();        
+      return;
+    }
+  }
+
 
   /**
    * Render the specials
