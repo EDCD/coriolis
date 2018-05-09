@@ -103,19 +103,24 @@ export default class ModificationsMenu extends TranslatedComponent {
     var className = event.currentTarget.attributes['class'].value;
     var elemId = event.currentTarget.attributes['data-id'].value;
     if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
+      event.stopPropagation();
       this.modItems[elemId].click();
+      
       return
     }
-    if (event.shiftKey && elemId == this.firstModId) {
-      event.preventDefault();
-      this.modItems[this.lastModId].focus();
-      return;        
+    if (event.key == 'Tab') {
+      if (event.shiftKey && elemId == this.firstModId) {
+        event.preventDefault();
+        this.modItems[this.lastModId].focus();
+        return;        
+      }
+      if (!event.shiftKey && elemId == this.lastModId) {
+        event.preventDefault();
+        this.modItems[this.firstModId].focus();        
+        return;
+      }
     }
-    if (!event.shiftKey && elemId == this.lastModId) {
-      event.preventDefault();
-      this.modItems[this.firstModId].focus();        
-      return;
-    }
+    
   }
 
 
