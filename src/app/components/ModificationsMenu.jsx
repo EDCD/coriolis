@@ -105,10 +105,16 @@ export default class ModificationsMenu extends TranslatedComponent {
     if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
       event.stopPropagation();
       this.modItems[elemId].click();
-      
       return
     }
     if (event.key == 'Tab') {
+      console.log("Tab key - target: %O", event.currentTarget);
+      /**
+       * For specials menus:
+       * currentTarget in specials menu will be "div.button-inline-menu". First item will be "div.button-inline-menu.warning"
+       * if nextElementSibling == null, it is the last element and focus should move to 'noExpEffect'
+       */
+      
       if (event.shiftKey && elemId == this.firstModId) {
         event.preventDefault();
         this.modItems[this.lastModId].focus();
@@ -131,6 +137,7 @@ export default class ModificationsMenu extends TranslatedComponent {
    * @return {Object}         list: Array of React Components
    */
   _renderSpecials(props, context) {
+    
     const { m } = props;
     const { language, tooltip, termtip } = context;
     const translate = language.translate;
@@ -138,7 +145,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     const specialsId = m.missile && Modifications.modules[m.grp]['specials_' + m.missile] ? 'specials_' + m.missile : 'specials';
     if (Modifications.modules[m.grp][specialsId] && Modifications.modules[m.grp][specialsId].length > 0) {
       const close = this._specialSelected.bind(this, null);
-      specials.push(<div style={{ cursor: 'pointer', fontWeight: 'bold' }} className={ 'button-inline-menu warning' } key={ 'none' } onClick={ close }>{translate('PHRASE_NO_SPECIAL')}</div>);
+      specials.push(<div tabIndex="0" style={{ cursor: 'pointer', fontWeight: 'bold' }} className={ 'button-inline-menu warning' } key={ 'none' } data-id={ 'noExpEffect' } onClick={ close } onKeyDown={this._keyDown} ref={modItem => this.modItems['noExpEffect'] = modItem}>{translate('PHRASE_NO_SPECIAL')}</div>);
       for (const specialName of Modifications.modules[m.grp][specialsId]) {
         if (Modifications.specials[specialName].name.search('Legacy') >= 0) {
           continue;
@@ -157,12 +164,13 @@ export default class ModificationsMenu extends TranslatedComponent {
           m.blueprint.special = Modifications.specials[specialName];
           let specialTt = specialToolTip(translate, m.blueprint.grades[m.blueprint.grade], m.grp, m, specialName);
           m.blueprint.special = tmp;
-          specials.push(<div style={{ cursor: 'pointer' }} className={classes} key={ specialName } onMouseOver={termtip.bind(null, specialTt)} onMouseOut={tooltip.bind(null, null)} onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
+          specials.push(<div tabIndex="0" style={{ cursor: 'pointer' }} className={classes} key={ specialName } data-id={ specialName } onMouseOver={termtip.bind(null, specialTt)} onMouseOut={tooltip.bind(null, null)} onClick={ close } onKeyDown={this._keyDown} ref={modItem => this.modItems[specialName] = modItem}>{translate(Modifications.specials[specialName].name)}</div>);
         } else {
-          specials.push(<div style={{ cursor: 'pointer' }} className={classes} key={ specialName } onClick={ close }>{translate(Modifications.specials[specialName].name)}</div>);
+          specials.push(<div tabIndex="0" style={{ cursor: 'pointer' }} className={classes} key={ specialName } data-id={ specialName }onClick={ close } onKeyDown={this._keyDown} ref={modItem => this.modItems[specialName] = modItem}>{translate(Modifications.specials[specialName].name)}</div>);
         }
       }
     }
+    console.log("_renderSpecials. specials: %O", specials);
     return specials;
   }
 
@@ -280,6 +288,12 @@ export default class ModificationsMenu extends TranslatedComponent {
 
     this.props.onChange();
   }
+
+  componentDidUpdate() {
+    console.log("componentDidUpdate - element selected className: " + event.target.className);
+    if (event.target.className == 'c' && this.modItems['noExpEffect']) this.modItems['noExpEffect'].focus();
+  }
+
 
   /**
    * Render the list
