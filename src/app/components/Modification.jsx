@@ -27,7 +27,6 @@ export default class Modification extends TranslatedComponent {
     super(props);
     this.state = {};
     this.state.value = props.value;
-    console.log("_renderModifications. _keyDown? %O", this.props.onKeyDown);
   }
 
   /**
