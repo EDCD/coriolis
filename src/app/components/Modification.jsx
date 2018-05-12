@@ -14,7 +14,8 @@ export default class Modification extends TranslatedComponent {
     m: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     value: PropTypes.number.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    onKeyDown: PropTypes.func.isRequired
   };
 
   /**
@@ -26,6 +27,7 @@ export default class Modification extends TranslatedComponent {
     super(props);
     this.state = {};
     this.state.value = props.value;
+    console.log("_renderModifications. _keyDown? %O", this.props.onKeyDown);
   }
 
   /**
@@ -88,7 +90,7 @@ export default class Modification extends TranslatedComponent {
     return (
       <div onBlur={this._updateFinished.bind(this)} className={'cb'} key={name}>
         <div className={'cb'}>{translate(name, m.grp)}{symbol}</div>
-        <NumberEditor className={'cb'} style={{ width: '90%', textAlign: 'center' }} step={0.01} stepModifier={1} decimals={2} value={this.state.value} onValueChange={this._updateValue.bind(this)} />
+        <NumberEditor className={'cb'} style={{ width: '90%', textAlign: 'center' }} step={0.01} stepModifier={1} decimals={2} value={this.state.value} onValueChange={this._updateValue.bind(this)} onKeyDown={ this.props.onKeyDown } />
       </div>
     );
   }
