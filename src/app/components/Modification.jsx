@@ -15,7 +15,8 @@ export default class Modification extends TranslatedComponent {
     name: PropTypes.string.isRequired,
     value: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
-    onKeyDown: PropTypes.func.isRequired
+    onKeyDown: PropTypes.func.isRequired,
+    modItems: PropTypes.array.isRequired
   };
 
   /**
@@ -87,7 +88,7 @@ export default class Modification extends TranslatedComponent {
     }
 
     return (
-      <div onBlur={this._updateFinished.bind(this)} className={'cb'} key={name}>
+      <div onBlur={this._updateFinished.bind(this)} className={'cb'} key={name} ref={ modItem => this.props.modItems[name] = modItem }>
         <div className={'cb'}>{translate(name, m.grp)}{symbol}</div>
         <NumberEditor className={'cb'} style={{ width: '90%', textAlign: 'center' }} step={0.01} stepModifier={1} decimals={2} value={this.state.value} onValueChange={this._updateValue.bind(this)} onKeyDown={ this.props.onKeyDown } />
       </div>

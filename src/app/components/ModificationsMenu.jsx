@@ -47,7 +47,9 @@ export default class ModificationsMenu extends TranslatedComponent {
 
     this.modItems = [];// Array to hold <li> refs.
     this.firstModId = null;
+    this.firstBPLabel = null;// First item in mod menu
     this.lastModId = null;
+    this.lastNeId = null;//Last number editor id. Used to set focus to last number editor when shift-tab pressed on first element in mod menu.
 
     this.state = {
       blueprintMenuOpened: !(props.m.blueprint && props.m.blueprint.name),
@@ -115,20 +117,21 @@ export default class ModificationsMenu extends TranslatedComponent {
       }
       return
     }
+    
     if (event.key == 'Tab') {
       //Shift-Tab
       if(event.shiftKey) {
-        console.log("Shift-Tab on - target: %O", event.currentTarget);
+        console.log("shift-Tab key. elemId: " + elemId + " - this.firstModId: " + this.firstModId);
         if (elemId == this.firstModId && elemId != null) {
           // Initial modification menu
+          
           event.preventDefault();
           this.modItems[this.lastModId].focus();
           return;        
-        } else  if (event.currentTarget.className == "button-inline-menu warning") {
-          // Experimental menu
-          console.log("Shift-Tab on " + event.currentTarget.className);
+        } else  if (event.currentTarget.className == "section-menu button-inline-menu" && event.currentTarget.previousSibling == null && this.lastNeId != null) {
+          // shift-tab on first element in modifications menu. set focus to last number editor field.
           event.preventDefault();
-          event.currentTarget.offsetParent.lastChild.focus();
+          this.modItems[this.lastNeId].lastChild.focus();
           return;
         }
       } else {
@@ -143,8 +146,11 @@ export default class ModificationsMenu extends TranslatedComponent {
           event.preventDefault();
           event.currentTarget.parentElement.firstElementChild.focus();
           return;
-        } else if (event.currentTarget.className == 'cb' && event.currentTarget.parentElement.nextSibling == null)
+        } else if (event.currentTarget.className == 'cb' && event.currentTarget.parentElement.nextSibling == null) {
           console.log("Tab on last number input in mod menu");
+          event.preventDefault();
+          this.modItems[this.firstBPLabel].focus();
+        }
       }
     }
   }
@@ -205,10 +211,12 @@ export default class ModificationsMenu extends TranslatedComponent {
     for (const modName of Modifications.modules[m.grp].modifications) {
       if (!Modifications.modifications[modName].hidden) {
         const key = modName + (m.getModValue(modName) / 100 || 0);
-        modifications.push(<Modification key={ key } ship={ ship } m={ m } name={ modName } value={ m.getModValue(modName) / 100 || 0 } onChange={ onChange } onKeyDown={ this._keyDown }/>);
+        this.lastNeId = modName;
+        modifications.push(<Modification key={ key } ship={ ship } m={ m } name={ modName } value={ m.getModValue(modName) / 100 || 0 } onChange={ onChange } onKeyDown={ this._keyDown } modItems={ this.modItems }/>);
         // Need onKeyDown to handle tab/shift-tab while the number modifiers are open
       }
     }
+    console.log("_renderModifications. modItems: %O", this.modItems);
     return modifications;
   }
 
@@ -365,7 +373,11 @@ export default class ModificationsMenu extends TranslatedComponent {
     const showRolls = haveBlueprint && !blueprintMenuOpened && !specialMenuOpened;
     const showReset = !blueprintMenuOpened && !specialMenuOpened && haveBlueprint;
     const showMods = !blueprintMenuOpened && !specialMenuOpened && haveBlueprint;
-
+    if (haveBlueprint) {
+      this.firstBPLabel = blueprintLabel
+    } else {
+      this.firstBPLabel = 'selectBP';
+    }
     return (
       <div
           className={cn('select', this.props.className)}
@@ -373,8 +385,8 @@ export default class ModificationsMenu extends TranslatedComponent {
           onContextMenu={stopCtxPropagation}
       >
         { showBlueprintsMenu | showSpecialsMenu ? '' : haveBlueprint ? 
-          <div tabIndex="0" className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={termtip.bind(null, blueprintTt)} onMouseOut={tooltip.bind(null, null)} onClick={_toggleBlueprintsMenu} onKeyDown={ this._keyDown }>{blueprintLabel}</div> : 
-          <div tabIndex="0" className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleBlueprintsMenu} onKeyDown={ this._keyDown }>{translate('PHRASE_SELECT_BLUEPRINT')}</div> }
+          <div tabIndex="0" className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={termtip.bind(null, blueprintTt)} onMouseOut={tooltip.bind(null, null)} onClick={_toggleBlueprintsMenu} onKeyDown={ this._keyDown } ref={modItems => this.modItems[this.firstBPLabel] = modItems}>{blueprintLabel}</div> : 
+          <div tabIndex="0" className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onClick={_toggleBlueprintsMenu} onKeyDown={ this._keyDown } ref={modItems => this.modItems[this.firstBPLabel] = modItems}>{translate('PHRASE_SELECT_BLUEPRINT')}</div> }
         { showBlueprintsMenu ? this._renderBlueprints(this.props, this.context) : null }
         { showSpecial & !showSpecialsMenu ? <div tabIndex="0" className={ cn('section-menu button-inline-menu', { selected: specialMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={specialTt ? termtip.bind(null, specialTt) : null} onMouseOut={specialTt ? tooltip.bind(null, null) : null}  onClick={_toggleSpecialsMenu} onKeyDown={ this._keyDown }>{specialLabel}</div> : null }
         { showSpecialsMenu ? specials : null }
