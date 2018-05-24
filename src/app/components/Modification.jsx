@@ -16,7 +16,8 @@ export default class Modification extends TranslatedComponent {
     value: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
     onKeyDown: PropTypes.func.isRequired,
-    modItems: PropTypes.array.isRequired
+    modItems: PropTypes.array.isRequired,
+    handleModChange: PropTypes.func.isRequired
   };
 
   /**
@@ -63,7 +64,10 @@ export default class Modification extends TranslatedComponent {
    * with each onBlur event, even when no change has actually been made to the field. 
    */
   _updateFinished() {
-   if (this.props.value != this.state.value) this.props.onChange();
+    if (this.props.value != this.state.value) {
+      this.props.handleModChange(true);
+      this.props.onChange();
+    }
   }
 
   /**

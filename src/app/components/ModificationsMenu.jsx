@@ -45,11 +45,13 @@ export default class ModificationsMenu extends TranslatedComponent {
 
     this._keyDown = this._keyDown.bind(this);
 
-    this.modItems = [];// Array to hold <li> refs.
+    this.modItems = [];// Array to hold various element refs (<li>, <div>, <ul>, etc.)
     this.firstModId = null;
     this.firstBPLabel = null;// First item in mod menu
     this.lastModId = null;
     this.lastNeId = null;//Last number editor id. Used to set focus to last number editor when shift-tab pressed on first element in mod menu.
+    this.modValDidChange = false; //used to determine if component update was caused by change in modification value
+    this._handleModChange = this._handleModChange.bind(this);
 
     this.state = {
       blueprintMenuOpened: !(props.m.blueprint && props.m.blueprint.name),
@@ -156,7 +158,12 @@ export default class ModificationsMenu extends TranslatedComponent {
       }
     }
   }
-
+  /**
+   * set mod did change boolean
+   */
+  _handleModChange(b) {
+    this.modValDidChange = b;
+  }
 
   /**
    * Render the specials
@@ -214,8 +221,7 @@ export default class ModificationsMenu extends TranslatedComponent {
       if (!Modifications.modifications[modName].hidden) {
         const key = modName + (m.getModValue(modName) / 100 || 0);
         this.lastNeId = modName;
-        modifications.push(<Modification key={ key } ship={ ship } m={ m } name={ modName } value={ m.getModValue(modName) / 100 || 0 } onChange={ onChange } onKeyDown={ this._keyDown } modItems={ this.modItems }/>);
-        // Need onKeyDown to handle tab/shift-tab while the number modifiers are open
+        modifications.push(<Modification key={ key } ship={ ship } m={ m } name={ modName } value={ m.getModValue(modName) / 100 || 0 } onChange={ onChange } onKeyDown={ this._keyDown } modItems={ this.modItems } handleModChange = {this._handleModChange} />);
       }
     }
     console.log("_renderModifications. modItems: %O", this.modItems);
@@ -338,19 +344,22 @@ export default class ModificationsMenu extends TranslatedComponent {
     /**
      * Set focust on first element in modifications menu
      * if component updates
+     * 
+     * need a way to determine if update was due to a change in a modification,
+     * and if so bypass focus reset.
+     * 
      */
 
-    console.log("componentDidUpdate. prevState: %O", prevState);
-    console.log("componentDidUpdate. this.state: %O", this.state);
+    console.log("componentDidUpdate. modValDidChange: " + this.modValDidChange);
+    
     
 
-    if (this.modItems['modMainDiv'].firstElementChild.className.indexOf('button-inline-menu') >= 0) {
+    if (!this.modValDidChange && this.modItems['modMainDiv'].firstElementChild.className.indexOf('button-inline-menu') >= 0) {
       this.modItems['modMainDiv'].firstElementChild.focus();
-    } else if (this.modItems['modMainDiv'].children[1].tagName == "UL") {
-      console.log("modMainDiv children[1]: %O", this.modItems['modMainDiv'].children[1]);
+    } else if (!this.modValDidChange && this.modItems['modMainDiv'].children[1].tagName == "UL") {
       this.modItems['modMainDiv'].children[1].firstElementChild.focus();
-
     }
+    this.modValDidChange = false;//Need to reset after component update.
     
   }
 
