@@ -128,7 +128,7 @@ export default class ModificationsMenu extends TranslatedComponent {
           event.preventDefault();
           this.modItems[this.lastModId].focus();
           return;        
-        } else  if (event.currentTarget.className == "section-menu button-inline-menu" && event.currentTarget.previousSibling == null && this.lastNeId != null) {
+        } else  if (event.currentTarget.className == "section-menu button-inline-menu" && event.currentTarget.previousSibling == null && this.lastNeId != null && this.modItems[this.lastNeId] != null) {
           // shift-tab on first element in modifications menu. set focus to last number editor field.
           event.preventDefault();
           this.modItems[this.lastNeId].lastChild.focus();
@@ -136,6 +136,7 @@ export default class ModificationsMenu extends TranslatedComponent {
         }
       } else {
         console.log("Tab key - target: %O", event.currentTarget);
+        
         if (elemId == this.lastModId && elemId != null) {
           // Initial modification menu
           event.preventDefault();
@@ -151,6 +152,7 @@ export default class ModificationsMenu extends TranslatedComponent {
           event.preventDefault();
           this.modItems[this.firstBPLabel].focus();
         }
+
       }
     }
   }
@@ -318,13 +320,40 @@ export default class ModificationsMenu extends TranslatedComponent {
     this.props.onChange();
   }
 
-  componentDidUpdate() {
-    console.log("componentDidUpdate - element selected className: " + event.target.className);
-    if (event.target.className == 'c' && this.modItems['noExpEffect']) this.modItems['noExpEffect'].focus();
-    if (event.target.className == 'cb') {
-      console.log("mod input field - %O", event.target);
+  componentDidMount() {
+    /**
+     * Set focus on first element in modifications menu
+     * after it first mounts
+     */
+    console.log("componentDidMount. modMainDiv: %O", this.modItems['modMainDiv']);
+    if (this.modItems['modMainDiv'].children[1].tagName == "UL") {
+      this.modItems['modMainDiv'].children[1].firstElementChild.focus();
+    } else {
+      this.modItems['modMainDiv'].firstElementChild.focus();
     }
+    
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    /**
+     * Set focust on first element in modifications menu
+     * if component updates
+     */
+
+    console.log("componentDidUpdate. prevState: %O", prevState);
+    console.log("componentDidUpdate. this.state: %O", this.state);
+    
+
+    if (this.modItems['modMainDiv'].firstElementChild.className.indexOf('button-inline-menu') >= 0) {
+      this.modItems['modMainDiv'].firstElementChild.focus();
+    } else if (this.modItems['modMainDiv'].children[1].tagName == "UL") {
+      console.log("modMainDiv children[1]: %O", this.modItems['modMainDiv'].children[1]);
+      this.modItems['modMainDiv'].children[1].firstElementChild.focus();
+
+    }
+    
+  }
+
 
 
   /**
@@ -383,6 +412,7 @@ export default class ModificationsMenu extends TranslatedComponent {
           className={cn('select', this.props.className)}
           onClick={(e) => e.stopPropagation() }
           onContextMenu={stopCtxPropagation}
+          ref={modItem => this.modItems['modMainDiv'] = modItem}
       >
         { showBlueprintsMenu | showSpecialsMenu ? '' : haveBlueprint ? 
           <div tabIndex="0" className={ cn('section-menu button-inline-menu', { selected: blueprintMenuOpened })} style={{ cursor: 'pointer' }} onMouseOver={termtip.bind(null, blueprintTt)} onMouseOut={tooltip.bind(null, null)} onClick={_toggleBlueprintsMenu} onKeyDown={ this._keyDown } ref={modItems => this.modItems[this.firstBPLabel] = modItems}>{blueprintLabel}</div> : 

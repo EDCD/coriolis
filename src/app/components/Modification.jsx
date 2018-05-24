@@ -38,7 +38,6 @@ export default class Modification extends TranslatedComponent {
    */
   _updateValue(value) {
     const name = this.props.name;
-
     let scaledValue = Math.round(Number(value) * 100);
     // Limit to +1000% / -99.99%
     if (scaledValue > 100000) {
@@ -59,9 +58,12 @@ export default class Modification extends TranslatedComponent {
 
   /**
    * Triggered when an update to slider value is finished i.e. when losing focus
+   * 
+   * pnellesen (24/05/2018): added value check below - this should prevent experimental effects from being recalculated 
+   * with each onBlur event, even when no change has actually been made to the field. 
    */
   _updateFinished() {
-    this.props.onChange();
+   if (this.props.value != this.state.value) this.props.onChange();
   }
 
   /**
