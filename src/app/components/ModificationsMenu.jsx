@@ -105,6 +105,7 @@ export default class ModificationsMenu extends TranslatedComponent {
    * TODO: Add keyDown handler for Enter key to <td> tags for the "Rolls" section (~line 384 below)
    * 
    */
+  //_keyDown(event) {
   _keyDown(event) {
     var className = null;
     var elemId = null;
