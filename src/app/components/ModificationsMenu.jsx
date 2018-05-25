@@ -123,34 +123,34 @@ export default class ModificationsMenu extends TranslatedComponent {
     if (event.key == 'Tab') {
       //Shift-Tab
       if(event.shiftKey) {
-        console.log("shift-Tab key. elemId: " + elemId + " - this.firstModId: " + this.firstModId);
         if (elemId == this.firstModId && elemId != null) {
           // Initial modification menu
-          
           event.preventDefault();
           this.modItems[this.lastModId].focus();
           return;        
-        } else  if (event.currentTarget.className == "section-menu button-inline-menu" && event.currentTarget.previousSibling == null && this.lastNeId != null && this.modItems[this.lastNeId] != null) {
-          // shift-tab on first element in modifications menu. set focus to last number editor field.
+        } else  if (event.currentTarget.className.indexOf("button-inline-menu") >= 0 && event.currentTarget.previousElementSibling == null && this.lastNeId != null && this.modItems[this.lastNeId] != null) {
+          // shift-tab on first element in modifications menu. set focus to last number editor field if open
           event.preventDefault();
           this.modItems[this.lastNeId].lastChild.focus();
           return;
+        } else if (event.currentTarget.className.indexOf("button-inline-menu") >= 0 && event.currentTarget.previousElementSibling == null) {
+          // shift-tab on button-inline-menu with no number editor
+          event.preventDefault();
+          event.currentTarget.parentElement.lastElementChild.focus();
         }
       } else {
         console.log("Tab key - target: %O", event.currentTarget);
-        
         if (elemId == this.lastModId && elemId != null) {
           // Initial modification menu
           event.preventDefault();
           this.modItems[this.firstModId].focus();        
           return;
-        } else if (event.currentTarget.className == "button-inline-menu" && event.currentTarget.nextSibling == null) {
+        } else if (event.currentTarget.className.indexOf("button-inline-menu") >= 0 && event.currentTarget.nextSibling == null) {
           // Experimental menu
           event.preventDefault();
           event.currentTarget.parentElement.firstElementChild.focus();
           return;
         } else if (event.currentTarget.className == 'cb' && event.currentTarget.parentElement.nextSibling == null) {
-          console.log("Tab on last number input in mod menu");
           event.preventDefault();
           this.modItems[this.firstBPLabel].focus();
         }
@@ -158,12 +158,7 @@ export default class ModificationsMenu extends TranslatedComponent {
       }
     }
   }
-  /**
-   * set mod did change boolean
-   */
-  _handleModChange(b) {
-    this.modValDidChange = b;
-  }
+  
 
   /**
    * Render the specials
@@ -326,13 +321,21 @@ export default class ModificationsMenu extends TranslatedComponent {
     this.props.onChange();
   }
 
+/**
+   * set mod did change boolean
+   */
+  _handleModChange(b) {
+    this.modValDidChange = b;
+  }
+
   componentDidMount() {
     /**
      * Set focus on first element in modifications menu
      * after it first mounts
      */
-    console.log("componentDidMount. modMainDiv: %O", this.modItems['modMainDiv']);
-    if (this.modItems['modMainDiv'].children[1].tagName == "UL") {
+    let firstEleCn = this.modItems['modMainDiv'].children[0].className;
+    console.log("componentDidMount. modMainDiv first child: %O", this.modItems['modMainDiv'].children[0]);
+    if (firstEleCn.indexOf('select-group cap') >= 0) {
       this.modItems['modMainDiv'].children[1].firstElementChild.focus();
     } else {
       this.modItems['modMainDiv'].firstElementChild.focus();
@@ -340,26 +343,23 @@ export default class ModificationsMenu extends TranslatedComponent {
     
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate() {
     /**
-     * Set focust on first element in modifications menu
-     * if component updates
-     * 
-     * need a way to determine if update was due to a change in a modification,
-     * and if so bypass focus reset.
-     * 
+     * Set focus on first element in modifications menu
+     * if component updates, unless update is due to value change
+     * in a modification
      */
-
-    console.log("componentDidUpdate. modValDidChange: " + this.modValDidChange);
-    
-    
-
-    if (!this.modValDidChange && this.modItems['modMainDiv'].firstElementChild.className.indexOf('button-inline-menu') >= 0) {
-      this.modItems['modMainDiv'].firstElementChild.focus();
-    } else if (!this.modValDidChange && this.modItems['modMainDiv'].children[1].tagName == "UL") {
-      this.modItems['modMainDiv'].children[1].firstElementChild.focus();
+    if (!this.modValDidChange) {
+      console.log("componentDidUpdate. modMainDiv first child: %O", this.modItems['modMainDiv'].children[0]);
+      let firstEleCn = this.modItems['modMainDiv'].children[0].className;
+      if (firstEleCn.indexOf('button-inline-menu') >= 0) {
+        this.modItems['modMainDiv'].firstElementChild.focus();
+      } else if (firstEleCn.indexOf('select-group cap') >= 0)  {
+        this.modItems['modMainDiv'].children[1].firstElementChild.focus();
+      }
+    } else {
+      this._handleModChange(false);//Need to reset if component update due to value change
     }
-    this.modValDidChange = false;//Need to reset after component update.
     
   }
 
