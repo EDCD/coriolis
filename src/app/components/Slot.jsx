@@ -41,6 +41,7 @@ export default class Slot extends TranslatedComponent {
     this._contextMenu = wrapCtxMenu(this._contextMenu.bind(this));
     this._getMaxClassLabel = this._getMaxClassLabel.bind(this);
     this._keyDown = this._keyDown.bind(this);
+    this.slotDiv = null;
   }
 
   // Must be implemented by subclasses:
@@ -124,6 +125,7 @@ export default class Slot extends TranslatedComponent {
           ship={ship}
           m={m}
           marker={modificationsMarker}
+          modButton = {this.modButton}
         />;
       } else {
         menu = <AvailableModulesMenu
@@ -134,6 +136,7 @@ export default class Slot extends TranslatedComponent {
           onSelect={onSelect}
           warning={warning}
           diffDetails={diffDetails.bind(ship, this.context.language)}
+          slotDiv = {this.slotDiv}
         />;
       }
     }
@@ -141,7 +144,7 @@ export default class Slot extends TranslatedComponent {
     // TODO: implement touch dragging
 
     return (
-      <div className={cn('slot', dropClass, { selected })} onClick={onOpen} onKeyDown={this._keyDown} onContextMenu={this._contextMenu} onDragOver={dragOver} tabIndex="0">
+      <div className={cn('slot', dropClass, { selected })} onClick={onOpen} onKeyDown={this._keyDown} onContextMenu={this._contextMenu} onDragOver={dragOver} tabIndex="0" ref={slotDiv => this.slotDiv = slotDiv}>
         <div className='details-container'>
           <div className='sz'>{this._getMaxClassLabel(translate)}</div>
             {slotDetails}

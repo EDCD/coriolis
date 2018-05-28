@@ -107,6 +107,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     warning: PropTypes.func,
     firstSlotId: PropTypes.string,
     lastSlotId: PropTypes.string,
+    slotDiv: PropTypes.object
   };
 
   static defaultProps = {
@@ -463,6 +464,16 @@ export default class AvailableModulesMenu extends TranslatedComponent {
        * changing this to the Active item instead.
        */
       this.slotItems[this.firstSlotId].focus();
+    }
+  }
+
+  componentWillUnmount() {
+    
+    if(this.props.slotDiv) {
+      console.log("AvailableModulesMenu component will unmount. Set focus to slot");
+      this.props.slotDiv.focus();
+    } else {
+      console.log("AvailableModulesMenu component will unmount. No slotDiv prop present.");
     }
   }
 

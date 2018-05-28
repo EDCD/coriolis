@@ -25,6 +25,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     m: PropTypes.object.isRequired,
     marker: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    modButton:PropTypes.object
   };
 
   /**
@@ -376,6 +377,12 @@ export default class ModificationsMenu extends TranslatedComponent {
       this._handleModChange(false);//Need to reset if component update due to value change
     }
     
+  }
+
+  componentWillUnmount() {
+    if (this.props.modButton) {
+      this.props.modButton.focus();// set focus to the modification menu icon after mod menu is unmounted.
+    }
   }
 
   /**
