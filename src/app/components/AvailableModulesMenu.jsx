@@ -259,7 +259,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         /** 
          * ToDo: possibly create an "activeSlotId" variable to allow 
          * focus to be set on active slot when slot menu is opened
-         */  
+         */ 
+        if (active) this.firstSlotId = sortedModules[i].id; 
         eventHandlers = {
           onKeyDown: this._keyDown.bind(this, null),
           onKeyUp: this._keyUp.bind(this, null)
