@@ -256,13 +256,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       });
       let eventHandlers;
 
-      //if (disabled || active) {
       if (disabled) {
-        /** 
-         * ToDo: possibly create an "activeSlotId" variable to allow 
-         * focus to be set on active slot when slot menu is opened
-         */ 
-        //if (active) this.firstSlotId = sortedModules[i].id; 
         eventHandlers = {
           onKeyDown: this._keyDown.bind(this, null),
           onKeyUp: this._keyUp.bind(this, null)
@@ -304,9 +298,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         elems.push(<br key={'b' + m.grp + i} />);
         itemsOnThisRow = 0;
       }
-       //let tbIdx = (classes.indexOf('disabled') < 0 && classes.indexOf('active') < 0) ? 0 : undefined;
-       let tbIdx = (classes.indexOf('disabled') < 0) ? 0 : undefined;
-       elems.push(
+      let tbIdx = (classes.indexOf('disabled') < 0) ? 0 : undefined;
+      elems.push(
         <li key={m.id} data-id={m.id} className={classes} {...eventHandlers} tabIndex={tbIdx} ref={slotItem => this.slotItems[m.id] = slotItem}>
           {mount}
           {(mount ? ' ' : '') + m.class + m.rating + (m.missile ? '/' + m.missile : '') + (m.name ? ' ' + translate(m.name) : '')}
@@ -457,31 +450,26 @@ export default class AvailableModulesMenu extends TranslatedComponent {
   /**
    * Scroll to mounted (if it exists) module group on mount
    */
-
   componentDidMount() {
     if (this.groupElem) {  // Scroll to currently selected group
       this.node.scrollTop = this.groupElem.offsetTop;
     }
+    /**
+     * Set focus on active or first slot element, if applicable.
+     */
     if (this.slotItems[this.activeSlotId]) {
-      console.log("AvailableModulesMenu component will mount. Set focus to active slot: %O", this.slotItems[this.activeSlotId]);
       this.slotItems[this.activeSlotId].focus();
     } else if (this.slotItems[this.firstSlotId]) {
-      /**
-       * Set focus on first focusable slot <li> after component mounts. May want to consider
-       * changing this to the Active item instead.
-       */
-      console.log("AvailableModulesMenu component will mount. Set focus to slot: %O", this.slotItems[this.firstSlotId]);
       this.slotItems[this.firstSlotId].focus();
     }
   }
 
   componentWillUnmount() {
-    
+    /**
+     * Set focus to slot element ref (if we have one) after modules component unmounts
+     */
     if(this.props.slotDiv) {
-      console.log("AvailableModulesMenu component will unmount. Set focus to slot");
       this.props.slotDiv.focus();
-    } else {
-      console.log("AvailableModulesMenu component will unmount. No slotDiv prop present.");
     }
   }
 
