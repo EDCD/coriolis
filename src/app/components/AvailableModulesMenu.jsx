@@ -458,7 +458,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       this.node.scrollTop = this.groupElem.offsetTop;
     }
 
-    if (this.slotItems) {
+    if (this.slotItems[this.firstSlotId]) {
       /**
        * Set focus on first focusable slot <li> after component mounts. May want to consider
        * changing this to the Active item instead.
