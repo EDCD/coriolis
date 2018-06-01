@@ -21,6 +21,13 @@ export default class HardpointSlotSection extends SlotSection {
     this._empty = this._empty.bind(this);
   }
 
+  
+  componentDidUpdate() {
+    this.props.sectionMenuRefs['hardpoints']['firstref'] = this.props.sectionMenuRefs['hardpoints']['emptyall'];
+    //console.log("hardpoint slot component updated. currentMenu: " + this.props.currentMenu);
+    if (this.props.sectionMenuRefs['hardpoints']['firstref'] && this.props.sectionMenuRefs['hardpoints']['firstref'] != null) this.props.sectionMenuRefs['hardpoints']['firstref'].focus();
+  }
+
   /**
    * Empty all slots
    */
@@ -95,52 +102,52 @@ export default class HardpointSlotSection extends SlotSection {
 
     return <div className='select hardpoint' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' onClick={this._empty}>{translate('empty all')}</li>
+        <li className='lc' tabIndex='0' onClick={this._empty} ref={smRef => this.props.sectionMenuRefs['hardpoints']['emptyall'] = smRef}>{translate('empty all')}</li>
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
       </ul>
       <div className='select-group cap'>{translate('pl')}</div>
       <ul>
-        <li className='c' onClick={_fill.bind(this, 'pl', 'F')}><MountFixed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'pl', 'G')}><MountGimballed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'pl', 'T')}><MountTurret className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'pl', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['pl-F'] = smRef}><MountFixed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'pl', 'G')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['pl-G'] = smRef}><MountGimballed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'pl', 'T')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['pl-T'] = smRef}><MountTurret className='lg'/></li>
       </ul>
       <div className='select-group cap'>{translate('ul')}</div>
       <ul>
-        <li className='c' onClick={_fill.bind(this, 'ul', 'F')}><MountFixed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'ul', 'G')}><MountGimballed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'ul', 'T')}><MountTurret className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'ul', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['ul-F'] = smRef}><MountFixed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'ul', 'G')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['ul-G'] = smRef}><MountGimballed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'ul', 'T')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['ul-T'] = smRef}><MountTurret className='lg'/></li>
       </ul>
       <div className='select-group cap'>{translate('bl')}</div>
       <ul>
-        <li className='c' onClick={_fill.bind(this, 'bl', 'F')}><MountFixed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'bl', 'G')}><MountGimballed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'bl', 'T')}><MountTurret className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'bl', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['bl-F'] = smRef}><MountFixed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'bl', 'G')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['bl-G'] = smRef}><MountGimballed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'bl', 'T')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['bl-T'] = smRef}><MountTurret className='lg'/></li>
       </ul>
       <div className='select-group cap'>{translate('mc')}</div>
       <ul>
-        <li className='c' onClick={_fill.bind(this, 'mc', 'F')}><MountFixed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'mc', 'G')}><MountGimballed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'mc', 'T')}><MountTurret className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'mc', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['mc-F'] = smRef}><MountFixed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'mc', 'G')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['mc-G'] = smRef}><MountGimballed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'mc', 'T')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['mc-T'] = smRef}><MountTurret className='lg'/></li>
       </ul>
       <div className='select-group cap'>{translate('c')}</div>
       <ul>
-        <li className='c' onClick={_fill.bind(this, 'c', 'F')}><MountFixed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'c', 'G')}><MountGimballed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'c', 'T')}><MountTurret className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'c', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['c-F'] = smRef}><MountFixed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'c', 'G')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['c-G'] = smRef}><MountGimballed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'c', 'T')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['c-T'] = smRef}><MountTurret className='lg'/></li>
       </ul>
       <div className='select-group cap'>{translate('fc')}</div>
       <ul>
-        <li className='c' onClick={_fill.bind(this, 'fc', 'F')}><MountFixed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'fc', 'G')}><MountGimballed className='lg'/></li>
-        <li className='c' onClick={_fill.bind(this, 'fc', 'T')}><MountTurret className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'fc', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['fc-F'] = smRef}><MountFixed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'fc', 'G')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['fc-G'] = smRef}><MountGimballed className='lg'/></li>
+        <li className='c' tabIndex='0' onClick={_fill.bind(this, 'fc', 'T')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['fc-T'] = smRef}><MountTurret className='lg'/></li>
       </ul>
       <div className='select-group cap'>{translate('pa')}</div>
       <ul>
-        <li className='lc' onClick={_fill.bind(this, 'pa', 'F')}>{translate('pa')}</li>
+        <li className='lc' tabIndex='0'  onClick={_fill.bind(this, 'pa', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['pa-F'] = smRef}>{translate('pa')}</li>
       </ul>
       <div className='select-group cap'>{translate('nl')}</div>
       <ul>
-        <li className='lc' onClick={_fill.bind(this, 'nl', 'F')}>{translate('nl')}</li>
+        <li className='lc' tabIndex='0' onClick={_fill.bind(this, 'nl', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['nl-F'] = smRef}>{translate('nl')}</li>
       </ul>
     </div>;
   }

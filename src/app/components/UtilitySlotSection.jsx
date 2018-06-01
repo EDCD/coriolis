@@ -19,6 +19,12 @@ export default class UtilitySlotSection extends SlotSection {
     this._empty = this._empty.bind(this);
   }
 
+  componentDidUpdate() {
+    this.props.sectionMenuRefs['utility']['firstref'] = this.props.sectionMenuRefs['utility']['emptyall'];
+    if (this.props.sectionMenuRefs['utility']['firstref'] && this.props.sectionMenuRefs['utility']['firstref'] != null) this.props.sectionMenuRefs['utility']['firstref'].focus();
+    console.log("utility slot component updated. section menu refs: %O", this.props.sectionMenuRefs);
+  }
+
   /**
    * Empty all utility slots and close the menu
    */
@@ -94,28 +100,28 @@ export default class UtilitySlotSection extends SlotSection {
 
     return <div className='select' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' onClick={this._empty}>{translate('empty all')}</li>
+        <li className='lc' tabIndex='0' onClick={this._empty} ref={smRef => this.props.sectionMenuRefs['utility']['emptyall'] = smRef}>{translate('empty all')}</li>
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
       </ul>
       <div className='select-group cap'>{translate('sb')}</div>
       <ul>
-        <li className='c' onClick={_use.bind(this, 'sb', 'A', null)}>A</li>
-        <li className='c' onClick={_use.bind(this, 'sb', 'B', null)}>B</li>
-        <li className='c' onClick={_use.bind(this, 'sb', 'C', null)}>C</li>
-        <li className='c' onClick={_use.bind(this, 'sb', 'D', null)}>D</li>
-        <li className='c' onClick={_use.bind(this, 'sb', 'E', null)}>E</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'A', null)} ref={smRef => this.props.sectionMenuRefs['utility']['sb-A'] = smRef}>A</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'B', null)} ref={smRef => this.props.sectionMenuRefs['utility']['sb-B'] = smRef}>B</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'C', null)} ref={smRef => this.props.sectionMenuRefs['utility']['sb-C'] = smRef}>C</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'D', null)} ref={smRef => this.props.sectionMenuRefs['utility']['sb-D'] = smRef}>D</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'E', null)} ref={smRef => this.props.sectionMenuRefs['utility']['sb-E'] = smRef}>E</li>
       </ul>
       <div className='select-group cap'>{translate('hs')}</div>
       <ul>
-        <li className='lc' onClick={_use.bind(this, 'hs', null, 'Heat Sink Launcher')}>{translate('Heat Sink Launcher')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'hs', null, 'Heat Sink Launcher')} ref={smRef => this.props.sectionMenuRefs['utility']['hs'] = smRef}>{translate('Heat Sink Launcher')}</li>
       </ul>
       <div className='select-group cap'>{translate('ch')}</div>
       <ul>
-        <li className='lc' onClick={_use.bind(this, 'ch', null, 'Chaff Launcher')}>{translate('Chaff Launcher')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'ch', null, 'Chaff Launcher')} ref={smRef => this.props.sectionMenuRefs['utility']['ch'] = smRef}>{translate('Chaff Launcher')}</li>
       </ul>
       <div className='select-group cap'>{translate('po')}</div>
       <ul>
-        <li className='lc' onClick={_use.bind(this, 'po', null, 'Point Defence')}>{translate('Point Defence')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} ref={smRef => this.props.sectionMenuRefs['utility']['po'] = smRef}>{translate('Point Defence')}</li>
       </ul>
     </div>;
   }

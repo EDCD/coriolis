@@ -18,7 +18,8 @@ export default class SlotSection extends TranslatedComponent {
     onCargoChange: PropTypes.func.isRequired,
     onFuelChange: PropTypes.func.isRequired,
     code: PropTypes.string.isRequired,
-    togglePwr: PropTypes.func
+    togglePwr: PropTypes.func,
+    sectionMenuRefs: PropTypes.object
   };
 
   /**
@@ -32,7 +33,8 @@ export default class SlotSection extends TranslatedComponent {
     super(props);
     this.sectionId = sectionId;
     this.sectionName = sectionName;
-
+    this.props.sectionMenuRefs[sectionId] = [];
+    this.props.sectionMenuRefs[sectionId]['selectedRef'] = null;
     this._getSlots = this._getSlots.bind(this);
     this._selectModule = this._selectModule.bind(this);
     this._getSectionMenu = this._getSectionMenu.bind(this);
@@ -47,6 +49,10 @@ export default class SlotSection extends TranslatedComponent {
   //  _getSlots()
   //  _getSectionMenu()
   //  _contextMenu()
+
+  componentDidUpdate() {
+    console.log("slot section component updated. firstRef? %O", this.props.sectionMenuRefs[this.sectionId]['firstref']);
+  }
 
   /**
    * Open a menu
@@ -224,7 +230,7 @@ export default class SlotSection extends TranslatedComponent {
 
     return (
       <div id={this.sectionId} className={'group'}  onDragLeave={this._dragOverNone}>
-        <div className={cn('section-menu', { selected: sectionMenuOpened })} onClick={open} onContextMenu={ctx}>
+        <div className={cn('section-menu', { selected: sectionMenuOpened })} tabIndex='0' onClick={open} onContextMenu={ctx}>
           <h1>{translate(this.sectionName)} <Equalizer/></h1>
           {sectionMenuOpened ? this._getSectionMenu(translate, this.props.ship) : null }
         </div>
