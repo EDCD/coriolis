@@ -42,6 +42,7 @@ export default class SlotSection extends TranslatedComponent {
     this._drop = this._drop.bind(this);
     this._dragOverNone = this._dragOverNone.bind(this);
     this._close = this._close.bind(this);
+    this._keyDown = this._keyDown.bind(this);
     this.state = {};
   }
 
@@ -53,6 +54,12 @@ export default class SlotSection extends TranslatedComponent {
   componentDidUpdate() {
     console.log("slot section component updated. firstRef? %O", this.props.sectionMenuRefs[this.sectionId]['firstref']);
   }
+
+  _keyDown(event) {
+        if (event.key == 'Enter') {
+          this._openMenu(this.sectionName, event);
+        }
+  } 
 
   /**
    * Open a menu
@@ -230,8 +237,8 @@ export default class SlotSection extends TranslatedComponent {
 
     return (
       <div id={this.sectionId} className={'group'}  onDragLeave={this._dragOverNone}>
-        <div className={cn('section-menu', { selected: sectionMenuOpened })} tabIndex='0' onClick={open} onContextMenu={ctx}>
-          <h1>{translate(this.sectionName)} <Equalizer/></h1>
+        <div className={cn('section-menu', { selected: sectionMenuOpened })} onClick={open} onContextMenu={ctx}>
+          <h1 tabIndex="0" onKeyDown={this._keyDown}>{translate(this.sectionName)} <Equalizer/></h1>
           {sectionMenuOpened ? this._getSectionMenu(translate, this.props.ship) : null }
         </div>
         {this._getSlots()}
