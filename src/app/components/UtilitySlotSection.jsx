@@ -21,6 +21,8 @@ export default class UtilitySlotSection extends SlotSection {
 
   componentDidUpdate() {
     this.props.sectionMenuRefs['utility']['firstref'] = this.props.sectionMenuRefs['utility']['emptyall'];
+    this.props.sectionMenuRefs['utility']['lastref'] = this.props.sectionMenuRefs['utility']['po'];
+
     if (this.props.sectionMenuRefs['utility']['firstref'] && this.props.sectionMenuRefs['utility']['firstref'] != null) this.props.sectionMenuRefs['utility']['firstref'].focus();
     console.log("utility slot component updated. section menu refs: %O", this.props.sectionMenuRefs);
   }
@@ -100,7 +102,7 @@ export default class UtilitySlotSection extends SlotSection {
 
     return <div className='select' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' tabIndex='0' onClick={this._empty} ref={smRef => this.props.sectionMenuRefs['utility']['emptyall'] = smRef}>{translate('empty all')}</li>
+        <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['utility']['emptyall'] = smRef}>{translate('empty all')}</li>
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
       </ul>
       <div className='select-group cap'>{translate('sb')}</div>
@@ -121,7 +123,7 @@ export default class UtilitySlotSection extends SlotSection {
       </ul>
       <div className='select-group cap'>{translate('po')}</div>
       <ul>
-        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} ref={smRef => this.props.sectionMenuRefs['utility']['po'] = smRef}>{translate('Point Defence')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['utility']['po'] = smRef}>{translate('Point Defence')}</li>
       </ul>
     </div>;
   }

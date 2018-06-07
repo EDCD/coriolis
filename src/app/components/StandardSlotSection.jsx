@@ -24,6 +24,7 @@ export default class StandardSlotSection extends SlotSection {
   
   componentDidUpdate() {
     this.props.sectionMenuRefs['standard']['firstref'] = this.props.sectionMenuRefs['standard']['maxjump'];
+    this.props.sectionMenuRefs['standard']['lastref'] = this.props.sectionMenuRefs['standard']['racer'];
     if (this.props.sectionMenuRefs['standard']['firstref'] && this.props.sectionMenuRefs['standard']['firstref'] != null) this.props.sectionMenuRefs['standard']['firstref'].focus();
     console.log("standard slot component updated. section menu refs: %O", this.props.sectionMenuRefs);
   }
@@ -235,7 +236,7 @@ export default class StandardSlotSection extends SlotSection {
     let planetaryDisabled = this.props.ship.internal.length < 4;
     return <div className='select' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' tabIndex="0" onClick={this._optimizeStandard} ref={smRef => this.props.sectionMenuRefs['standard']['maxjump'] = smRef}>{translate('Maximize Jump Range')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeStandard} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['maxjump'] = smRef}>{translate('Maximize Jump Range')}</li>
       </ul>
       <div className='select-group cap'>{translate('roles')}</div>
       <ul>
@@ -245,7 +246,7 @@ export default class StandardSlotSection extends SlotSection {
         <li className='lc' tabIndex="0" onClick={this._optimizeExplorer.bind(this, false)} ref={smRef => this.props.sectionMenuRefs['standard']['explorer'] = smRef}>{translate('Explorer')}</li>
         <li className={cn('lc', { disabled:  planetaryDisabled })} tabIndex={planetaryDisabled ? '' : '0'} onClick={!planetaryDisabled && this._optimizeExplorer.bind(this, true)} ref={smRef => this.props.sectionMenuRefs['standard']['planetary'] = smRef}>{translate('Planetary Explorer')}</li>
         <li className='lc' tabIndex="0" onClick={this._optimizeMiner.bind(this, true)} ref={smRef => this.props.sectionMenuRefs['standard']['miner'] = smRef}>{translate('Miner')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeRacer.bind(this)} ref={smRef => this.props.sectionMenuRefs['standard']['racer'] = smRef}>{translate('Racer')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeRacer.bind(this)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['racer'] = smRef}>{translate('Racer')}</li>
       </ul>
     </div>;
   }

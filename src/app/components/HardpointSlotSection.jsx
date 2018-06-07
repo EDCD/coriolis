@@ -24,6 +24,7 @@ export default class HardpointSlotSection extends SlotSection {
   
   componentDidUpdate() {
     this.props.sectionMenuRefs['hardpoints']['firstref'] = this.props.sectionMenuRefs['hardpoints']['emptyall'];
+    this.props.sectionMenuRefs['hardpoints']['lastref'] = this.props.sectionMenuRefs['hardpoints']['nl-F'];
     //console.log("hardpoint slot component updated. currentMenu: " + this.props.currentMenu);
     if (this.props.sectionMenuRefs['hardpoints']['firstref'] && this.props.sectionMenuRefs['hardpoints']['firstref'] != null) this.props.sectionMenuRefs['hardpoints']['firstref'].focus();
   }
@@ -102,7 +103,7 @@ export default class HardpointSlotSection extends SlotSection {
 
     return <div className='select hardpoint' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' tabIndex='0' onClick={this._empty} ref={smRef => this.props.sectionMenuRefs['hardpoints']['emptyall'] = smRef}>{translate('empty all')}</li>
+        <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['hardpoints']['emptyall'] = smRef}>{translate('empty all')}</li>
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
       </ul>
       <div className='select-group cap'>{translate('pl')}</div>
@@ -147,7 +148,7 @@ export default class HardpointSlotSection extends SlotSection {
       </ul>
       <div className='select-group cap'>{translate('nl')}</div>
       <ul>
-        <li className='lc' tabIndex='0' onClick={_fill.bind(this, 'nl', 'F')} ref={smRef => this.props.sectionMenuRefs['hardpoints']['nl-F'] = smRef}>{translate('nl')}</li>
+        <li className='lc' tabIndex='0' onClick={_fill.bind(this, 'nl', 'F')} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['hardpoints']['nl-F'] = smRef}>{translate('nl')}</li>
       </ul>
     </div>;
   }
