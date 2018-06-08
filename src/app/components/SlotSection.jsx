@@ -63,7 +63,13 @@ export default class SlotSection extends TranslatedComponent {
      */
     if (event.key == 'Enter') {
       // _keyDownfn();
-      this._openMenu(this.sectionName, event);
+      event.stopPropagation();
+      if (event.currentTarget.nodeName === 'H1') {
+        this._openMenu(this.sectionName, event);
+      } else {
+        event.currentTarget.click();
+      }
+      
       return;
     }
     if (event.key == 'Tab') {

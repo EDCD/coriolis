@@ -20,12 +20,17 @@ export default class StandardSlotSection extends SlotSection {
     super(props, context, 'standard', 'core internal');
     this._optimizeStandard = this._optimizeStandard.bind(this);
     this._selectBulkhead = this._selectBulkhead.bind(this);
+    this.selectedRefId = null;
   }
   
   componentDidUpdate() {
     this.props.sectionMenuRefs['standard']['firstref'] = this.props.sectionMenuRefs['standard']['maxjump'];
     this.props.sectionMenuRefs['standard']['lastref'] = this.props.sectionMenuRefs['standard']['racer'];
-    if (this.props.sectionMenuRefs['standard']['firstref'] && this.props.sectionMenuRefs['standard']['firstref'] != null) this.props.sectionMenuRefs['standard']['firstref'].focus();
+    if (this.selectedRefId !== null && this.props.sectionMenuRefs['standard'][this.selectedRefId]) {
+      this.props.sectionMenuRefs['standard'][this.selectedRefId].focus();
+    } else if (this.props.sectionMenuRefs['standard']['firstref'] && this.props.sectionMenuRefs['standard']['firstref'] != null) {
+      this.props.sectionMenuRefs['standard']['firstref'].focus();
+    }
     console.log("standard slot component updated. section menu refs: %O", this.props.sectionMenuRefs);
   }
 
@@ -33,6 +38,7 @@ export default class StandardSlotSection extends SlotSection {
    * Use the lightest/optimal available standard modules
    */
   _optimizeStandard() {
+    this.selectedRefId = 'maxjump';
     this.props.ship.useLightestStandard();
     this.props.onChange();
     this.props.onCargoChange(this.props.ship.cargoCapacity);
@@ -46,6 +52,8 @@ export default class StandardSlotSection extends SlotSection {
    * @param {integer} bulkheadIndex Bulkhead to use see Constants.BulkheadNames
    */
   _multiPurpose(shielded, bulkheadIndex) {
+    this.selectedRefId = 'multipurpose';
+    if (bulkheadIndex === 2) this.selectedRefId = 'combat';
     ShipRoles.multiPurpose(this.props.ship, shielded, bulkheadIndex);
     this.props.onChange();
     this.props.onCargoChange(this.props.ship.cargoCapacity);
@@ -58,6 +66,7 @@ export default class StandardSlotSection extends SlotSection {
    * @param  {Boolean} shielded True if shield generator should be included
    */
   _optimizeCargo(shielded) {
+    this.selectedRefId = 'trader';
     ShipRoles.trader(this.props.ship, shielded);
     this.props.onChange();
     this.props.onCargoChange(this.props.ship.cargoCapacity);
@@ -70,6 +79,7 @@ export default class StandardSlotSection extends SlotSection {
    * @param  {Boolean} shielded True if shield generator should be included
    */
   _optimizeMiner(shielded) {
+    this.selectedRefId = 'miner';
     ShipRoles.miner(this.props.ship, shielded);
     this.props.onChange();
     this.props.onCargoChange(this.props.ship.cargoCapacity);
@@ -82,6 +92,8 @@ export default class StandardSlotSection extends SlotSection {
    * @param  {Boolean} planetary True if Planetary Vehicle Hangar (PVH) should be included
    */
   _optimizeExplorer(planetary) {
+    this.selectedRefId = 'explorer';
+    if (planetary) this.selectedRefId = 'planetary';
     ShipRoles.explorer(this.props.ship, planetary);
     this.props.onChange();
     this.props.onCargoChange(this.props.ship.cargoCapacity);
@@ -93,6 +105,7 @@ export default class StandardSlotSection extends SlotSection {
    * Racer role
    */
   _optimizeRacer() {
+    this.selectedRefId = 'racer';
     ShipRoles.racer(this.props.ship);
     this.props.onChange();
     this.props.onCargoChange(this.props.ship.cargoCapacity);
@@ -240,12 +253,12 @@ export default class StandardSlotSection extends SlotSection {
       </ul>
       <div className='select-group cap'>{translate('roles')}</div>
       <ul>
-        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, false, 0)} ref={smRef => this.props.sectionMenuRefs['standard']['multipurpose'] = smRef}>{translate('Multi-purpose')}</li>
-        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, true, 2)} ref={smRef => this.props.sectionMenuRefs['standard']['combat'] = smRef}>{translate('Combat')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeCargo.bind(this, true)} ref={smRef => this.props.sectionMenuRefs['standard']['trader'] = smRef}>{translate('Trader')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeExplorer.bind(this, false)} ref={smRef => this.props.sectionMenuRefs['standard']['explorer'] = smRef}>{translate('Explorer')}</li>
-        <li className={cn('lc', { disabled:  planetaryDisabled })} tabIndex={planetaryDisabled ? '' : '0'} onClick={!planetaryDisabled && this._optimizeExplorer.bind(this, true)} ref={smRef => this.props.sectionMenuRefs['standard']['planetary'] = smRef}>{translate('Planetary Explorer')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeMiner.bind(this, true)} ref={smRef => this.props.sectionMenuRefs['standard']['miner'] = smRef}>{translate('Miner')}</li>
+        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, false, 0)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['multipurpose'] = smRef}>{translate('Multi-purpose')}</li>
+        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, true, 2)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['combat'] = smRef}>{translate('Combat')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeCargo.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['trader'] = smRef}>{translate('Trader')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeExplorer.bind(this, false)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['explorer'] = smRef}>{translate('Explorer')}</li>
+        <li className={cn('lc', { disabled:  planetaryDisabled })} tabIndex={planetaryDisabled ? '' : '0'} onClick={!planetaryDisabled && this._optimizeExplorer.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['planetary'] = smRef}>{translate('Planetary Explorer')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeMiner.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['miner'] = smRef}>{translate('Miner')}</li>
         <li className='lc' tabIndex="0" onClick={this._optimizeRacer.bind(this)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['racer'] = smRef}>{translate('Racer')}</li>
       </ul>
     </div>;
