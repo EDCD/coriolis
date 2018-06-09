@@ -17,12 +17,12 @@ export default class Slider extends React.Component {
 
   static propTypes = {
     axis: PropTypes.bool,
-    axisUnit: PropTypes.string,//units (T, M, etc.)
+    axisUnit: PropTypes.string,// units (T, M, etc.)
     max: PropTypes.number,
     min: PropTypes.number,
     onChange: PropTypes.func.isRequired,// function which determins percent value
     onResize: PropTypes.func,
-    percent: PropTypes.number.isRequired,//value of slider
+    percent: PropTypes.number.isRequired,// value of slider
     scale: PropTypes.number
   };
 
@@ -51,7 +51,6 @@ export default class Slider extends React.Component {
    * @param  {SyntheticEvent} event Event
    */
   _down(event) {
-    
     let rect = event.currentTarget.getBoundingClientRect();
     this.left = rect.left;
     this.width = rect.width;
@@ -104,18 +103,18 @@ export default class Slider extends React.Component {
   /**
    * Key down handler
    * increment slider position by +/- 1 when right/left arrow key is pressed or held
-   * @param {Event} event 
+   * @param {Event} event Keyboard even
    */
   _keydown(event) {
-    
+    let newVal = this.props.percent * this.props.max;
     switch (event.key) {
       case 'ArrowRight':
-        var newVal = this.props.percent*this.props.max + 1;
-        if (newVal <= this.props.max) this.props.onChange(newVal/this.props.max);
+        newVal += 1;
+        if (newVal <= this.props.max) this.props.onChange(newVal / this.props.max);
         return;
       case 'ArrowLeft':
-        var newVal = this.props.percent*this.props.max - 1;
-        if (newVal >= 0) this.props.onChange(newVal/this.props.max);
+        newVal -= 1;
+        if (newVal >= 0) this.props.onChange(newVal / this.props.max);
         return;
       default:
         return;
@@ -204,21 +203,17 @@ export default class Slider extends React.Component {
   render() {
     let outerWidth = this.state.outerWidth;
     let { axis, axisUnit, min, max, scale } = this.props;
-
     let style = {
       width: '100%',
       height: axis ? '2.5em' : '1.5em',
       boxSizing: 'border-box'
     };
-
     if (!outerWidth) {
       return <svg style={style} ref={node => this.node = node} />;
     }
-
     let margin = MARGIN_LR * scale;
     let width = outerWidth - (margin * 2);
     let pctPos = width * this.props.percent;
-
     return <div><svg 
       onMouseUp={this._up} onMouseEnter={this._enter.bind(this)} onMouseMove={this._move} onKeyUp={this._keyup} onKeyDown={this._keydown} style={style} ref={node => this.node = node} tabIndex="0">
       <rect className='primary' style={{ opacity: 0.3 }} x={margin} y='0.25em' rx='0.3em' ry='0.3em' width={width} height='0.7em' />
@@ -237,24 +232,21 @@ export default class Slider extends React.Component {
       axisUnit={this.props.axisUnit}
       scale={this.props.scale}
       max={this.props.max}
-    
     />
    </div>;
   }
-
 }
 /**
  * New component to add keyboard support for sliders - works on all devices (desktop, iOS, Android)
  **/
  class TextInputBox extends React.Component {
   static propTypes = {
-    axisUnit: PropTypes.string,//units (T, M, etc.)
+    axisUnit: PropTypes.string,// units (T, M, etc.)
     max: PropTypes.number,
     onChange: PropTypes.func.isRequired,// function which determins percent value
-    percent: PropTypes.number.isRequired,//value of slider
+    percent: PropTypes.number.isRequired,// value of slider
     scale: PropTypes.number
   };
-
   /**
    * Determine if the user is still dragging
    * @param  {Object} props React Component properties
@@ -266,115 +258,109 @@ export default class Slider extends React.Component {
       this._handleChange = this._handleChange.bind(this);
       this._keyup = this._keyup.bind(this);
       this.state = this._getInitialState();
+  }
+  /**
+   * Update input value if slider changes will change props/state
+   * @param  {Object} nextProps React Component properites
+   * @param  {Object} nextState React Component state values
+   */
+  componentWillReceiveProps(nextProps, nextState) {
+      let nextValue = nextProps.percent * nextProps.max;
+      // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
+      if (nextValue !== this.state.inputValue && nextValue <= nextProps.max) {
+          this.setState({ inputValue: nextValue });
     }
+  }
     /**
-     * Update input value if slider changes will change props/state
-     * @param  {Object} nextProps React Component properites
-     * @param  {Object} nextState React Component state values
-     */
-    componentWillReceiveProps(nextProps, nextState) {
-        var nextValue = nextProps.percent * nextProps.max;
-        // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
-        if (nextValue !== this.state.inputValue && nextValue <= nextProps.max) {
-            this.setState({ inputValue: nextValue });
-      }
+   * Update slider textbox visibility/values if changes are made to slider
+   * @param  {Object} prevProps React Component properites
+   * @param  {Object} prevState React Component state values
+   */
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.divStyle.display == 'none' && this.state.divStyle.display == 'block') {
+        this.enterTimer = setTimeout(() => this.sliderVal.focus(), 10);  
     }
-     /**
-     * Update slider textbox visibility/values if changes are made to slider
-     * @param  {Object} prevProps React Component properites
-     * @param  {Object} prevState React Component state values
-     */
-    componentDidUpdate(prevProps, prevState) {
-
-        if (prevState.divStyle.display == 'none' && this.state.divStyle.display == 'block') {
-            this.enterTimer = setTimeout(() => this.sliderVal.focus(), 10);  
-        }
-        
-      if (prevProps.max !== this.props.max && this.state.inputValue > this.props.max) {
-          // they chose a different module
-          this.setState({ inputValue: this.props.max });
-      }
-      
-      if (this.state.inputValue != prevState.inputValue && prevProps.max == this.props.max) {
-          this.props.onChange(this.state.inputValue/this.props.max);
-      }
-
+    if (prevProps.max !== this.props.max && this.state.inputValue > this.props.max) {
+        // they chose a different module
+        this.setState({ inputValue: this.props.max });
     }
-    /**
-     * Set initial state for the textbox. 
-     * We may want to rethink this to 
-     * try and make it a stateless component
-     */
-    _getInitialState() {
-      return {
-        divStyle: {display:'none'}, 
-        inputStyle: {width:'4em'},
-        labelStyle: {marginLeft: '.1em'},
-        maxLength:5,
-        size:5,
-        min:0,
-        tabIndex:-1,
-        type:'number',
-        readOnly: true,
-        inputValue: this.props.percent * this.props.max
-      }
-    }
-    /**
-     * 
-     * @param {string} val block or none
-     */
-    _setDisplay(val) {
-      this.setState({
-        divStyle: {display:val}
-      });
-    }
-    /**
-     * Update the input value
-     * when textbox gets focus
-     */
-    _handleFocus() {
-      this.setState({
-        inputValue:this._getValue()
-      });
-    }
-    /**
-     * Update inputValue when textbox loses focus
-     */
-    _handleBlur() {
-      this._setDisplay('none');
-      if (this.state.inputValue !== '') {
+    if (this.state.inputValue != prevState.inputValue && prevProps.max == this.props.max) {
         this.props.onChange(this.state.inputValue/this.props.max);
-      } else {
-        this.setState({
-          inputValue: this.props.percent * this.props.max
-        });
-      }
-      
     }
-    /**
-     * Get the value in the text box
-     */
-    _getValue() {
-      return this.state.inputValue;
+  }
+  /**
+   * Set initial state for the textbox. 
+   * We may want to rethink this to 
+   * try and make it a stateless component
+   * @returns {object} React state object with initial values set
+   */
+  _getInitialState() {
+    return {
+      divStyle: {display:'none'}, 
+      inputStyle: {width:'4em'},
+      labelStyle: {marginLeft: '.1em'},
+      maxLength:5,
+      size:5,
+      min:0,
+      tabIndex:-1,
+      type:'number',
+      readOnly: true,
+      inputValue: this.props.percent * this.props.max
     }
-
-    /**
-     * Update and set limits on input box
-     * values depending on what user
-     * has selected
-     * 
-     * @param {SyntheticEvent} event 
-     */
-    _handleChange(event) {
-      if (event.target.value < 0) {
-        this.setState({inputValue: 0});
-      } else if (event.target.value <= this.props.max)  {
-        this.setState({inputValue: event.target.value});
-      } else {
-        this.setState({inputValue: this.props.max});
-      }
+  }
+  /**
+   * 
+   * @param {string} val block or none
+   */
+  _setDisplay(val) {
+    this.setState({
+      divStyle: {display:val}
+    });
+  }
+  /**
+   * Update the input value
+   * when textbox gets focus
+   */
+  _handleFocus() {
+    this.setState({
+      inputValue:this._getValue()
+    });
+  }
+  /**
+   * Update inputValue when textbox loses focus
+   */
+  _handleBlur() {
+    this._setDisplay('none');
+    if (this.state.inputValue !== '') {
+      this.props.onChange(this.state.inputValue/this.props.max);
+    } else {
+      this.setState({
+        inputValue: this.props.percent * this.props.max
+      });
     }
-
+  }
+  /**
+   * Get the value in the text box
+   */
+  _getValue() {
+    return this.state.inputValue;
+  }
+  /**
+   * Update and set limits on input box
+   * values depending on what user
+   * has selected
+   * 
+   * @param {SyntheticEvent} event 
+   */
+  _handleChange(event) {
+    if (event.target.value < 0) {
+      this.setState({inputValue: 0});
+    } else if (event.target.value <= this.props.max)  {
+      this.setState({inputValue: event.target.value});
+    } else {
+      this.setState({inputValue: this.props.max});
+    }
+  }
   /**
    * Key up handler for input field.
    * If user hits Enter key, blur/close the input field
@@ -388,12 +374,10 @@ export default class Slider extends React.Component {
       default:
         return;
     }
-
   }
-
-   render() {
-      let {  axisUnit, onChange, percent, scale } = this.props;
-      return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} min={this.state.min} max={this.props.max} onChange={this._handleChange} onKeyUp={this._keyup} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur()}} onFocus={() => {this._handleFocus()}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><text className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</text></div>;
-    }
- }
+  render() {
+    let {  axisUnit, onChange, percent, scale } = this.props;
+    return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} min={this.state.min} max={this.props.max} onChange={this._handleChange} onKeyUp={this._keyup} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur()}} onFocus={() => {this._handleFocus()}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><text className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</text></div>;
+  }
+}
 

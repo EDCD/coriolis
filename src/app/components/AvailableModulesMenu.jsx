@@ -210,7 +210,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       }
     }
     let trackingFocus = false;
-    return { list, currentGroup, trackingFocus};
+    return { list, currentGroup, trackingFocus };
   }
 
   /**
@@ -242,7 +242,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       let m = sortedModules[i];
       let mount = null;
       let disabled = false;
-      prevName = m.name
+      prevName = m.name;
       if (ModuleUtils.isShieldGenerator(m.grp)) {
         // Shield generators care about maximum hull mass
         disabled = mass > m.maxmass;
@@ -369,14 +369,13 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @param  {Function} select Select module callback
    * @param  {SyntheticEvent} event Event
    */
-
   _keyDown(select, event) {
-    var className = event.currentTarget.attributes['class'].value;
-      if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
+    let className = event.currentTarget.attributes['class'].value;
+    if (event.key == 'Enter' && className.indexOf('disabled') < 0 && className.indexOf('active') < 0) {
       select();
-      return
+      return;
     }
-    var elemId = event.currentTarget.attributes['data-id'].value;
+    let elemId = event.currentTarget.attributes['data-id'].value;
     if (className.indexOf('disabled') < 0 && event.key == 'Tab') {
       if (event.shiftKey && elemId == this.firstSlotId) {
         event.preventDefault();
@@ -397,7 +396,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @param {SytheticEvent} event Event
    */
   _keyUp(select,event) {
-    //nothing here yet
+    // nothing here yet
   }
 
   /**
@@ -466,11 +465,11 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       this.slotItems[this.firstSlotId].focus();
     }
   }
-
+  /**
+   * Handle focus if the component updates
+   * 
+   */
   componentWillUnmount() {
-    /**
-     * Set focus to slot element ref (if we have one) after modules component unmounts
-     */
     if(this.props.slotDiv) {
       this.props.slotDiv.focus();
     }
