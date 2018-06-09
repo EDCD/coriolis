@@ -18,7 +18,6 @@ export default class InternalSlotSection extends SlotSection {
    */
   constructor(props, context) {
     super(props, context, 'internal', 'optional internal');
-
     this._empty = this._empty.bind(this);
     this._fillWithCargo = this._fillWithCargo.bind(this);
     this._fillWithCells = this._fillWithCells.bind(this);
@@ -30,6 +29,8 @@ export default class InternalSlotSection extends SlotSection {
     this._fillWithBusinessClassCabins = this._fillWithBusinessClassCabins.bind(this);
     this._fillWithEconomyClassCabins = this._fillWithEconomyClassCabins.bind(this);
     this.selectedRefId = null;
+    this.firstRefId = 'emptyall';
+    this.lastRefId = this.sectionRefArr['pcq'] ? 'pcq' : 'pcm';
   }
 
   /**
@@ -37,8 +38,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param {Object} prevProps React Component properties
    */
   componentDidUpdate(prevProps) {
-    let internalLastRefId = this.sectionRefArr['pcq'] ? 'pcq' : 'pcm';
-    this._handleSectionFocus(prevProps,'emptyall', internalLastRefId);
+    this._handleSectionFocus(prevProps,this.firstRefId, this.lastRefId);
   }
 
   /**

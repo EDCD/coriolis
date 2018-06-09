@@ -17,9 +17,10 @@ export default class HardpointSlotSection extends SlotSection {
    */
   constructor(props, context) {
     super(props, context, 'hardpoints', 'hardpoints');
-
     this._empty = this._empty.bind(this);
     this.selectedRefId = null;
+    this.firstRefId = 'emptyall';
+    this.lastRefId = 'nl-F';
   }
 
   /**
@@ -27,7 +28,7 @@ export default class HardpointSlotSection extends SlotSection {
    * @param {Object} prevProps React Component properties
    */
   componentDidUpdate(prevProps) {
-    this._handleSectionFocus(prevProps,'emptyall', 'nl-F');
+    this._handleSectionFocus(prevProps,this.firstRefId, this.lastRefId);
   }
 
   /**

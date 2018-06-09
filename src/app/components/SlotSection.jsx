@@ -74,14 +74,14 @@ export default class SlotSection extends TranslatedComponent {
     }
     if (event.key == 'Tab') {
       if (event.shiftKey) {
-        if ((event.currentTarget === this.sectionRefArr['firstref']) && this.sectionRefArr['lastref']) {
+          if ((event.currentTarget === this.sectionRefArr[this.firstRefId]) && this.sectionRefArr[this.lastRefId]) {
           event.preventDefault();
-          this.sectionRefArr['lastref'].focus();
+          this.sectionRefArr[this.lastRefId].focus();
         }
       } else {
-        if ((event.currentTarget === this.sectionRefArr['lastref']) &&  this.sectionRefArr['firstref']) {
+        if ((event.currentTarget === this.sectionRefArr[this.lastRefId]) &&  this.sectionRefArr[this.firstRefId]) {
           event.preventDefault();
-          this.sectionRefArr['firstref'].focus();
+          this.sectionRefArr[this.firstRefId].focus();
         }
       }
     }

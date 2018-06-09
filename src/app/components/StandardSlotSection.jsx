@@ -21,13 +21,15 @@ export default class StandardSlotSection extends SlotSection {
     this._optimizeStandard = this._optimizeStandard.bind(this);
     this._selectBulkhead = this._selectBulkhead.bind(this);
     this.selectedRefId = null;
+    this.firstRefId = 'maxjump';
+    this.lastRefId = 'racer';
   }
   /**
    * Handle focus if the component updates
    * @param {Object} prevProps React Component properties
    */
   componentDidUpdate(prevProps) {
-    this._handleSectionFocus(prevProps,'maxjump','racer');
+    this._handleSectionFocus(prevProps,this.firstRefId, this.lastRefId);
   }
 
   /**
