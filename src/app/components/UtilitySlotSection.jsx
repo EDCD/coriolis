@@ -128,7 +128,7 @@ export default class UtilitySlotSection extends SlotSection {
       </ul>
       <div className='select-group cap'>{translate('po')}</div>
       <ul>
-        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} onKeyDown={this._keyDown} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['po'] = smRef}>{translate('Point Defence')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['po'] = smRef}>{translate('Point Defence')}</li>
       </ul>
     </div>;
   }
