@@ -33,6 +33,7 @@ export default class SlotSection extends TranslatedComponent {
     super(props);
     this.sectionId = sectionId;
     this.sectionName = sectionName;
+    this.ssHeadRef = null;
     this.props.sectionMenuRefs[sectionId] = [];
     this.props.sectionMenuRefs[sectionId]['selectedRef'] = null;
     this._getSlots = this._getSlots.bind(this);
@@ -50,10 +51,6 @@ export default class SlotSection extends TranslatedComponent {
   //  _getSlots()
   //  _getSectionMenu()
   //  _contextMenu()
-
-  componentDidUpdate() {
-    console.log("slot section component updated. firstRef? %O", this.props.sectionMenuRefs[this.sectionId]['firstref']);
-  }
 
   _keyDown(event) {
     /** 
@@ -75,14 +72,11 @@ export default class SlotSection extends TranslatedComponent {
     if (event.key == 'Tab') {
       if (event.shiftKey) {
         if ((event.currentTarget === this.props.sectionMenuRefs[this.sectionId]['firstref']) && this.props.sectionMenuRefs[this.sectionId]['lastref']) {
-          console.log("shift-tab key on first ref in " + this.sectionName);
           event.preventDefault();
           this.props.sectionMenuRefs[this.sectionId]['lastref'].focus();
-        
         }
       } else {
         if ((event.currentTarget === this.props.sectionMenuRefs[this.sectionId]['lastref']) &&  this.props.sectionMenuRefs[this.sectionId]['firstref']) {
-          console.log("tab key on last ref in " + this.sectionName);
           event.preventDefault();
           this.props.sectionMenuRefs[this.sectionId]['firstref'].focus();
         }
@@ -268,7 +262,7 @@ export default class SlotSection extends TranslatedComponent {
     return (
       <div id={this.sectionId} className={'group'}  onDragLeave={this._dragOverNone}>
         <div className={cn('section-menu', { selected: sectionMenuOpened })} onClick={open} onContextMenu={ctx}>
-          <h1 tabIndex="0" onKeyDown={this._keyDown}>{translate(this.sectionName)} <Equalizer/></h1>
+          <h1 tabIndex="0" onKeyDown={this._keyDown} ref={ssHead => this.ssHeadRef = ssHead}>{translate(this.sectionName)} <Equalizer/></h1>
           {sectionMenuOpened ? this._getSectionMenu(translate, this.props.ship) : null }
         </div>
         {this._getSlots()}

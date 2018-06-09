@@ -31,7 +31,6 @@ export default class StandardSlotSection extends SlotSection {
     } else if (this.props.sectionMenuRefs['standard']['firstref'] && this.props.sectionMenuRefs['standard']['firstref'] != null) {
       this.props.sectionMenuRefs['standard']['firstref'].focus();
     }
-    console.log("standard slot component updated. section menu refs: %O", this.props.sectionMenuRefs);
   }
 
   /**

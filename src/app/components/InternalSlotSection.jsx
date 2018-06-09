@@ -29,22 +29,26 @@ export default class InternalSlotSection extends SlotSection {
     this._fillWithFirstClassCabins = this._fillWithFirstClassCabins.bind(this);
     this._fillWithBusinessClassCabins = this._fillWithBusinessClassCabins.bind(this);
     this._fillWithEconomyClassCabins = this._fillWithEconomyClassCabins.bind(this);
+    this.selectedRefId = null;
   }
 
   componentDidUpdate() {
     this.props.sectionMenuRefs['internal']['firstref'] = this.props.sectionMenuRefs['internal']['emptyall'];
-    this.props.sectionMenuRefs['hardpoints']['lastref'] = this.props.sectionMenuRefs['hardpoints']['nl-F'];
+    this.props.sectionMenuRefs['internal']['lastref'] = this.props.sectionMenuRefs['internal']['nl-F'];
 
     this.props.sectionMenuRefs['internal']['pcq'] ? this.props.sectionMenuRefs['internal']['lastref'] = this.props.sectionMenuRefs['internal']['pcq'] : this.props.sectionMenuRefs['internal']['lastref'] = this.props.sectionMenuRefs['internal']['pcm'];
-
-    if (this.props.sectionMenuRefs['internal']['firstref'] && this.props.sectionMenuRefs['internal']['firstref'] != null) this.props.sectionMenuRefs['internal']['firstref'].focus();
-    console.log("standard slot component updated. section menu refs: %O", this.props.sectionMenuRefs);
+    if (this.selectedRefId !== null && this.props.sectionMenuRefs['internal'][this.selectedRefId]) {
+      this.props.sectionMenuRefs['internal'][this.selectedRefId].focus();
+    } else if (this.props.sectionMenuRefs['internal']['firstref'] && this.props.sectionMenuRefs['internal']['firstref'] != null) {
+      this.props.sectionMenuRefs['internal']['firstref'].focus();
+    }
   }
 
   /**
    * Empty all slots
    */
   _empty() {
+    this.selectedRefId = 'emptyall';
     this.props.ship.emptyInternal();
     this.props.onChange();
     this._close();
@@ -55,6 +59,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithCargo(event) {
+    this.selectedRefId = 'cargo';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -71,6 +76,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithFuelTanks(event) {
+    this.selectedRefId = 'ft';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -87,6 +93,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithLuxuryCabins(event) {
+    this.selectedRefId = 'pcq';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -103,6 +110,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithFirstClassCabins(event) {
+    this.selectedRefId = 'pcm';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -119,6 +127,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithBusinessClassCabins(event) {
+    this.selectedRefId = 'pci';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -135,6 +144,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithEconomyClassCabins(event) {
+    this.selectedRefId = 'pce';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -151,6 +161,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithCells(event) {
+    this.selectedRefId = 'scb';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     let chargeCap = 0; // Capacity of single activation
@@ -170,6 +181,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithArmor(event) {
+    this.selectedRefId = 'hr';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -186,6 +198,7 @@ export default class InternalSlotSection extends SlotSection {
    * @param  {SyntheticEvent} event Event
    */
   _fillWithModuleReinforcementPackages(event) {
+    this.selectedRefId = 'mrp';
     let clobber = event.getModifierState('Alt');
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
@@ -251,13 +264,13 @@ export default class InternalSlotSection extends SlotSection {
     return <div className='select' onClick={e => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
         <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['emptyall'] = smRef}>{translate('empty all')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithCargo} ref={smRef => this.props.sectionMenuRefs['internal']['cargo'] = smRef}>{translate('cargo')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithCells} ref={smRef => this.props.sectionMenuRefs['internal']['scb'] = smRef}>{translate('scb')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithArmor} ref={smRef => this.props.sectionMenuRefs['internal']['hr'] = smRef}>{translate('hr')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithModuleReinforcementPackages} ref={smRef => this.props.sectionMenuRefs['internal']['mrp'] = smRef}>{translate('mrp')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithFuelTanks} ref={smRef => this.props.sectionMenuRefs['internal']['ft'] = smRef}>{translate('ft')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithEconomyClassCabins} ref={smRef => this.props.sectionMenuRefs['internal']['pce'] = smRef}>{translate('pce')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithBusinessClassCabins} ref={smRef => this.props.sectionMenuRefs['internal']['pci'] = smRef}>{translate('pci')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithCargo} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['cargo'] = smRef}>{translate('cargo')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithCells} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['scb'] = smRef}>{translate('scb')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithArmor} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['hr'] = smRef}>{translate('hr')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithModuleReinforcementPackages} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['mrp'] = smRef}>{translate('mrp')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithFuelTanks} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['ft'] = smRef}>{translate('ft')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithEconomyClassCabins} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pce'] = smRef}>{translate('pce')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithBusinessClassCabins} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pci'] = smRef}>{translate('pci')}</li>
         <li className='lc' tabIndex='0' onClick={this._fillWithFirstClassCabins} onKeyDown={ship.luxuryCabins ? '' : this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pcm'] = smRef}>{translate('pcm')}</li>
 	{ ship.luxuryCabins ? <li className='lc' tabIndex='0' onClick={this._fillWithLuxuryCabins} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pcq'] = smRef}>{translate('pcq')}</li> : ''}
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
