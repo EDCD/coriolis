@@ -39,16 +39,21 @@ export default class StandardSlot extends TranslatedComponent {
     this.modButton = null;
     this.slotDiv = null;
   }
+<<<<<<< HEAD
   /**
    * Handle Enter key
    * @param {SyntheticEvent} event KeyDown event
    */
    _keyDown(event) {
+=======
+
+  _keyDown(event) {
+>>>>>>> develop
     if (event.key == 'Enter') {
-        if(event.target.className == 'r') {
-            this._toggleModifications();
-        }
-        this.props.onOpen(event); 
+      if(event.target.className == 'r') {
+        this._toggleModifications();
+      }
+      this.props.onOpen(event);
     }
   }
 
@@ -64,6 +69,9 @@ export default class StandardSlot extends TranslatedComponent {
     let classRating = m.class + m.rating;
     let menu;
     let validMods = m == null || !Modifications.modules[m.grp] ? [] : (Modifications.modules[m.grp].modifications || []);
+    if (m && m.name && m.name === 'Guardian Hybrid Power Plant') {
+      validMods = [];
+    }
     let showModuleResistances = Persist.showModuleResistances();
     let mass = m.getMass() || m.cargo || m.fuel || 0;
 
@@ -151,7 +159,6 @@ export default class StandardSlot extends TranslatedComponent {
    * Toggle the modifications flag when selecting the modifications icon
    */
   _toggleModifications() {
-
     this._modificationsSelected = !this._modificationsSelected;
   }
 }

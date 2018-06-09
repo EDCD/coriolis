@@ -18,36 +18,35 @@ export function specialToolTip(translate, blueprint, grp, m, specialName) {
   if (m) {
     // We also add in any benefits from specials that aren't covered above
     if (m.blueprint) {
-        for (const feature in Modifications.modifierActions[specialName]) {
+      for (const feature in Modifications.modifierActions[specialName]) {
           // if (!blueprint.features[feature] && !m.mods.feature) {
-            const featureDef = Modifications.modifications[feature];
-            if (featureDef && !featureDef.hidden) {
-              let symbol = '';
-              if (feature === 'jitter') {
-                symbol = '°';
-              } else if (featureDef.type === 'percentage') {
-                symbol = '%';
-              }
-              let current = m.getModValue(feature) - m.getModValue(feature, true);
-              if (featureDef.type === 'percentage') {
-                current = Math.round(current / 10) / 10;
-              } else if (featureDef.type === 'numeric') {
-                current /= 100;
-              }
-                const currentIsBeneficial = isValueBeneficial(feature, current);
+        const featureDef = Modifications.modifications[feature];
+        if (featureDef && !featureDef.hidden) {
+          let symbol = '';
+          if (feature === 'jitter') {
+            symbol = '°';
+          } else if (featureDef.type === 'percentage') {
+            symbol = '%';
+          }
+          let current = m.getModValue(feature) - m.getModValue(feature, true);
+          if (featureDef.type === 'percentage') {
+            current = Math.round(current / 10) / 10;
+          } else if (featureDef.type === 'numeric') {
+            current /= 100;
+          }
+          const currentIsBeneficial = isValueBeneficial(feature, current);
 
-                effects.push(
-                  <tr key={feature + '_specialTT'}>
-                    <td style={{textAlign: 'left'}}>{translate(feature, grp)}</td>
-                    <td>&nbsp;</td>
-                    <td className={current === 0 ? '' : currentIsBeneficial ? 'secondary' : 'warning'}
-                        style={{textAlign: 'right'}}>{current}{symbol}</td>
-                    <td>&nbsp;</td>
-                  </tr>
-                );
-            }
+          effects.push(
+            <tr key={feature + '_specialTT'}>
+              <td style={{ textAlign: 'left' }}>{translate(feature, grp)}</td>
+              <td>&nbsp;</td>
+              <td className={current === 0 ? '' : currentIsBeneficial ? 'secondary' : 'warning'}
+                  style={{ textAlign: 'right' }}>{current}{symbol}</td>
+              <td>&nbsp;</td>
+            </tr>
+          );
+        }
       }
-
     }
   }
 
@@ -289,7 +288,7 @@ export function isValueBeneficial(feature, value) {
  */
 export function getBlueprint(name, module) {
   // Start with a copy of the blueprint
-  const findMod = val => Object.keys(Modifications.blueprints).find(elem => elem.toString().toLowerCase().search(val.toString().toLowerCase().replace(/(OutfittingFieldType_|persecond)/igm, '')) >= 0)
+  const findMod = val => Object.keys(Modifications.blueprints).find(elem => elem.toString().toLowerCase().search(val.toString().toLowerCase().replace(/(OutfittingFieldType_|persecond)/igm, '')) >= 0);
   const found = Modifications.blueprints[findMod(name)];
   if (!found || !found.fdname) {
     return {};
@@ -382,36 +381,35 @@ export function getPercent(m) {
   let result = null;
   const features = m.blueprint.grades[m.blueprint.grade].features;
   for (const featureName in features) {
-    
-	if (features[featureName][0] === features[featureName][1]) {
-		continue;
-	}
-	
-	let value = _getValue(m, featureName);
-	let mult;
+    if (features[featureName][0] === features[featureName][1]) {
+      continue;
+    }
+
+    let value = _getValue(m, featureName);
+    let mult;
     if (Modifications.modifications[featureName].higherbetter) {
       // Higher is better, but is this making it better or worse?
       if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
-		mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
+        mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
       } else {
-		mult = Math.round((value - features[featureName][0]) / (features[featureName][1] - features[featureName][0]) * 100);        
+        mult = Math.round((value - features[featureName][0]) / (features[featureName][1] - features[featureName][0]) * 100);
       }
     } else {
       // Higher is worse, but is this making it better or worse?
       if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
-		mult = Math.round((value - features[featureName][0]) / (features[featureName][1] - features[featureName][0]) * 100);
+        mult = Math.round((value - features[featureName][0]) / (features[featureName][1] - features[featureName][0]) * 100);
       } else {
-		mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
+        mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
       }
     }
-	
-	if (result && result != mult) {
-		return null;
-	} else if (result != mult) {
-		result = mult;
-	}
+
+    if (result && result != mult) {
+      return null;
+    } else if (result != mult) {
+      result = mult;
+    }
   }
-  
+
   return result;
 }
 

@@ -505,8 +505,8 @@ export default class Header extends TranslatedComponent {
     return (
       <header>
         {this.props.appCacheUpdate && <div id="app-update" onClick={() => window.location.reload() }>{translate('PHRASE_UPDATE_RDY')}</div>}
-        {this.props.appCache ? <a className={"view-changes"} href={"https://github.com/EDCD/coriolis/compare/edcd:develop@{" + window.CORIOLIS_DATE + "}...edcd:develop"} target="_blank">
-          {"View Release Changes"}
+        {this.props.appCache ? <a className={'view-changes'} href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'} target="_blank">
+          {'View Release Changes'}
         </a> : null}
         <Link className='l' href='/' style={{ marginRight: '1em' }} title='Home'><CoriolisLogo className='icon xl' /></Link>
 

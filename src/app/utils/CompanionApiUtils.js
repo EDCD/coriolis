@@ -318,7 +318,7 @@ function _addModifications(module, modifiers, blueprint, grade, specialModificat
   if (!modifiers) return;
   let special;
   if (specialModifications) {
-    special = Modifications.specials[Object.keys(specialModifications)[0]]
+    special = Modifications.specials[Object.keys(specialModifications)[0]];
   }
   for (const i in modifiers) {
     // Some special modifications
@@ -345,7 +345,7 @@ function _addModifications(module, modifiers, blueprint, grade, specialModificat
       let value;
       if (i === 'OutfittingFieldType_DefenceModifierShieldMultiplier') {
         value = modifiers[i].value - 1;
-     } else if (i === 'OutfittingFieldType_DefenceModifierHealthMultiplier' && blueprint.startsWith('Armour_')) {
+      } else if (i === 'OutfittingFieldType_DefenceModifierHealthMultiplier' && blueprint.startsWith('Armour_')) {
         value = (modifiers[i].value - module.hullboost) / module.hullboost;
       } else if (i === 'OutfittingFieldType_DefenceModifierHealthMultiplier') {
         value = modifiers[i].value / module.hullboost;

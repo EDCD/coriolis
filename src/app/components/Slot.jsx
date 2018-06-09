@@ -81,15 +81,25 @@ export default class Slot extends TranslatedComponent {
    *  we do more or less the same thing
    *  in every section when Enter key is pressed
    *  on a focusable item
-   * 
+   *
    */
   _keyDown(event) {
     if (event.key == 'Enter') {
+<<<<<<< HEAD
         if(event.target.className == 'r') {
             this._toggleModifications();
         } else {
         }
         this.props.onOpen(event); 
+=======
+      if(event.target.className == 'r') {
+        console.log('Slot: Enter key pressed on mod icon');
+        this._toggleModifications();
+      } else {
+        console.log('Slot: Enter key pressed on: %O', event.target);
+      }
+      this.props.onOpen(event);
+>>>>>>> develop
     }
   }
   /**
@@ -152,7 +162,7 @@ export default class Slot extends TranslatedComponent {
     );
   }
 
-  
+
   /**
    * Toggle the modifications flag when selecting the modifications icon
    */

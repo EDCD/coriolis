@@ -274,11 +274,11 @@ export default class ShipyardPage extends Page {
 
     for (let s of shipSummaries) {
       let shipSortValue = s[shipPredicate];
-      if( shipPredicateIndex != undefined ) {
+      if(shipPredicateIndex != undefined) {
         shipSortValue = shipSortValue[shipPredicateIndex];
       }
 
-      if( shipSortValue != lastShipSortValue ) {
+      if(shipSortValue != lastShipSortValue) {
         backgroundHighlight = !backgroundHighlight;
         lastShipSortValue = shipSortValue;
       }

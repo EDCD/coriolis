@@ -22,11 +22,11 @@ export default class ShipSummaryTable extends TranslatedComponent {
    * @param {Object} props React Component properties
    */
   constructor(props) {
-    super(props)
+    super(props);
     this.didContextChange = this.didContextChange.bind(this);
     this.state = {
       shieldColour: 'blue'
-    }
+    };
   }
 
   /**
@@ -59,7 +59,7 @@ export default class ShipSummaryTable extends TranslatedComponent {
     }
     this.state = {
       shieldColour
-    }
+    };
     return <div id='summary'>
       <table className={'summaryTable'}>
         <thead>
@@ -143,8 +143,8 @@ export default class ShipSummaryTable extends TranslatedComponent {
           <td>{int(ship.shieldThermRes * 100) + '%'}</td>
           <td>{int(sgMetrics && sgMetrics.generator ? sgMetrics.total / sgMetrics.absolute.total : 0)}</td>
           <td>{int(sgMetrics && sgMetrics.generator ? sgMetrics.total / sgMetrics.explosive.total : 0)}</td>
-          <td>{int(sgMetrics && sgMetrics.generator ? sgMetrics.total / sgMetrics.kinetic.total : 0 )}</td>
-          <td>{int(sgMetrics && sgMetrics.generator ? sgMetrics.total / sgMetrics.thermal.total : 0 )}</td>
+          <td>{int(sgMetrics && sgMetrics.generator ? sgMetrics.total / sgMetrics.kinetic.total : 0)}</td>
+          <td>{int(sgMetrics && sgMetrics.generator ? sgMetrics.total / sgMetrics.thermal.total : 0)}</td>
           <td>{sgMetrics && sgMetrics.recover ? formats.time(sgMetrics.recover) : 0}</td>
           <td>{sgMetrics && sgMetrics.recharge ? formats.time(sgMetrics.recharge) : 0}</td>
         </tr>

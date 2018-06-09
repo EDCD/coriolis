@@ -137,7 +137,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     let translate = context.language.translate;
     let { m, warning, shipMass, onSelect, modules, firstSlotId, lastSlotId } = props;
     let list, currentGroup;
-    
+
     let buildGroup = this._buildGroup.bind(
       this,
       translate,
@@ -149,7 +149,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         onSelect(m);
       }
    );
-   
+
     if (modules instanceof Array) {
       list = buildGroup(modules[0].grp, modules);
     } else {
@@ -229,10 +229,10 @@ export default class AvailableModulesMenu extends TranslatedComponent {
   _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules, firstSlotId, lastSlotId) {
     let prevClass = null, prevRating = null, prevName;
     let elems = [];
-    
+
     const sortedModules = modules.sort(this._moduleOrder);
-    
-    
+
+
     // Calculate the number of items per class.  Used so we don't have long lists with only a few items in each row
     const tmp = sortedModules.map((v, i) => v['class']).reduce((count, cls) => { count[cls] = ++count[cls] || 1; return count; }, {});
     const itemsPerClass = Math.max.apply(null, Object.keys(tmp).map(key => tmp[key]));
@@ -307,7 +307,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
           {(mount ? ' ' : '') + m.class + m.rating + (m.missile ? '/' + m.missile : '') + (m.name ? ' ' + translate(m.name) : '')}
         </li>
       );
-      
+
       itemsOnThisRow++;
       prevClass = m.class;
       prevRating = m.rating;
@@ -380,11 +380,11 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       if (event.shiftKey && elemId == this.firstSlotId) {
         event.preventDefault();
         this.slotItems[this.lastSlotId].focus();
-        return;        
+        return;
       }
       if (!event.shiftKey && elemId == this.lastSlotId) {
         event.preventDefault();
-        this.slotItems[this.firstSlotId].focus();        
+        this.slotItems[this.firstSlotId].focus();
         return;
       }
     }

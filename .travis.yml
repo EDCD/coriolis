@@ -8,7 +8,8 @@ cache:
   directories:
     - node_modules
 
-before_script:
+before_install:
+  - git clone https://github.com/EDCD/coriolis-data.git ../coriolis-data
 
 script:
   - npm run lint

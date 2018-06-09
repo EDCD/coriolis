@@ -136,7 +136,7 @@ export default class Module {
         if (modification.type === 'percentage') {
           modValue = this.getModValue(name) / 10000;
         } else if (modification.type === 'numeric') {
-          modValue = this.getModValue(name)/ 100;
+          modValue = this.getModValue(name) / 100;
         } else {
           modValue = this.getModValue(name);
         }

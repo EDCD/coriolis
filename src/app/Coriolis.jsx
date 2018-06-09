@@ -356,7 +356,7 @@ export default class Coriolis extends React.Component {
         <div className="right cap">
           <a href="https://github.com/EDCD/coriolis" target="_blank" title="Coriolis Github Project">{window.CORIOLIS_VERSION} - {window.CORIOLIS_DATE}</a>
           <br/>
-          <a href={"https://github.com/EDCD/coriolis/compare/edcd:develop@{" + window.CORIOLIS_DATE + "}...edcd:develop"} target="_blank" title={"Coriolis Commits since" + window.CORIOLIS_DATE}>Commits since last release ({window.CORIOLIS_DATE})</a>
+          <a href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'} target="_blank" title={'Coriolis Commits since' + window.CORIOLIS_DATE}>Commits since last release ({window.CORIOLIS_DATE})</a>
         </div>
       </footer>
     </div>;
