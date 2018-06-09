@@ -98,7 +98,6 @@ export default class Slider extends React.Component {
       default:
         return;
     }
-
   }
   /**
    * Key down handler
@@ -184,7 +183,6 @@ export default class Slider extends React.Component {
    */
   componentDidMount() {
     this._updateDimensions();
-    
   }
 
   /**
@@ -239,7 +237,7 @@ export default class Slider extends React.Component {
 /**
  * New component to add keyboard support for sliders - works on all devices (desktop, iOS, Android)
  **/
- class TextInputBox extends React.Component {
+class TextInputBox extends React.Component {
   static propTypes = {
     axisUnit: PropTypes.string,// units (T, M, etc.)
     max: PropTypes.number,

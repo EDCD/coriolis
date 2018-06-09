@@ -233,7 +233,6 @@ export function shipFromLoadoutJSON(json) {
     ship.cargoHatch.enabled = false;
     ship.cargoHatch.priority = 4;
   }
-  console.log(ship);
 
   // Now update the ship's codes before returning it
   return ship.updatePowerPrioritesString().updatePowerEnabledString().updateModificationsString();

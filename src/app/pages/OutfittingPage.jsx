@@ -58,7 +58,6 @@ export default class OutfittingPage extends Page {
     this._fuelUpdated = this._fuelUpdated.bind(this);
     this._opponentUpdated = this._opponentUpdated.bind(this);
     this._engagementRangeUpdated = this._engagementRangeUpdated.bind(this);
-
     this._sectionMenuRefs = {};
   }
 
@@ -557,7 +556,12 @@ export default class OutfittingPage extends Page {
 
     const requirements = Ships[ship.id].requirements;
     let requirementElements = [];
-
+    /**
+     * Render the requirements for a ship / etc
+     * @param {string} className Class names
+     * @param {string} textKey The key for translating
+     * @param {String} tooltipTextKey  Tooltip key
+     */
     function renderRequirement(className, textKey, tooltipTextKey) {
       requirementElements.push(<div key={textKey} className={className} onMouseEnter={termtip.bind(null, tooltipTextKey)} onMouseLeave={hide}><a href={textKey.startsWith('empire') ? 'http://elite-dangerous.wikia.com/wiki/Empire/Ranks' : 'http://elite-dangerous.wikia.com/wiki/Federation/Ranks'} target="_blank" rel="noopener">{translate(textKey)}</a></div>);
     }

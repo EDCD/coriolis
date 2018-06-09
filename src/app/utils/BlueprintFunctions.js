@@ -7,7 +7,7 @@ import { Modifications } from 'coriolis-data/dist';
  * @param   {Object}  blueprint   The blueprint at the required grade
  * @param   {string}  grp         The group of the module
  * @param   {Object}  m           The module to compare with
- * @param specialName
+ * @param   {string} specialName  The name of the special
  * @returns {Object}              The react components
  */
 export function specialToolTip(translate, blueprint, grp, m, specialName) {
@@ -37,14 +37,14 @@ export function specialToolTip(translate, blueprint, grp, m, specialName) {
           const currentIsBeneficial = isValueBeneficial(feature, current);
 
           effects.push(
-            <tr key={feature + '_specialTT'}>
-              <td style={{ textAlign: 'left' }}>{translate(feature, grp)}</td>
-              <td>&nbsp;</td>
-              <td className={current === 0 ? '' : currentIsBeneficial ? 'secondary' : 'warning'}
-                  style={{ textAlign: 'right' }}>{current}{symbol}</td>
-              <td>&nbsp;</td>
-            </tr>
-          );
+                  <tr key={feature + '_specialTT'}>
+                    <td style={{ textAlign: 'left' }}>{translate(feature, grp)}</td>
+                    <td>&nbsp;</td>
+                    <td className={current === 0 ? '' : currentIsBeneficial ? 'secondary' : 'warning'}
+                        style={{ textAlign: 'right' }}>{current}{symbol}</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                );
         }
       }
     }
@@ -417,6 +417,7 @@ export function getPercent(m) {
  * Query a feature value
  * @param {Object}      m             The module for which to perform the query
  * @param {string}      featureName   The feature being queried
+ * @returns {number}  The value of the modification as a %
  */
 function _getValue(m, featureName) {
   if (Modifications.modifications[featureName].type == 'percentage') {

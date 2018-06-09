@@ -93,8 +93,8 @@ export default class Coriolis extends React.Component {
       // Need to decode and gunzip the data, then build the ship
       const data = zlib.inflate(new Buffer(r.params.data, 'base64'), { to: 'string' });
       const json = JSON.parse(data);
-      console.log('Ship import data: ');
-      console.log(json);
+      console.info('Ship import data: ');
+      console.info(json);
       let ship;
       if (json && json.modules) {
         ship = CompanionApiUtils.shipFromJson(json);

@@ -45,7 +45,8 @@ export function totalJumpRange(mass, fsd, fuel) {
  * @param  {number} baseShield  Base Shield strength MJ for ship
  * @param  {object} sg          The shield generator used
  * @param  {number} multiplier  Shield multiplier for ship (1 + shield boosters if any)
- * @return {number}             Approximate shield strengh in MJ
+ * @param  {Object} ship        The ship object
+ * @return {number} Approximate shield strengh in MJ
  */
 export function shieldStrength(mass, baseShield, sg, multiplier, ship) {
   // sg might be a module or a template; handle either here
