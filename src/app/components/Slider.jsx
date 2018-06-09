@@ -95,7 +95,6 @@ export default class Slider extends React.Component {
       case 'Enter':
         event.preventDefault();
         this.sliderInputBox._setDisplay('block');
-        //this.enterTimer = setTimeout(() => this.sliderInputBox.sliderVal.focus(), 10);
         return;
       default:
         return;
@@ -131,7 +130,12 @@ export default class Slider extends React.Component {
   _touchstart(event) {
     this.touchStartTimer = setTimeout(() => this.sliderInputBox._setDisplay('block'), 1500);
   }
-
+  
+  /**
+   * Touch end handler
+   * @param  {Event} event  DOM Event
+   * 
+   */
   _touchend(event) {
     this.sliderInputBox.sliderVal.focus();
     clearTimeout(this.touchStartTimer);
@@ -250,19 +254,24 @@ export default class Slider extends React.Component {
     percent: PropTypes.number.isRequired,//value of slider
     scale: PropTypes.number
   };
+
+  /**
+   * Determine if the user is still dragging
+   * @param  {Object} props React Component properties
+   */
   constructor(props) {
     super(props);
       this._handleFocus = this._handleFocus.bind(this);
       this._handleBlur = this._handleBlur.bind(this);
       this._handleChange = this._handleChange.bind(this);
-      //this._keydown = this._keydown.bind(this);
       this._keyup = this._keyup.bind(this);
       this.state = this._getInitialState();
-      this.percent = this.props.percent;
-      this.max = this.props.max;
-      this.state.inputValue = this.percent * this.max;
     }
-
+    /**
+     * Update input value if slider changes will change props/state
+     * @param  {Object} nextProps React Component properites
+     * @param  {Object} nextState React Component state values
+     */
     componentWillReceiveProps(nextProps, nextState) {
         var nextValue = nextProps.percent * nextProps.max;
         // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
@@ -270,6 +279,11 @@ export default class Slider extends React.Component {
             this.setState({ inputValue: nextValue });
       }
     }
+     /**
+     * Update slider textbox visibility/values if changes are made to slider
+     * @param  {Object} prevProps React Component properites
+     * @param  {Object} prevState React Component state values
+     */
     componentDidUpdate(prevProps, prevState) {
 
         if (prevState.divStyle.display == 'none' && this.state.divStyle.display == 'block') {
@@ -286,7 +300,11 @@ export default class Slider extends React.Component {
       }
 
     }
-
+    /**
+     * Set initial state for the textbox. 
+     * We may want to rethink this to 
+     * try and make it a stateless component
+     */
     _getInitialState() {
       return {
         divStyle: {display:'none'}, 
@@ -297,36 +315,56 @@ export default class Slider extends React.Component {
         min:0,
         tabIndex:-1,
         type:'number',
-        readOnly: true
+        readOnly: true,
+        inputValue: this.props.percent * this.props.max
       }
     }
-
+    /**
+     * 
+     * @param {string} val block or none
+     */
     _setDisplay(val) {
       this.setState({
         divStyle: {display:val}
       });
     }
-
+    /**
+     * Update the input value
+     * when textbox gets focus
+     */
     _handleFocus() {
       this.setState({
         inputValue:this._getValue()
       });
     }
-
+    /**
+     * Update inputValue when textbox loses focus
+     */
     _handleBlur() {
       this._setDisplay('none');
       if (this.state.inputValue !== '') {
         this.props.onChange(this.state.inputValue/this.props.max);
       } else {
-        this.state.inputValue = this.props.percent * this.props.max;
+        this.setState({
+          inputValue: this.props.percent * this.props.max
+        });
       }
       
     }
-
+    /**
+     * Get the value in the text box
+     */
     _getValue() {
       return this.state.inputValue;
     }
 
+    /**
+     * Update and set limits on input box
+     * values depending on what user
+     * has selected
+     * 
+     * @param {SyntheticEvent} event 
+     */
     _handleChange(event) {
       if (event.target.value < 0) {
         this.setState({inputValue: 0});

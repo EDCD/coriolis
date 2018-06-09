@@ -22,7 +22,10 @@ export default class HardpointSlotSection extends SlotSection {
     this.selectedRefId = null;
   }
 
-  
+  /**
+   * Handle focus when component updates
+   * @param {Object} prevProps React Component properties
+   */
   componentDidUpdate(prevProps) {
     this._handleSectionFocus(prevProps,'emptyall', 'nl-F');
   }

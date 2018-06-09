@@ -55,22 +55,21 @@ export default class SlotSection extends TranslatedComponent {
   //  _contextMenu()
   //  componentDidUpdate(prevProps)
 
+  /** 
+   * TODO: May either need to send the function to be triggered when Enter key is pressed, or else 
+   * may need a separate keyDown handler for each subclass (StandardSlotSection, HardpointSlotSection, etc.)
+   * ex: _keyDown(_keyDownfn, event)
+   * 
+   * @param {SyntheticEvent} event KeyDown event
+   */
   _keyDown(event) {
-    /** 
-     * TODO: May either need to send the function to be triggered when Enter key is pressed, or else 
-     * may need a separate keyDown handler for each subclass (StandardSlotSection, HardpointSlotSection, etc.)
-     * ex: _keyDown(_keyDownfn, event)
-     */
     if (event.key == 'Enter') {
-      // _keyDownfn();
-      
       event.stopPropagation();
       if (event.currentTarget.nodeName === 'H1') {
         this._openMenu(this.sectionName, event);
       } else {
         event.currentTarget.click();
       }
-      
       return;
     }
     if (event.key == 'Tab') {
@@ -85,7 +84,6 @@ export default class SlotSection extends TranslatedComponent {
           this.sectionRefArr['firstref'].focus();
         }
       }
-
     }
   } 
 

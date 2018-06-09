@@ -22,7 +22,10 @@ export default class StandardSlotSection extends SlotSection {
     this._selectBulkhead = this._selectBulkhead.bind(this);
     this.selectedRefId = null;
   }
-  
+  /**
+   * Handle focus if the component updates
+   * @param {Object} prevProps React Component properties
+   */
   componentDidUpdate(prevProps) {
     this._handleSectionFocus(prevProps,'maxjump','racer');
   }

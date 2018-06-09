@@ -21,8 +21,6 @@ export default class InternalSlot extends Slot {
    * @param  {Object} u             Localized Units Map
    * @return {React.Component}      Slot contents
    */
-
-
   _getSlotDetails(m, enabled, translate, formats, u) {
     if (m) {
       let classRating = m.class + m.rating;

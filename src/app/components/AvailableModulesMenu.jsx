@@ -222,6 +222,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @param  {function} onSelect    Select/Mount callback
    * @param  {string} grp           Group name
    * @param  {Array} modules        Available modules
+   * @param  {string} firstSlotId   id of first slot item
+   * @param  {string} lastSlotId    id of last slot item
    * @return {React.Component}      Available Module Group contents
    */
   _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules, firstSlotId, lastSlotId) {
@@ -391,7 +393,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
 
   /**
    * Key Up
-   * 
+   * @param {Function}  select Select module callback
+   * @param {SytheticEvent} event Event
    */
   _keyUp(select,event) {
     //nothing here yet
@@ -487,7 +490,6 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * @return {React.Component} List
    */
   render() {
-    console.log("Tracking focus? " + this.state.trackingFocus);
     return (
       <div ref={node => this.node = node}
           className={cn('select', this.props.className)}

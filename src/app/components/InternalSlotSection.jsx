@@ -32,6 +32,10 @@ export default class InternalSlotSection extends SlotSection {
     this.selectedRefId = null;
   }
 
+  /**
+   * Handle focus when component updates
+   * @param {Object} prevProps React Component properties
+   */
   componentDidUpdate(prevProps) {
     let internalLastRefId = this.sectionRefArr['pcq'] ? 'pcq' : 'pcm';
     this._handleSectionFocus(prevProps,'emptyall', internalLastRefId);

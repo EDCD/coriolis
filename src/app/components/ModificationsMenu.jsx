@@ -100,11 +100,9 @@ export default class ModificationsMenu extends TranslatedComponent {
 
   /**
    * Key down - select module on Enter key, move to next/previous module on Tab/Shift-Tab, close on Esc
-   * @param  {Function} select Select module callback
    * @param  {SyntheticEvent} event Event
    *
    */
-  
   _keyDown(event) {
     var className = null;
     var elemId = null;
@@ -200,7 +198,6 @@ export default class ModificationsMenu extends TranslatedComponent {
         }
       }
     }
-    console.log("_renderSpecials. specials: %O", specials);
     return specials;
   }
 
@@ -219,7 +216,6 @@ export default class ModificationsMenu extends TranslatedComponent {
         modifications.push(<Modification key={ key } ship={ ship } m={ m } name={ modName } value={ m.getModValue(modName) / 100 || 0 } onChange={ onChange } onKeyDown={ this._keyDown } modItems={ this.modItems } handleModChange = {this._handleModChange} />);
       }
     }
-    console.log("_renderModifications. modItems: %O", this.modItems);
     return modifications;
   }
 
@@ -338,18 +334,19 @@ export default class ModificationsMenu extends TranslatedComponent {
     this.props.onChange();
   }
 
-/**
+  /**
    * set mod did change boolean
+   * @param {boolean} b Boolean to determine if a change has been made to a module
    */
   _handleModChange(b) {
     this.modValDidChange = b;
   }
 
+  /**
+   * Set focus on first element in modifications menu
+   * after it first mounts
+   */
   componentDidMount() {
-    /**
-     * Set focus on first element in modifications menu
-     * after it first mounts
-     */
     let firstEleCn = this.modItems['modMainDiv'].children.length > 0 ? this.modItems['modMainDiv'].children[0].className : null;
     if (firstEleCn.indexOf('select-group cap') >= 0) {
       this.modItems['modMainDiv'].children[1].firstElementChild.focus();
@@ -358,12 +355,13 @@ export default class ModificationsMenu extends TranslatedComponent {
     }
   }
 
+  /**
+   * Set focus on first element in modifications menu
+   * if component updates, unless update is due to value change
+   * in a modification
+   */
   componentDidUpdate() {
-    /**
-     * Set focus on first element in modifications menu
-     * if component updates, unless update is due to value change
-     * in a modification
-     */
+
     if (!this.modValDidChange) {
       if (this.modItems['modMainDiv'].children.length > 0) {
         let firstEleCn = this.modItems['modMainDiv'].children[0].className;
@@ -378,10 +376,12 @@ export default class ModificationsMenu extends TranslatedComponent {
     }
     
   }
-
+  /**
+   * set focus to the modification menu icon after mod menu is unmounted.
+   */
   componentWillUnmount() {
     if (this.props.modButton) {
-      this.props.modButton.focus();// set focus to the modification menu icon after mod menu is unmounted.
+      this.props.modButton.focus();
     }
   }
 

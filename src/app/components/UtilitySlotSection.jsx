@@ -19,7 +19,10 @@ export default class UtilitySlotSection extends SlotSection {
     this._empty = this._empty.bind(this);
     this.selectedRefId = null;
   }
-
+  /**
+   * Handle focus if the component updates
+   * @param {Object} prevProps React Component properties
+   */
   componentDidUpdate(prevProps) {
     this._handleSectionFocus(prevProps,'emptyall','po');
   }

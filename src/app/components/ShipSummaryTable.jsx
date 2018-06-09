@@ -17,7 +17,10 @@ export default class ShipSummaryTable extends TranslatedComponent {
     marker: PropTypes.string.isRequired,
     pips: PropTypes.object.isRequired
   };
-
+  /**
+   * Constructor
+   * @param {Object} props React Component properties
+   */
   constructor(props) {
     super(props)
     this.didContextChange = this.didContextChange.bind(this);
