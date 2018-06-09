@@ -34,8 +34,9 @@ export default class SlotSection extends TranslatedComponent {
     this.sectionId = sectionId;
     this.sectionName = sectionName;
     this.ssHeadRef = null;
-    this.props.sectionMenuRefs[sectionId] = [];
-    this.props.sectionMenuRefs[sectionId]['selectedRef'] = null;
+    
+    this.sectionRefArr = this.props.sectionMenuRefs[this.sectionId] = [];
+    this.sectionRefArr['selectedRef'] = null;
     this._getSlots = this._getSlots.bind(this);
     this._selectModule = this._selectModule.bind(this);
     this._getSectionMenu = this._getSectionMenu.bind(this);
@@ -44,6 +45,7 @@ export default class SlotSection extends TranslatedComponent {
     this._dragOverNone = this._dragOverNone.bind(this);
     this._close = this._close.bind(this);
     this._keyDown = this._keyDown.bind(this);
+    this._handleSectionFocus = this._handleSectionFocus.bind(this);
     this.state = {};
   }
 
@@ -51,6 +53,7 @@ export default class SlotSection extends TranslatedComponent {
   //  _getSlots()
   //  _getSectionMenu()
   //  _contextMenu()
+  //  componentDidUpdate(prevProps)
 
   _keyDown(event) {
     /** 
@@ -60,6 +63,7 @@ export default class SlotSection extends TranslatedComponent {
      */
     if (event.key == 'Enter') {
       // _keyDownfn();
+      
       event.stopPropagation();
       if (event.currentTarget.nodeName === 'H1') {
         this._openMenu(this.sectionName, event);
@@ -71,20 +75,39 @@ export default class SlotSection extends TranslatedComponent {
     }
     if (event.key == 'Tab') {
       if (event.shiftKey) {
-        if ((event.currentTarget === this.props.sectionMenuRefs[this.sectionId]['firstref']) && this.props.sectionMenuRefs[this.sectionId]['lastref']) {
+        if ((event.currentTarget === this.sectionRefArr['firstref']) && this.sectionRefArr['lastref']) {
           event.preventDefault();
-          this.props.sectionMenuRefs[this.sectionId]['lastref'].focus();
+          this.sectionRefArr['lastref'].focus();
         }
       } else {
-        if ((event.currentTarget === this.props.sectionMenuRefs[this.sectionId]['lastref']) &&  this.props.sectionMenuRefs[this.sectionId]['firstref']) {
+        if ((event.currentTarget === this.sectionRefArr['lastref']) &&  this.sectionRefArr['firstref']) {
           event.preventDefault();
-          this.props.sectionMenuRefs[this.sectionId]['firstref'].focus();
+          this.sectionRefArr['firstref'].focus();
         }
       }
 
     }
   } 
 
+  /**
+   * Set focus on appropriate Slot Section Menu element
+   * @param {Object} focusPrevProps prevProps for componentDidUpdate() from ...SlotSection.jsx 
+   * @param {String} firstRef id of the first ref in ...SlotSection.jsx
+   * @param {String} lastRef id of the last ref in ...SlotSection.jsx
+   * 
+   */
+  _handleSectionFocus(focusPrevProps, firstRef, lastRef) {
+    if (this.selectedRefId !== null && this.sectionRefArr[this.selectedRefId]) {
+      // set focus on the previously selected option for the currently open section menu
+      this.sectionRefArr[this.selectedRefId].focus();
+    } else if (this.sectionRefArr[firstRef] && this.sectionRefArr[firstRef] != null) {
+      // set focus on the first option in the currently open section menu if none have been selected previously
+      this.sectionRefArr[firstRef].focus();
+    }  else if (this.props.currentMenu == null && focusPrevProps.currentMenu == this.sectionName && this.sectionRefArr['ssHeadRef']) {
+      // set focus on the section menu header when section menu is closed
+      this.sectionRefArr['ssHeadRef'].focus();
+    }
+  }
   /**
    * Open a menu
    * @param  {string} menu    Menu name
@@ -262,7 +285,7 @@ export default class SlotSection extends TranslatedComponent {
     return (
       <div id={this.sectionId} className={'group'}  onDragLeave={this._dragOverNone}>
         <div className={cn('section-menu', { selected: sectionMenuOpened })} onClick={open} onContextMenu={ctx}>
-          <h1 tabIndex="0" onKeyDown={this._keyDown} ref={ssHead => this.ssHeadRef = ssHead}>{translate(this.sectionName)} <Equalizer/></h1>
+          <h1 tabIndex="0" onKeyDown={this._keyDown} ref={ssHead => this.sectionRefArr['ssHeadRef'] = ssHead}>{translate(this.sectionName)} <Equalizer/></h1>
           {sectionMenuOpened ? this._getSectionMenu(translate, this.props.ship) : null }
         </div>
         {this._getSlots()}

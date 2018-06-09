@@ -32,16 +32,9 @@ export default class InternalSlotSection extends SlotSection {
     this.selectedRefId = null;
   }
 
-  componentDidUpdate() {
-    this.props.sectionMenuRefs['internal']['firstref'] = this.props.sectionMenuRefs['internal']['emptyall'];
-    this.props.sectionMenuRefs['internal']['lastref'] = this.props.sectionMenuRefs['internal']['nl-F'];
-
-    this.props.sectionMenuRefs['internal']['pcq'] ? this.props.sectionMenuRefs['internal']['lastref'] = this.props.sectionMenuRefs['internal']['pcq'] : this.props.sectionMenuRefs['internal']['lastref'] = this.props.sectionMenuRefs['internal']['pcm'];
-    if (this.selectedRefId !== null && this.props.sectionMenuRefs['internal'][this.selectedRefId]) {
-      this.props.sectionMenuRefs['internal'][this.selectedRefId].focus();
-    } else if (this.props.sectionMenuRefs['internal']['firstref'] && this.props.sectionMenuRefs['internal']['firstref'] != null) {
-      this.props.sectionMenuRefs['internal']['firstref'].focus();
-    }
+  componentDidUpdate(prevProps) {
+    let internalLastRefId = this.sectionRefArr['pcq'] ? 'pcq' : 'pcm';
+    this._handleSectionFocus(prevProps,'emptyall', internalLastRefId);
   }
 
   /**
@@ -263,16 +256,16 @@ export default class InternalSlotSection extends SlotSection {
   _getSectionMenu(translate, ship) {
     return <div className='select' onClick={e => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['emptyall'] = smRef}>{translate('empty all')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithCargo} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['cargo'] = smRef}>{translate('cargo')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithCells} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['scb'] = smRef}>{translate('scb')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithArmor} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['hr'] = smRef}>{translate('hr')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithModuleReinforcementPackages} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['mrp'] = smRef}>{translate('mrp')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithFuelTanks} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['ft'] = smRef}>{translate('ft')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithEconomyClassCabins} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pce'] = smRef}>{translate('pce')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithBusinessClassCabins} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pci'] = smRef}>{translate('pci')}</li>
-        <li className='lc' tabIndex='0' onClick={this._fillWithFirstClassCabins} onKeyDown={ship.luxuryCabins ? '' : this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pcm'] = smRef}>{translate('pcm')}</li>
-	{ ship.luxuryCabins ? <li className='lc' tabIndex='0' onClick={this._fillWithLuxuryCabins} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['internal']['pcq'] = smRef}>{translate('pcq')}</li> : ''}
+        <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['emptyall'] = smRef}>{translate('empty all')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithCargo} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['cargo'] = smRef}>{translate('cargo')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithCells} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['scb'] = smRef}>{translate('scb')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithArmor} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['hr'] = smRef}>{translate('hr')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithModuleReinforcementPackages} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['mrp'] = smRef}>{translate('mrp')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithFuelTanks} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['ft'] = smRef}>{translate('ft')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithEconomyClassCabins} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['pce'] = smRef}>{translate('pce')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithBusinessClassCabins} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['pci'] = smRef}>{translate('pci')}</li>
+        <li className='lc' tabIndex='0' onClick={this._fillWithFirstClassCabins} onKeyDown={ship.luxuryCabins ? '' : this._keyDown} ref={smRef => this.sectionRefArr['pcm'] = smRef}>{translate('pcm')}</li>
+	{ ship.luxuryCabins ? <li className='lc' tabIndex='0' onClick={this._fillWithLuxuryCabins} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['pcq'] = smRef}>{translate('pcq')}</li> : ''}
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
       </ul>
     </div>;

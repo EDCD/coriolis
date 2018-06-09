@@ -23,14 +23,8 @@ export default class StandardSlotSection extends SlotSection {
     this.selectedRefId = null;
   }
   
-  componentDidUpdate() {
-    this.props.sectionMenuRefs['standard']['firstref'] = this.props.sectionMenuRefs['standard']['maxjump'];
-    this.props.sectionMenuRefs['standard']['lastref'] = this.props.sectionMenuRefs['standard']['racer'];
-    if (this.selectedRefId !== null && this.props.sectionMenuRefs['standard'][this.selectedRefId]) {
-      this.props.sectionMenuRefs['standard'][this.selectedRefId].focus();
-    } else if (this.props.sectionMenuRefs['standard']['firstref'] && this.props.sectionMenuRefs['standard']['firstref'] != null) {
-      this.props.sectionMenuRefs['standard']['firstref'].focus();
-    }
+  componentDidUpdate(prevProps) {
+    this._handleSectionFocus(prevProps,'maxjump','racer');
   }
 
   /**
@@ -248,17 +242,17 @@ export default class StandardSlotSection extends SlotSection {
     let planetaryDisabled = this.props.ship.internal.length < 4;
     return <div className='select' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' tabIndex="0" onClick={this._optimizeStandard} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['maxjump'] = smRef}>{translate('Maximize Jump Range')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeStandard} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['maxjump'] = smRef}>{translate('Maximize Jump Range')}</li>
       </ul>
       <div className='select-group cap'>{translate('roles')}</div>
       <ul>
-        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, false, 0)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['multipurpose'] = smRef}>{translate('Multi-purpose')}</li>
-        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, true, 2)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['combat'] = smRef}>{translate('Combat')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeCargo.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['trader'] = smRef}>{translate('Trader')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeExplorer.bind(this, false)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['explorer'] = smRef}>{translate('Explorer')}</li>
-        <li className={cn('lc', { disabled:  planetaryDisabled })} tabIndex={planetaryDisabled ? '' : '0'} onClick={!planetaryDisabled && this._optimizeExplorer.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['planetary'] = smRef}>{translate('Planetary Explorer')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeMiner.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['miner'] = smRef}>{translate('Miner')}</li>
-        <li className='lc' tabIndex="0" onClick={this._optimizeRacer.bind(this)} onKeyDown={this._keyDown} ref={smRef => this.props.sectionMenuRefs['standard']['racer'] = smRef}>{translate('Racer')}</li>
+        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, false, 0)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['multipurpose'] = smRef}>{translate('Multi-purpose')}</li>
+        <li className='lc' tabIndex="0" onClick={this._multiPurpose.bind(this, true, 2)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['combat'] = smRef}>{translate('Combat')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeCargo.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['trader'] = smRef}>{translate('Trader')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeExplorer.bind(this, false)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['explorer'] = smRef}>{translate('Explorer')}</li>
+        <li className={cn('lc', { disabled:  planetaryDisabled })} tabIndex={planetaryDisabled ? '' : '0'} onClick={!planetaryDisabled && this._optimizeExplorer.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['planetary'] = smRef}>{translate('Planetary Explorer')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeMiner.bind(this, true)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['miner'] = smRef}>{translate('Miner')}</li>
+        <li className='lc' tabIndex="0" onClick={this._optimizeRacer.bind(this)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['racer'] = smRef}>{translate('Racer')}</li>
       </ul>
     </div>;
   }
