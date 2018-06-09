@@ -85,21 +85,10 @@ export default class Slot extends TranslatedComponent {
    */
   _keyDown(event) {
     if (event.key == 'Enter') {
-<<<<<<< HEAD
         if(event.target.className == 'r') {
             this._toggleModifications();
-        } else {
         }
         this.props.onOpen(event); 
-=======
-      if(event.target.className == 'r') {
-        console.log('Slot: Enter key pressed on mod icon');
-        this._toggleModifications();
-      } else {
-        console.log('Slot: Enter key pressed on: %O', event.target);
-      }
-      this.props.onOpen(event);
->>>>>>> develop
     }
   }
   /**
