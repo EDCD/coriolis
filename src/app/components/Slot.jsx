@@ -85,10 +85,10 @@ export default class Slot extends TranslatedComponent {
    */
   _keyDown(event) {
     if (event.key == 'Enter') {
-        if(event.target.className == 'r') {
-            this._toggleModifications();
-        }
-        this.props.onOpen(event); 
+      if(event.target.className == 'r') {
+        this._toggleModifications();
+      }
+      this.props.onOpen(event); 
     }
   }
   /**

@@ -43,7 +43,7 @@ export default class StandardSlot extends TranslatedComponent {
    * Handle Enter key
    * @param {SyntheticEvent} event KeyDown event
    */
-   _keyDown(event) {
+  _keyDown(event) {
     if (event.key == 'Enter') {
       if(event.target.className == 'r') {
         this._toggleModifications();

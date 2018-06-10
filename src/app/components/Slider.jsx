@@ -251,11 +251,11 @@ class TextInputBox extends React.Component {
    */
   constructor(props) {
     super(props);
-      this._handleFocus = this._handleFocus.bind(this);
-      this._handleBlur = this._handleBlur.bind(this);
-      this._handleChange = this._handleChange.bind(this);
-      this._keyup = this._keyup.bind(this);
-      this.state = this._getInitialState();
+    this._handleFocus = this._handleFocus.bind(this);
+    this._handleBlur = this._handleBlur.bind(this);
+    this._handleChange = this._handleChange.bind(this);
+    this._keyup = this._keyup.bind(this);
+    this.state = this._getInitialState();
   }
   /**
    * Update input value if slider changes will change props/state
@@ -263,10 +263,10 @@ class TextInputBox extends React.Component {
    * @param  {Object} nextState React Component state values
    */
   componentWillReceiveProps(nextProps, nextState) {
-      let nextValue = nextProps.percent * nextProps.max;
-      // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
-      if (nextValue !== this.state.inputValue && nextValue <= nextProps.max) {
-          this.setState({ inputValue: nextValue });
+    let nextValue = nextProps.percent * nextProps.max;
+    // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
+    if (nextValue !== this.state.inputValue && nextValue <= nextProps.max) {
+      this.setState({ inputValue: nextValue });
     }
   }
     /**
@@ -276,14 +276,14 @@ class TextInputBox extends React.Component {
    */
   componentDidUpdate(prevProps, prevState) {
     if (prevState.divStyle.display == 'none' && this.state.divStyle.display == 'block') {
-        this.enterTimer = setTimeout(() => this.sliderVal.focus(), 10);  
+      this.enterTimer = setTimeout(() => this.sliderVal.focus(), 10);  
     }
     if (prevProps.max !== this.props.max && this.state.inputValue > this.props.max) {
-        // they chose a different module
-        this.setState({ inputValue: this.props.max });
+      // they chose a different module
+      this.setState({ inputValue: this.props.max });
     }
     if (this.state.inputValue != prevState.inputValue && prevProps.max == this.props.max) {
-        this.props.onChange(this.state.inputValue/this.props.max);
+      this.props.onChange(this.state.inputValue / this.props.max);
     }
   }
   /**
@@ -294,9 +294,9 @@ class TextInputBox extends React.Component {
    */
   _getInitialState() {
     return {
-      divStyle: {display:'none'}, 
-      inputStyle: {width:'4em'},
-      labelStyle: {marginLeft: '.1em'},
+      divStyle: { display:'none' }, 
+      inputStyle: { width:'4em' },
+      labelStyle: { marginLeft: '.1em' },
       maxLength:5,
       size:5,
       min:0,
@@ -304,7 +304,7 @@ class TextInputBox extends React.Component {
       type:'number',
       readOnly: true,
       inputValue: this.props.percent * this.props.max
-    }
+    };
   }
   /**
    * 
@@ -312,7 +312,7 @@ class TextInputBox extends React.Component {
    */
   _setDisplay(val) {
     this.setState({
-      divStyle: {display:val}
+      divStyle: { display:val }
     });
   }
   /**
@@ -330,7 +330,7 @@ class TextInputBox extends React.Component {
   _handleBlur() {
     this._setDisplay('none');
     if (this.state.inputValue !== '') {
-      this.props.onChange(this.state.inputValue/this.props.max);
+      this.props.onChange(this.state.inputValue / this.props.max);
     } else {
       this.setState({
         inputValue: this.props.percent * this.props.max
@@ -339,6 +339,7 @@ class TextInputBox extends React.Component {
   }
   /**
    * Get the value in the text box
+   * @returns {number} inputValue Value of the input box 
    */
   _getValue() {
     return this.state.inputValue;
@@ -348,15 +349,15 @@ class TextInputBox extends React.Component {
    * values depending on what user
    * has selected
    * 
-   * @param {SyntheticEvent} event 
+   * @param {SyntheticEvent} event ReactJs onChange event
    */
   _handleChange(event) {
     if (event.target.value < 0) {
-      this.setState({inputValue: 0});
+      this.setState({ inputValue: 0 });
     } else if (event.target.value <= this.props.max)  {
-      this.setState({inputValue: event.target.value});
+      this.setState({ inputValue: event.target.value });
     } else {
-      this.setState({inputValue: this.props.max});
+      this.setState({ inputValue: this.props.max });
     }
   }
   /**
@@ -373,9 +374,13 @@ class TextInputBox extends React.Component {
         return;
     }
   }
+  /**
+   * Get the value in the text box
+   * @return {React.Component} Text Input component for Slider
+   */
   render() {
     let {  axisUnit, onChange, percent, scale } = this.props;
-    return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} min={this.state.min} max={this.props.max} onChange={this._handleChange} onKeyUp={this._keyup} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur()}} onFocus={() => {this._handleFocus()}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><text className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</text></div>;
+    return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} min={this.state.min} max={this.props.max} onChange={this._handleChange} onKeyUp={this._keyup} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur();}} onFocus={() => {this._handleFocus();}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><text className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</text></div>;
   }
 }
 
