@@ -33,6 +33,7 @@ export default class UtilitySlotSection extends SlotSection {
    * Empty all utility slots and close the menu
    */
   _empty() {
+    this.selectedRefId = this.firstRefId;
     this.props.ship.emptyUtility();
     this.props.onChange();
     this._close();
