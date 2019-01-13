@@ -52,12 +52,12 @@ export default class Defence extends TranslatedComponent {
    * @return {React.Component} contents
    */
   render() {
-    const { ship, sys, opponentWep } = this.props;
+    const { opponent, sys, opponentWep } = this.props;
     const { language, tooltip, termtip } = this.context;
     const { formats, translate, units } = language;
     const { shield, armour, shielddamage, armourdamage } = this.state;
 
-    const pd = ship.standard[4].m;
+    const pd = opponent.standard[4].m;
 
     const shieldSourcesData = [];
     const effectiveShieldData = [];
