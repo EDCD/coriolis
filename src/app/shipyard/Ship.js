@@ -1308,7 +1308,7 @@ export default class Ship {
     let fsd = this.standard[2].m;   // Frame Shift Drive;
     let { unladenMass, fuelCapacity } = this;
     this.unladenRange = this.calcUnladenRange(); // Includes fuel weight for jump
-    this.fullTankRange = Calc.jumpRange(unladenMass + fuelCapacity, fsd, this); // Full Tank
+    this.fullTankRange = Calc.jumpRange(unladenMass + fuelCapacity, fsd, fuelCapacity, this); // Full Tank
     this.ladenRange = this.calcLadenRange(); // Includes full tank and caro
     this.unladenFastestRange = Calc.totalJumpRange(unladenMass + this.fuelCapacity, fsd, fuelCapacity, this);
     this.ladenFastestRange = Calc.totalJumpRange(unladenMass + this.fuelCapacity + this.cargoCapacity, fsd, fuelCapacity, this);
