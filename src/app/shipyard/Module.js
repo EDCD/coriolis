@@ -167,7 +167,7 @@ export default class Module {
     } else if (name === 'shieldboost' || name === 'hullboost') {
       modValue = (1 + value) / (1 + baseValue) - 1;
     } else { // multiplicative
-      modValue = value / baseValue - 1;
+      modValue = baseValue == 0 ? 0 : value / baseValue - 1;
     }
 
     if (modification.type === 'percentage') {
