@@ -145,11 +145,11 @@ export function diffDetails(language, m, mm) {
   if (m.grp === 'pp') {
     let mPowerGeneration = m.pgen || 0;
     let mmPowerGeneration = mm ? mm.getPowerGeneration() : 0;
-    if (mPowerGeneration != mmPowerGeneration) propDiffs.push(<div key='pgen'>{translate('pgen')}: <span className={diffClass(mPowerGeneration, mmPowerGeneration)}>{diff(formats.round, mPowerGeneration, mmPowerGeneration)}{units.MJ}</span></div>);
+    if (mPowerGeneration != mmPowerGeneration) propDiffs.push(<div key='pgen'>{translate('pgen')}: <span className={diffClass(mPowerGeneration, mmPowerGeneration)}>{diff(formats.round, mPowerGeneration, mmPowerGeneration)}{units.MW}</span></div>);
   } else {
     let mPowerUsage = m.power || 0;
     let mmPowerUsage = mm ? mm.getPowerUsage() || 0 : 0;
-    if (mPowerUsage != mmPowerUsage) propDiffs.push(<div key='power'>{translate('power')}: <span className={diffClass(mPowerUsage, mmPowerUsage, true)}>{diff(formats.round, mPowerUsage, mmPowerUsage)}{units.MJ}</span></div>);
+    if (mPowerUsage != mmPowerUsage) propDiffs.push(<div key='power'>{translate('power')}: <span className={diffClass(mPowerUsage, mmPowerUsage, true)}>{diff(formats.round, mPowerUsage, mmPowerUsage)}{units.MW}</span></div>);
   }
 
   let mDps = m.damage * (m.rpshot || 1) * (m.rof || 1);
