@@ -349,7 +349,7 @@ export default class Header extends TranslatedComponent {
   _getShipsMenu() {
     let shipList = [];
 
-    for (let s in Ships) {
+    for (let s of this.shipOrder) {
       shipList.push(<ActiveLink key={s} href={outfitURL(s)} className='block'>{Ships[s].properties.name}</ActiveLink>);
     }
 
