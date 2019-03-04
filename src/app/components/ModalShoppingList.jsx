@@ -116,7 +116,7 @@ export default class ModalShoppingList extends TranslatedComponent {
       target.innerText = translate('No modded components.');
       target.disabled = true;
       setTimeout(() => {
-        target.innerText = translate('Send To EDEngineer');
+        target.innerText = translate('Send to EDEngineer');
         target.disabled = false;
       }, 3000);
     } else {
@@ -140,7 +140,7 @@ export default class ModalShoppingList extends TranslatedComponent {
           countSent++;
           if (countSent === countTotal) {
             target.disabled = false;
-            target.innerText = translate('Send To EDEngineer');
+            target.innerText = translate('Send to EDEngineer');
           }
         });
     }
@@ -256,7 +256,7 @@ export default class ModalShoppingList extends TranslatedComponent {
       <br/>
       <p hidden={!this.state.failed} id={'failed'} className={'l'}>{translate('PHRASE_FAIL_EDENGINEER')}</p>
       <p hidden={compatible} id={'browserbad'} className={'l'}>{translate('PHRASE_FIREFOX_EDENGINEER')}</p>
-      <button className={'l cb dismiss cap'} disabled={!!this.state.failed || !compatible} onClick={this.sendToEDEng}>{translate('Send To EDEngineer')}</button>
+      <button className={'l cb dismiss cap'} disabled={!!this.state.failed || !compatible} onClick={this.sendToEDEng}>{translate('Send to EDEngineer')}</button>
       <button className={'r dismiss cap'} onClick={this.context.hideModal}>{translate('close')}</button>
     </div>;
   }
