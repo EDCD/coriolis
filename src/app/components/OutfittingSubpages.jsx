@@ -174,7 +174,7 @@ export default class OutfittingSubpages extends TranslatedComponent {
               <th style={{ width:'25%' }} className={cn({ active: tab == 'power' })} onClick={this._showTab.bind(this, 'power')} >{translate('power and costs')}</th>
               <th style={{ width:'25%' }} className={cn({ active: tab == 'profiles' })} onClick={this._showTab.bind(this, 'profiles')} >{translate('profiles')}</th>
               <th style={{ width:'25%' }} className={cn({ active: tab == 'offence' })} onClick={this._showTab.bind(this, 'offence')} >{translate('offence')}</th>
-              <th style={{ width:'25%' }} className={cn({ active: tab == 'defence' })} onClick={this._showTab.bind(this, 'defence')} >{translate('defence')}</th>
+              <th style={{ width:'25%' }} className={cn({ active: tab == 'defence' })} onClick={this._showTab.bind(this, 'defence')} >{translate('tab_defence')}</th>
             </tr>
           </thead>
         </table>

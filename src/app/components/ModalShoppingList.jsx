@@ -109,17 +109,18 @@ export default class ModalShoppingList extends TranslatedComponent {
    */
   sendToEDEng(event) {
     event.preventDefault();
+    let translate = this.context.language.translate;
     const target = event.target;
     target.disabled = this.state.blueprints.length > 0;
     if (this.state.blueprints.length === 0) {
-      target.innerText = 'No modded components.';
+      target.innerText = translate('No modded components.');
       target.disabled = true;
       setTimeout(() => {
-        target.innerText = 'Send to EDEngineer';
+        target.innerText = translate('Send To EDEngineer');
         target.disabled = false;
       }, 3000);
     } else {
-      target.innerText = 'Sending...';
+      target.innerText = translate('Sending...');
     }
     let countSent = 0;
     let countTotal = this.state.blueprints.length;
@@ -139,7 +140,7 @@ export default class ModalShoppingList extends TranslatedComponent {
           countSent++;
           if (countSent === countTotal) {
             target.disabled = false;
-            target.innerText = 'Send to EDEngineer';
+            target.innerText = translate('Send To EDEngineer');
           }
         });
     }
@@ -230,31 +231,31 @@ export default class ModalShoppingList extends TranslatedComponent {
     this.sendToEDEng = this.sendToEDEng.bind(this);
     return <div className='modal' onClick={ (e) => e.stopPropagation() }>
       <h2>{translate('PHRASE_SHOPPING_MATS')}</h2>
-      <label>Grade 1 rolls </label>
+      <label>{translate('Grade 1 rolls ')}</label>
       <input id={1} type={'number'} min={0} defaultValue={this.state.matsPerGrade[1]} onChange={this.changeHandler} />
       <br/>
-      <label>Grade 2 rolls </label>
+      <label>{translate('Grade 2 rolls ')}</label>
       <input id={2} type={'number'} min={0} defaultValue={this.state.matsPerGrade[2]} onChange={this.changeHandler} />
       <br/>
-      <label>Grade 3 rolls </label>
+      <label>{translate('Grade 3 rolls ')}</label>
       <input id={3} type={'number'} min={0} value={this.state.matsPerGrade[3]} onChange={this.changeHandler} />
       <br/>
-      <label>Grade 4 rolls </label>
+      <label>{translate('Grade 4 rolls ')}</label>
       <input id={4} type={'number'} min={0} value={this.state.matsPerGrade[4]} onChange={this.changeHandler} />
       <br/>
-      <label>Grade 5 rolls </label>
+      <label>{translate('Grade 5 rolls ')}</label>
       <input id={5} type={'number'} min={0} value={this.state.matsPerGrade[5]} onChange={this.changeHandler} />
       <div>
         <textarea className='cb json' readOnly value={this.state.matsList} />
       </div>
-      <label hidden={!compatible} className={'l cap'}>CMDR Name </label>
+      <label hidden={!compatible} className={'l cap'}>{translate('CMDR Name')}</label>
       <br/>
       <select hidden={!compatible} className={'cmdr-select l cap'} onChange={this.cmdrChangeHandler} defaultValue={this.state.cmdrName}>
         {this.state.cmdrs.map(e => <option key={e}>{e}</option>)}
       </select>
       <br/>
-      <p hidden={!this.state.failed} id={'failed'} className={'l'}>Failed to send to EDEngineer (Launch EDEngineer and make sure the API is started then refresh the page.)</p>
-      <p hidden={compatible} id={'browserbad'} className={'l'}>Sending to EDEngineer is not compatible with Firefox's security settings. Please try again with Chrome.</p>
+      <p hidden={!this.state.failed} id={'failed'} className={'l'}>{translate('PHRASE_FAIL_EDENGINEER')}</p>
+      <p hidden={compatible} id={'browserbad'} className={'l'}>{translate('PHRASE_FIREFOX_EDENGINEER')}</p>
       <button className={'l cb dismiss cap'} disabled={!!this.state.failed || !compatible} onClick={this.sendToEDEng}>{translate('Send To EDEngineer')}</button>
       <button className={'r dismiss cap'} onClick={this.context.hideModal}>{translate('close')}</button>
     </div>;

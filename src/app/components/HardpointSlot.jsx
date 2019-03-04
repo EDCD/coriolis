@@ -121,7 +121,7 @@ export default class HardpointSlot extends Slot {
           {m.getShieldBoost() ? <div className={'l'}>+{formats.pct1(m.getShieldBoost())}</div> : null}
           {m.getAmmo() ? <div
             className={'l'}>{translate('ammunition')}: {formats.int(m.getClip())}/{formats.int(m.getAmmo())}</div> : null}
-          {m.getReload() ? <div className={'l'}>{translate('reload')}: {formats.round(m.getReload())}{u.s}</div> : null}
+          {m.getReload() ? <div className={'l'}>{translate('wep_reload')}: {formats.round(m.getReload())}{u.s}</div> : null}
           {m.getShotSpeed() ? <div
             className={'l'}>{translate('shotspeed')}: {formats.int(m.getShotSpeed())}{u.mps}</div> : null}
           {m.getPiercing() ? <div className={'l'}>{translate('piercing')}: {formats.int(m.getPiercing())}</div> : null}

@@ -478,7 +478,7 @@ export default class ModificationsMenu extends TranslatedComponent {
             <tbody>
               { showRolls ?
                 <tr>
-                  <td tabIndex="0" className={ cn('section-menu button-inline-menu', { active: false }) }> { translate('roll') }: </td>
+                  <td tabIndex="0" className={ cn('section-menu button-inline-menu', { active: false }) }> { translate('mroll') }: </td>
                   <td tabIndex="0" className={ cn('section-menu button-inline-menu', { active: blueprintCv ===    0 }) } style={{ cursor: 'pointer' }} onClick={_rollWorst} onKeyDown={ this._keyDown } onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_WORST')} onMouseOut={tooltip.bind(null, null)}> { translate('0%') } </td>
                   <td tabIndex="0" className={ cn('section-menu button-inline-menu', { active: blueprintCv ===   50 })} style={{ cursor: 'pointer' }} onClick={_rollFifty} onKeyDown={ this._keyDown } onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_FIFTY')} onMouseOut={tooltip.bind(null, null)}> { translate('50%') } </td>
                   <td tabIndex="0" className={ cn('section-menu button-inline-menu', { active: blueprintCv ===  100 })} style={{ cursor: 'pointer' }} onClick={_rollFull} onKeyDown={ this._keyDown } onMouseOver={termtip.bind(null, 'PHRASE_BLUEPRINT_BEST')} onMouseOut={tooltip.bind(null, null)}> { translate('100%') } </td>
