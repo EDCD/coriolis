@@ -1,6 +1,7 @@
 import React from 'react';
 import Persist from '../stores/Persist';
 import * as ModuleUtils from '../shipyard/ModuleUtils';
+import Module from '../shipyard/Module';
 
 /**
  * Determine if a slot on a ship can mount a module of a particular class and group
@@ -139,20 +140,21 @@ function diff(format, mVal, mmVal) {
 export function diffDetails(language, m, mm) {
   let { formats, translate, units } = language;
   let propDiffs = [];
+  m = new Module(m);
 
   // Module-specific items
 
   if (m.grp === 'pp') {
-    let mPowerGeneration = m.pgen || 0;
+    let mPowerGeneration = m.getPowerGeneration() || 0;
     let mmPowerGeneration = mm ? mm.getPowerGeneration() : 0;
     if (mPowerGeneration != mmPowerGeneration) propDiffs.push(<div key='pgen'>{translate('pgen')}: <span className={diffClass(mPowerGeneration, mmPowerGeneration)}>{diff(formats.round, mPowerGeneration, mmPowerGeneration)}{units.MW}</span></div>);
   } else {
-    let mPowerUsage = m.power || 0;
+    let mPowerUsage = m.getPowerUsage() || 0;
     let mmPowerUsage = mm ? mm.getPowerUsage() || 0 : 0;
     if (mPowerUsage != mmPowerUsage) propDiffs.push(<div key='power'>{translate('power')}: <span className={diffClass(mPowerUsage, mmPowerUsage, true)}>{diff(formats.round, mPowerUsage, mmPowerUsage)}{units.MW}</span></div>);
   }
 
-  let mDps = m.damage * (m.rpshot || 1) * (m.rof || 1);
+  let mDps = m.getDps() || 0;
   let mmDps = mm ? mm.getDps() || 0 : 0;
   if (mDps && mDps != mmDps) propDiffs.push(<div key='dps'>{translate('dps')}: <span className={diffClass(mmDps, mDps, true)}>{diff(formats.round, mDps, mmDps)}</span></div>);
 
@@ -164,7 +166,7 @@ export function diffDetails(language, m, mm) {
 
     if (mAffectsShield) {
       if (m.grp == 'sb') {  // Both m and mm must be utility modules if this is true
-        newShield = this.calcShieldStrengthWith(null, m.shieldboost - (mm ? mm.getShieldBoost() || 0 : 0));
+        newShield = this.calcShieldStrengthWith(null, m.getShieldBoost() - (mm ? mm.getShieldBoost() || 0 : 0));
       } else {
         newShield = this.calcShieldStrengthWith(m);
       }
@@ -179,7 +181,7 @@ export function diffDetails(language, m, mm) {
   }
 
   if (m.grp === 'mrp') {
-    let mProtection = m.protection;
+    let mProtection = m.getProtection();
     let mmProtection = mm ? mm.getProtection() || 0 : 0;
     if (mProtection != mmProtection) {
       propDiffs.push(<div key='protection'>{translate('protection')}: <span className={diffClass(mmProtection, mProtection, true)}>{diff(formats.pct, mProtection, mmProtection)}</span></div>);
@@ -187,7 +189,7 @@ export function diffDetails(language, m, mm) {
   }
 
   if (m.grp === 'hr') {
-    let mHullReinforcement = m.hullreinforcement;
+    let mHullReinforcement = m.getHullReinforcement();
     let mmHullReinforcement = mm ? mm.getHullReinforcement() || 0 : 0;
     if (mHullReinforcement && mHullReinforcement != mmHullReinforcement) propDiffs.push(<div key='hullreinforcement'>{translate('hullreinforcement')}: <span className={diffClass(mmHullReinforcement, mHullReinforcement, true)}>{diff(formats.round, mHullReinforcement, mmHullReinforcement)}</span></div>);
   }
@@ -219,7 +221,7 @@ export function diffDetails(language, m, mm) {
   let mmCost = mm ? mm.cost : 0;
   if (mCost != mmCost) propDiffs.push(<div key='cost'>{translate('cost')}: <span className={diffClass(mCost, mmCost, true) }>{formats.int(mCost ? Math.round(mCost * (1 - Persist.getModuleDiscount())) : 0)}{units.CR}</span></div>);
 
-  let mMass = m.mass || 0;
+  let mMass = m.getMass() || 0;
   let mmMass = mm ? mm.getMass() : 0;
   if (mMass != mmMass) propDiffs.push(<div key='mass'>{translate('mass')}: <span className={diffClass(mMass, mmMass, true)}>{diff(formats.round, mMass, mmMass)}{units.T}</span></div>);
 
@@ -240,7 +242,7 @@ export function diffDetails(language, m, mm) {
     }
   }
 
-  let mIntegrity = m.integrity || 0;
+  let mIntegrity = m.getIntegrity() || 0;
   let mmIntegrity = mm ? mm.getIntegrity() || 0 : 0;
   if (mIntegrity != mmIntegrity) {
     propDiffs.push(<div key='integrity'>{translate('integrity')}: <span className={diffClass(mmIntegrity, mIntegrity, true)}>{diff(formats.round, mIntegrity, mmIntegrity)}</span></div>);
