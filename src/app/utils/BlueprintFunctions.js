@@ -372,9 +372,7 @@ export function getPercent(m) {
 
     let value = _getValue(m, featureName);
     let mult;
-    if (featureName == 'shieldboost') {
-      mult = ((1 + value) * (1 + m.shieldboost)) - 1 - m.shieldboost;
-    } else if (Modifications.modifications[featureName].higherbetter) {
+    if (Modifications.modifications[featureName].higherbetter) {
       // Higher is better, but is this making it better or worse?
       if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
         mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);
