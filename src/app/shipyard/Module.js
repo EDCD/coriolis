@@ -640,15 +640,6 @@ export default class Module {
   }
 
   /**
-   * Get the delay for this module
-   * @param {Boolean} [modified=true] Whether to take modifications into account
-   * @return {Number} the delay of this module
-   */
-  getDelay(modified = true) {
-    return this.get('delay', modified);
-  }
-
-  /**
    * Get the duration for this module
    * @param {Boolean} [modified=true] Whether to take modifications into account
    * @return {Number} the duration of this module
@@ -793,24 +784,6 @@ export default class Module {
   }
 
   /**
-   * Get the thermal load for this module
-   * @param {Boolean} [modified=true] Whether to take modifications into account
-   * @return {Number} the thermal load of this module
-   */
-  getThermalLoad(modified = true) {
-    return this.get('thermload', modified);
-  }
-
-  /**
-   * Get the rounds per shot for this module
-   * @param {Boolean} [modified=true] Whether to take modifications into account
-   * @return {Number} the rounds per shot of this module
-   */
-  getRoundsPerShot(modified = true) {
-    return this.get('roundspershot', modified);
-  }
-
-  /**
    * Get the DPS for this module
    * @param {Boolean} [modified=true] Whether to take modifications into account
    * @return {Number} the DPS of this module
@@ -875,7 +848,7 @@ export default class Module {
    */
   getHps(modified = true) {
     // HPS is a synthetic value
-    let heat = this.getThermalLoad(modified);
+    let heat = this.get('thermload', modified);
     // We don't use rpshot here as dist draw is per combined shot
     let rof = this.getRoF(modified) || 1;
 
@@ -913,24 +886,6 @@ export default class Module {
   }
 
   /**
-   * Get the burst size for this module
-   * @param {Boolean} [modified=true] Whether to take modifications into account
-   * @return {Number} the burst size of this module
-   */
-  getBurst(modified = true) {
-    return this.get('burst', modified);
-  }
-
-  /**
-   * Get the burst rate of fire for this module
-   * @param {Boolean} [modified=true] Whether to take modifications into account
-   * @return {Number} the burst rate of fire of this module
-   */
-  getBurstRoF(modified = true) {
-    return this.get('burstrof', modified);
-  }
-
-  /**
    * Get the rate of fire for this module.
    * The rate of fire is a combination value, and needs to take in to account
    * bursts of fire.
@@ -940,8 +895,8 @@ export default class Module {
    * @return {Number} the rate of fire for this module
    */
   getRoF(modified = true) {
-    const burst = this.getBurst(modified) || 1;
-    const burstRoF = this.getBurstRoF(modified) || 1;
+    const burst = this.get('burst', modified) || 1;
+    const burstRoF = this.get('burstrof', modified) || 1;
     const intRoF = this.get('rof', modified);
 
     return burst / (((burst - 1) / burstRoF) + 1 / intRoF);
