@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modifications } from 'coriolis-data/dist';
+import { STATS_FORMATTING } from '../shipyard/StatsFormatting';
 
 /**
  * Generate a tooltip with details of a blueprint's specials
@@ -274,6 +275,25 @@ export function isBeneficial(feature, values) {
  */
 export function isValueBeneficial(feature, value) {
   if (Modifications.modifications[feature].higherbetter) {
+    return value > 0;
+  } else {
+    return value < 0;
+  }
+}
+
+/**
+ * Is the change as shown beneficial?
+ * @param {string} feature The name of the feature
+ * @param {number} value The value of the feature as percentage change
+ * @returns True if the value is beneficial
+ */
+export function isChangeValueBeneficial(feature, value) {
+  let changeHigherBetter = STATS_FORMATTING[feature].higherbetter;
+  if (changeHigherBetter === undefined) {
+    return isValueBeneficial(feature, value);
+  }
+
+  if (changeHigherBetter) {
     return value > 0;
   } else {
     return value < 0;
