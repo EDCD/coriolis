@@ -172,8 +172,7 @@ export default class Module {
 
     if (modification.type === 'percentage') {
       modValue = modValue * 10000;
-    } else if (modification.type === 'numeric' && name !== 'burst' &&
-      name !== 'burstrof') {
+    } else if (modification.type === 'numeric') {
       modValue = modValue * 100;
     }
 
