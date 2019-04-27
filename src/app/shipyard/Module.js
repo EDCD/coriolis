@@ -59,7 +59,8 @@ export default class Module {
         } else if (modification.method === 'overwrite') {
           result = modifierActions[name];
         } else {
-          // rate of fire is special, as it's really burst interval.  Handle that here
+          // Rate of fire modifiers are special as they actually are modifiers
+          // for fire interval. Translate them accordingly here:
           let mod = null;
           if (name === 'rof') {
             mod = 1 / (1 + modifierActions[name]) - 1;
@@ -105,13 +106,6 @@ export default class Module {
         } else if (modification.method === 'overwrite') {
           value = null;
         } else {
-          // rate of fire is special, as it's really burst interval.  Handle that here
-          let mod = null;
-          if (name === 'rof') {
-            mod = 1 / (1 + modifierActions[name]) - 1;
-          } else {
-            mod = modifierActions[name];
-          }
           value = ((value / 10000 + 1) / (1 + mod) - 1) * 10000;
         }
       }
@@ -131,6 +125,13 @@ export default class Module {
    * @return {Number} The value queried
    */
   get(name, modified = true) {
+    if (name == 'rof' && isNaN(this[name])) {
+      let fireint = this['fireint'];
+      if (!isNaN(fireint)) {
+        this['rof'] = 1 / fireint;
+      }
+    }
+
     let val;
     if (modified) {
       val = this._getModifiedValue(name);
@@ -166,6 +167,13 @@ export default class Module {
       modValue = value - baseValue;
     } else if (name === 'shieldboost' || name === 'hullboost') {
       modValue = (1 + value) / (1 + baseValue) - 1;
+    } else if (name === 'rof') {
+      let burst = this.get('burst', true) || 1;
+      let burstInt = 1 / (this.get('burstrof', true) / 1);
+
+      let interval = burst / value;
+      let newFireint = (interval - (burst - 1) * burstInt);
+      modValue = newFireint / this['fireint'] - 1;
     } else { // multiplicative
       modValue = baseValue == 0 ? 0 : value / baseValue - 1;
     }
@@ -256,6 +264,11 @@ export default class Module {
           } else if (name === 'shieldboost' || name === 'hullboost') {
             result = (1 + result) * (1 + modValue) - 1;
           } else {
+            // Rate of fire modifiers are special as they actually are modifiers
+            // for fire interval. Translate them accordingly here:
+            if (name == 'rof') {
+              modValue = 1 / (1 + modValue) - 1;
+            }
             result = result * (1 + modValue);
           }
         } else if (name === 'burstrof') {

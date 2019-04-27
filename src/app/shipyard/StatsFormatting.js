@@ -61,7 +61,7 @@ export const STATS_FORMATTING = {
   'ranget': { 'format': 'f1', 'unit': 's' },
   'regen': { 'format': 'round1', 'unit': 'ps' },
   'reload': { 'format': 'int', 'unit': 's' },
-  'rof': { 'format': 'round1', 'unit': 'ps' },
+  'rof': { 'format': 'round1', 'unit': 'ps', 'synthetic': 'getRoF', 'higherbetter': true },
   'angle': { 'format': 'round1', 'unit': 'ang' },
   'scanrate': { 'format': 'int' },
   'scantime': { 'format': 'round1', 'unit': 's' },
