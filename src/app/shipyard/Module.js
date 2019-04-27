@@ -350,14 +350,18 @@ export default class Module {
 
     if (formattingOptions && formattingOptions.change) {
       let changeFormatting = formattingOptions.change;
-      let baseVal = this[name];
+      let baseVal = this[name] || 0;
       let absVal = this._getModifiedValue(name);
       if (changeFormatting === 'additive') {
         val = absVal - baseVal;
       } else if (changeFormatting === 'multiplicative') {
         val = absVal / baseVal - 1;
       }
-      val *= 10000;
+      if (Modifications.modifications[name].method === 'overwrite') {
+        val *= 100;
+      } else {
+        val *= 10000;
+      }
     }
     return val;
   }

@@ -4,6 +4,7 @@ import TranslatedComponent from './TranslatedComponent';
 import cn from 'classnames';
 import NumberEditor from 'react-number-editor';
 import { isValueBeneficial } from '../utils/BlueprintFunctions';
+import { Modifications } from 'coriolis-data/dist';
 
 /**
  * Modification
@@ -79,6 +80,7 @@ export default class Modification extends TranslatedComponent {
     let { translate, formats, units } = this.context.language;
     let { m, name } = this.props;
     let modValue = m.getChange(name);
+    let isOverwrite = Modifications.modifications[name].method === 'overwrite';
 
     if (name === 'damagedist') {
       // We don't show damage distribution
@@ -120,7 +122,7 @@ export default class Modification extends TranslatedComponent {
                   isValueBeneficial(name, modValue) ? 'secondary' : 'warning' :
                   ''
               }>
-                {formats.f2(modValue / 100) || 0}%
+                {formats.f2(modValue / 100) || 0}{isOverwrite ? '' : '%'}
               </td>
             </tr>
           </tbody>
