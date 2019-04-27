@@ -190,7 +190,14 @@ export default class Module {
    */
   getPretty(name, modified = true, places = 2) {
     const formattingOptions = STATS_FORMATTING[name];
-    let val = this.get(name, modified) || 0;
+    let val;
+    if (formattingOptions && formattingOptions.synthetic) {
+      val = (this[formattingOptions.synthetic]).call(this, modified);
+    } else {
+      val = this.get(name, modified);
+    }
+    val = val || 0;
+
     if (formattingOptions && formattingOptions.format.startsWith('pct')) {
       return 100 * val;
     }
@@ -276,11 +283,7 @@ export default class Module {
   formatModifiedValue(name, language, unit, val) {
     const formattingOptions = STATS_FORMATTING[name];
     if (val === undefined) {
-      if (formattingOptions && formattingOptions.synthetic) {
-        val = (this[formattingOptions.synthetic]).call(this, true);
-      } else {
-        val = this._getModifiedValue(name);
-      }
+      val = this.getPretty(name, true);
     }
 
     val = val || 0;
