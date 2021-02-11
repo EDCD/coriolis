@@ -1,0 +1,15 @@
+#boost {
+  button {
+    font-size: 1.2em;
+    background: $primary-bg;
+    color: $primary;
+    border: 1px solid $primary;
+
+    &.selected {
+      // Shown when button is selected
+      background: $primary;
+      color: $primary-bg;
+    }
+  }
+}
+

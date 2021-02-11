@@ -1,24 +1,24 @@
 
 table {
-  background-color: @primary-bg;
+  background-color: $primary-bg;
   border-spacing: 0;
   cursor: default;
 
   a, a:visited {
-    color: @primary;
+    color: $primary;
     text-decoration: none;
   }
 }
 
 thead {
-  color: @bgBlack;
-  background-color: @primary-disabled;
+  color: $bgBlack;
+  background-color: $primary-disabled;
   text-transform: uppercase;
   line-height: 1.3em;
-  .user-select-none();
+  @include user-select-none();
 
   .main th {
-    border-left: 1px solid @primary-bg;
+    border-left: 1px solid $primary-bg;
 
     &:first-child {
       border-left: none;
@@ -31,15 +31,15 @@ thead {
     padding: 2px 0.4em 0; // Padding top for font vertical alignment
 
     &.lft {
-      border-left: 1px solid @primary-bg;
+      border-left: 1px solid $primary-bg;
     }
 
     &.rgt {
-      border-right: 1px solid @primary-bg;
+      border-right: 1px solid $primary-bg;
     }
 
     &.invisible {
-      color: @primary-disabled;
+      color: $primary-disabled;
     }
   }
 }
@@ -47,16 +47,16 @@ thead {
 tbody tr {
 
   &.tr {
-    color: @fg;
+    color: $fg;
     text-align: right;
   }
 
   .no-touch &.highlight:hover, .no-touch &.highlighted {
-    background-color: @alt-primary-bg-highlighted; //@warning-bg;
+    background-color: $alt-primary-bg-highlighted; //$warning-bg;
   }
 
-  &:nth-child(odd){
-    background-color: @alt-primary-bg;
+  &:nth-child(odd) {
+    background-color: $alt-primary-bg;
   }
 }
 
@@ -65,14 +65,14 @@ td {
   padding: 0 0.3em;
 
   &.val {
-    border: 1px solid @primary-disabled;
+    border: 1px solid $primary-disabled;
   }
 
   &.lbl {
-    border: 1px solid @primary-disabled;
+    border: 1px solid $primary-disabled;
     text-transform: uppercase;
-    color: @primary-bg;
-    background-color: @primary-disabled;
+    color: $primary-bg;
+    background-color: $primary-disabled;
   }
 
   &.tl {

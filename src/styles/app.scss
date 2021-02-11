@@ -33,15 +33,15 @@ html, body {
 }
 
 body {
-  color: @fg;
+  color: $fg;
   margin: 0;
   padding: 0;
-  font-family: @fStandard;
+  font-family: $fStandard;
   letter-spacing: 0.05em;
 }
 
 div, a, li {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 #coriolis {
@@ -61,9 +61,9 @@ div, a, li {
   text-align: center;
   box-sizing: border-box;
 
-  .largePhone({
+  @include largePhone() {
     padding: 0.5em 0.25em;
-  });
+  }
 }
 
 .l {
@@ -116,26 +116,26 @@ div, a, li {
 }
 
 h1 {
-  font-family: @fTitle;
-  color: @primary;
+  font-family: $fTitle;
+  color: $primary;
   font-size: 1.6em;
   letter-spacing: 0.1em;
 }
 
 h2 {
   text-transform: uppercase;
-  font-family: @fStandard;
+  font-family: $fStandard;
   font-size: 1.2em;
   font-weight: normal;
 }
 
 h3 {
   text-transform: uppercase;
-  font-family: @fStandard;
+  font-family: $fStandard;
   font-weight: normal;
   font-size: 1em;
   margin: 0.2em 0;
-  color: @primary;
+  color: $primary;
 }
 
 u { // Unit (Mj, Km, etc)
@@ -145,7 +145,7 @@ u { // Unit (Mj, Km, etc)
 }
 
 a, a:visited {
-  color: @fg;
+  color: $fg;
 }
 
 p {
@@ -153,9 +153,9 @@ p {
 }
 
 input {
-  background: @primary-bg;
-  border: 1px solid @primary-disabled;
-  color: @primary-disabled;
+  background: $primary-bg;
+  border: 1px solid $primary-disabled;
+  color: $primary-disabled;
   outline: none;
 }
 
@@ -181,6 +181,6 @@ footer {
 }
 
 .announcement {
-  border: 1px @secondary solid;
+  border: 1px $secondary solid;
   padding: 10px;
 }

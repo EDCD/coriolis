@@ -1,12 +1,12 @@
-#defence {
+#offence {
   table {
-    background-color: @bgBlack;
-    color: @primary;
+    background-color: $bgBlack;
+    color: $fg;
     margin: 0 auto;
   }
 
   .icon {
-    stroke: @primary;
+    stroke: $fg;
     stroke-width: 20;
     fill: transparent;
   }

@@ -1,5 +1,5 @@
 .chart {
-  .user-select-none();
+  @include user-select-none();
   display: inline-block;
   margin: 0;
   cursor: default;
@@ -7,13 +7,13 @@
   width: 33%;
   box-sizing: border-box;
 
-  .tablet({
+  @include tablet() {
     width: 50%;
-  });
+  }
 
-  .largePhone({
+  @include largePhone() {
     width: 100%;
-  });
+  }
 
   h3 {
     text-align: center;
@@ -31,13 +31,13 @@ svg {
 
     line, path {
       fill: none;
-      stroke: @primary-disabled;
+      stroke: $primary-disabled;
     }
 
     text {
       font-size: 1.2em;
-      font-family: @fStandard;
-      fill: @primary-disabled;
+      font-family: $fStandard;
+      fill: $primary-disabled;
     }
 
   }
@@ -47,7 +47,7 @@ svg {
   }
 
   .x {
-    fill: @fg;
+    fill: $fg;
   }
 
   .metric {
@@ -55,7 +55,7 @@ svg {
   }
 
   .marker {
-    fill: @secondary;
+    fill: $secondary;
   }
 
   .label {
@@ -67,8 +67,8 @@ svg {
   }
 
   .tooltip {
-    fill: @bgBlack;
-    stroke: @secondary;
+    fill: $bgBlack;
+    stroke: $secondary;
     stroke-width: 1px;
     font-size: 0.8em
   }

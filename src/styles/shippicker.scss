@@ -1,13 +1,13 @@
 .shippicker {
-  background-color: @bgBlack;
+  background-color: $bgBlack;
   margin: 0;
   height: 3em;
-  font-family: @fTitle;
+  font-family: $fTitle;
   vertical-align: middle;
   position: relative;
   display: block;
 
-  .user-select-none();
+  @include user-select-none();
 
   .menu {
     position: relative;
@@ -19,46 +19,46 @@
       }
     }
 
-    .smallTablet({
+    @include smallTablet() {
       position: static;
       position: initial;
-    });
+    }
   }
 
   .menu-header {
     height: 100%;
     z-index: 2;
-    padding : 0 1em;
+    padding: 0 1em;
     cursor: pointer;
-    color: @warning;
+    color: $warning;
     text-transform: uppercase;
 
     &.disabled {
-      color: @warning-disabled;
+      color: $warning-disabled;
       cursor: default;
     }
 
     &.selected {
-      background-color: @bgBlack;
+      background-color: $bgBlack;
     }
 
     .menu-item-label {
       margin-left: 1em;
 
-      .smallTablet({
+      @include smallTablet() {
         display: none;
-      });
+      }
     }
   }
 
   .menu-list {
-    font-family: @fStandard;
+    font-family: $fStandard;
     position: absolute;
     padding: 0.5em 1em;
     box-sizing: border-box;
     min-width: 100%;
     overflow-x: hidden;
-    background-color: @bgBlack;
+    background-color: $bgBlack;
     font-size: 0.9em;
     overflow-y: auto;
     z-index: 1;
@@ -74,7 +74,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: @warning-disabled;
+      background-color: $warning-disabled;
     }
 
     input {
@@ -82,32 +82,33 @@
       background-color: transparent;
       text-align: right;
       font-size: 1em;
-      font-family: @fStandard;
+      font-family: $fStandard;
     }
 
-    .smallTablet({
+    @include smallTablet() {
       max-height: 400px;
       left: 0;
       right: 0;
-      border-bottom: 1px solid @bg;
-    });
+      border-bottom: 1px solid $bg;
+    }
 
-    .tablet({
+    @include tablet() {
       li, a {
         padding: 0.3em 0;
       }
-    });
+    }
   }
 
   .quad {
     -webkit-column-count: 4; /* Chrome, Safari, Opera */
     -moz-column-count: 4; /* Firefox */
     column-count: 4;
+
     ul {
       min-width: 10em;
     }
 
-    .smallTablet({
+    @include smallTablet() {
       -webkit-column-count: 3; /* Chrome, Safari, Opera */
       -moz-column-count: 3; /* Firefox */
       column-count: 3;
@@ -115,19 +116,19 @@
       ul {
         min-width: 20em;
       }
-    });
+    }
 
-    .largePhone({
+    @include largePhone() {
       -webkit-column-count: 2; /* Chrome, Safari, Opera */
       -moz-column-count: 2; /* Firefox */
       column-count: 2;
-    });
+    }
 
-    .smallPhone({
+    @include smallPhone() {
       -webkit-column-count: 1; /* Chrome, Safari, Opera */
       -moz-column-count: 1; /* Firefox */
       column-count: 1;
-    });
+    }
   }
 
   ul {
@@ -136,7 +137,7 @@
     margin: 0 0 0.5em;
     padding: 0;
     line-height: 1.3em;
-    color: @fg;
+    color: $fg;
   }
 
   li {
@@ -144,17 +145,17 @@
     list-style: none;
     margin-left: 1em;
     line-height: 1.1em;
-    color: @warning;
+    color: $warning;
     cursor: pointer;
 
     &.selected {
-      color: @primary;
+      color: $primary;
     }
   }
 
   hr {
     border: none;
-    border-top: 1px solid @disabled;
+    border-top: 1px solid $disabled;
   }
 
   .no-wrap {
@@ -170,7 +171,7 @@
   .title {
     font-size: 1.3em;
     display: inline-block;
-    margin:0px;
+    margin: 0px;
     text-transform: uppercase;
   }
 }

@@ -1,20 +1,20 @@
 select {
-  .border-radius(0);
+  @include border-radius(0);
   cursor: pointer;
   background: none;
-  color: @primary-disabled;
-  font-family: @fStandard;
+  color: $primary-disabled;
+  font-family: $fStandard;
   font-size: 1em;
   background-color: transparent;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   padding: 0 0.5em;
-  outline:none;
+  outline: none;
   border: 0;
 
   &:focus {
-    outline:none;
+    outline: none;
   }
 
   &::-moz-focus-inner {
@@ -24,20 +24,21 @@ select {
 
 .react-fuzzy-search > * {
   padding: 0 !important;
-  color: @primary;
+  color: $primary;
+
   & > input {
-    border: 1px solid @primary !important;
-    color: @primary-bg;
+    border: 1px solid $primary !important;
+    color: $primary-bg;
   }
 }
 
 .cmdr-select {
-  border: 1px solid @primary;
+  border: 1px solid $primary;
   padding: 0.5em 0.5em;
 }
 
 .select {
-  color: @primary-disabled;
+  color: $primary-disabled;
   position: absolute;
   left: -1px;
   padding: 0.5em 0;
@@ -48,13 +49,13 @@ select {
   overflow-x: hidden;
   z-index: 0;
   -webkit-overflow-scrolling: touch;
-  background-color: @bg;
-  border: 1px solid @primary;
+  background-color: $bg;
+  border: 1px solid $primary;
   text-align: center;
 
-  .tablet({
+  @include tablet() {
     max-height: 300px;
-  });
+  }
 
   &::-webkit-scrollbar {
     width: 0.5em;
@@ -62,11 +63,11 @@ select {
 
   &::-webkit-scrollbar-track {
     background-color: transparent;
-    border-left: 1px solid @primary;
+    border-left: 1px solid $primary;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: @primary-disabled;
+    background-color: $primary-disabled;
   }
 
   .select-category {
@@ -76,8 +77,8 @@ select {
     text-align: center;
     margin: 0.5em 0;
     padding-left: 5px;
-    border-top: 3px solid @primary-disabled;
-    border-bottom: 3px solid @primary-disabled;
+    border-top: 3px solid $primary-disabled;
+    border-bottom: 3px solid $primary-disabled;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -88,26 +89,26 @@ select {
     text-align: center;
     margin: 0.5em 0;
     padding-left: 5px;
-    border-top: 1px solid @primary-disabled;
-    border-bottom: 1px solid @primary-disabled;
+    border-top: 1px solid $primary-disabled;
+    border-bottom: 1px solid $primary-disabled;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  @optionSpacing: 2em;
+  $optionSpacing: 2em;
 
   .empty-c, .c, .lc {
     white-space: nowrap;
     text-align: center;
     cursor: pointer;
-    line-height:@optionSpacing;
-    color: @primary-disabled;
-    stroke: @primary-disabled;
+    line-height: $optionSpacing;
+    color: $primary-disabled;
+    stroke: $primary-disabled;
 
     .no-touch &:hover {
-      border-color: @primary;
-      color: @primary;
-      stroke: @primary;
+      border-color: $primary;
+      color: $primary;
+      stroke: $primary;
     }
 
     svg {
@@ -116,32 +117,33 @@ select {
   }
 
   .lc, .c {
-    border:1px solid @primary-disabled;
+    border: 1px solid $primary-disabled;
     padding: 0.1em 0.25em;
     margin: 0.3em;
 
     &.warning {
-      border-color: @warning-disabled;
-      color: @warning-disabled;
-      stroke: @warning-disabled;
+      border-color: $warning-disabled;
+      color: $warning-disabled;
+      stroke: $warning-disabled;
 
       .no-touch &:hover {
-        border-color: @warning;
-        color: @warning;
-        stroke: @warning;
+        border-color: $warning;
+        color: $warning;
+        stroke: $warning;
       }
     }
 
     &.disabled, &.disabled:hover {
       cursor: not-allowed;
-      border-color: @disabled;
-      color: @disabled;
-      stroke: @disabled;
+      border-color: $disabled;
+      color: $disabled;
+      stroke: $disabled;
     }
+
     &.active {
-      border-color: @secondary;
-      color: @secondary;
-      stroke: @secondary;
+      border-color: $secondary;
+      color: $secondary;
+      stroke: $secondary;
     }
   }
 
@@ -170,11 +172,8 @@ select {
     list-style: none;
   }
 
-  &.hardpoint {
-    .c {
-      width: 4.5em;
-      padding: 0.1em 0.2em;
-    }
+  .hardpoint {
+    width: 4.5em;
+    padding: 0.1em 0.2em;
   }
-
 }

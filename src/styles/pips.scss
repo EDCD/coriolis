@@ -2,8 +2,8 @@
 #pips {
 
   table {
-    background-color: @bgBlack;
-    color: @primary;
+    background-color: $bgBlack;
+    color: $primary;
     margin: 0 auto;
   }
 
@@ -14,26 +14,26 @@
 
   // A multi-crew pip
   .mc {
-    stroke: @secondary;
-    fill: @secondary;
+    stroke: $secondary;
+    fill: $secondary;
   }
 
   // A full pip
   .full {
-    stroke: @primary;
-    fill: @primary;
+    stroke: $primary;
+    fill: $primary;
   }
 
   // A half pip
   .half {
-    stroke: @primary-disabled;
-    fill: @primary-disabled;
+    stroke: $primary-disabled;
+    fill: $primary-disabled;
   }
 
   // An empty pip
   .empty {
-    stroke: @primary-bg;
-    fill: @primary-bg;
+    stroke: $primary-bg;
+    fill: $primary-bg;
   }
 }
 

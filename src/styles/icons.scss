@@ -1,4 +1,3 @@
-
 // Standard icons
 .icon {
   display: inline-block;
@@ -59,8 +58,8 @@
 }
 
 .summary {
-  stroke: @fg;
-  fill: @fg;
+  stroke: $fg;
+  fill: $fg;
 
   svg {
     stroke-width: 10;

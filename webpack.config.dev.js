@@ -18,7 +18,7 @@ module.exports = {
   },
   resolve: {
     // When requiring, you don't need to add these extensions
-    extensions: ['.js', '.jsx', '.json', '.less']
+    extensions: ['.js', '.jsx', '.json', '.scss']
   },
   optimization: {
     minimize: false,
@@ -55,8 +55,8 @@ module.exports = {
     rules: [
       { test: /\.css$/, loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }) },
       {
-        test: /\.less$/,
-        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!less-loader' })
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader', 'sass-loader'] })
       },
       { test: /\.(js|jsx)$/, loaders: ['babel-loader'], include: path.join(__dirname, 'src') },
       { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },

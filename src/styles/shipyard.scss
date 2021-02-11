@@ -8,17 +8,17 @@ a.ship {
   display: inline-block;
   width: 15em;
   margin: 0.5em;
-  background-color: @bg;
+  background-color: $bg;
   padding: 0.5em;
   text-decoration: none;
-  color: @fg;
-  font-family: @fStandard;
+  color: $fg;
+  font-family: $fStandard;
   text-align: right;
-  .user-select-none();
+  @include user-select-none();
 
-  .smallPhone({
+  @include smallPhone() {
     width: 16em;
-  });
+  }
 
   h2 {
     width: 100%;
@@ -28,8 +28,8 @@ a.ship {
   }
 
   small {
-    color: @warning;
-    font-family: @fStandard;
+    color: $warning;
+    font-family: $fStandard;
     float: left;
     font-size: 0.8em;
     margin-right: 2em;
@@ -44,6 +44,7 @@ a.ship {
     float: left;
     font-size: 0.8em;
   }
+
   .purpose {
     text-transform: uppercase;
     font-size: 0.7em;
@@ -60,34 +61,36 @@ a.ship {
   max-width: 100%;
 }
 
-table.shipyard-table{
-  tbody tr.comparehighlight{
-    background-color: @secondary-bg;
-    color: @fg-highlighted;
+table.shipyard-table {
+  tbody tr.comparehighlight {
+    background-color: $secondary-bg;
+    color: $fg-highlighted;
   }
 }
 
 .shipyard-table-wrapper {
-  border-bottom: 1px solid @primary-darker;
+  border-bottom: 1px solid $primary-darker;
 }
 
 .shipyard-table-wrapper div .shipyard-table td:last-child {
-  border-right: 1px solid @primary-darker;
-}
-.shipyard-table-wrapper > .shipyard-table td:first-child {
-  border-left: 1px solid @primary-darker;
+  border-right: 1px solid $primary-darker;
 }
 
-.content-wrapper{
+.shipyard-table-wrapper > .shipyard-table td:first-child {
+  border-left: 1px solid $primary-darker;
+}
+
+.content-wrapper {
   display: inline-block;
   margin: 0 auto;
   max-width: 100%;
 }
 
-.table-tools{
+.table-tools {
   text-align: left;
-  color: @primary;
-  label{
+  color: $primary;
+
+  label {
     cursor: pointer;
   }
 }

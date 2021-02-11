@@ -1,7 +1,7 @@
 import '@babel/polyfill';
 import React from 'react';
 import { render } from 'react-dom';
-import '../less/app.less';
+import '../styles/app.scss';
 import Coriolis from './Coriolis';
 // import TapEventPlugin from 'react/lib/TapEventPlugin';
 // import EventPluginHub from 'react/lib/EventPluginHub';

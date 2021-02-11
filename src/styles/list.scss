@@ -10,18 +10,19 @@
     overflow: hidden;
 
     .val {
-      float:right;
+      float: right;
       text-align: right;
     }
 
     .lbl {
       float: left;
     }
-    color: @disabled;
+
+    color: $disabled;
     cursor: pointer;
 
     &.enabled {
-      color: @fg;
+      color: $fg;
     }
 
     &.consumer {

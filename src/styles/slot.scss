@@ -9,11 +9,11 @@
   padding-right: 0.4em;
   padding-left: 1.65em;
   box-sizing: border-box;
-  background-color: @primary-bg;
-  border: 1px solid @primary-disabled;
-  color: @fg;
-  stroke: @fg;
-  fill: @fg;
+  background-color: $primary-bg;
+  border: 1px solid $primary-disabled;
+  color: $fg;
+  stroke: $fg;
+  fill: $fg;
 
   .details-container {
     min-height: 2.7em;
@@ -27,7 +27,7 @@
 
   .details {
     min-height: 2.2em;
-    background-color: @primary-bg;
+    background-color: $primary-bg;
   }
 
   .name {
@@ -38,14 +38,15 @@
   }
 
   .modification-container {
-    @input-container-width: 75%;
+    $input-container-width: 75%;
+
     td {
-      width: 100% - @input-container-width;
+      width: 100% - $input-container-width;
       text-align: center;
     }
 
     .input-container {
-      width: @input-container-width;
+      width: $input-container-width;
       text-align: right;
     }
 
@@ -61,7 +62,7 @@
     }
 
     .header-adjuster {
-      width: 100% - @input-container-width;
+      width: 100% - $input-container-width;
       display: inline-block;
     }
   }
@@ -71,7 +72,7 @@
   }
 
   input.cb:focus {
-    border-color:#fff;
+    border-color: #fff;
   }
 
   input.greyed-out {
@@ -92,12 +93,13 @@
     left: 0;
     font-size: 1.2em;
     width: 1.2em;
-    color: @primary-disabled;
-    stroke: @primary-disabled;
-    border-right: 1px solid @primary-disabled;
+    color: $primary-disabled;
+    stroke: $primary-disabled;
+    border-right: 1px solid $primary-disabled;
     box-sizing: border-box;
     padding-top: 0.2em;
     padding-left: 0.05em;
+
     svg {
       stroke-width: 20;
     }
@@ -106,46 +108,53 @@
   .empty {
     text-transform: uppercase;
     font-size: 1.3em;
-    color: lighten(@primary-bg, 12%);
-    stroke: lighten(@primary-bg, 12%);
+    color: lighten($primary-bg, 12%);
+    stroke: lighten($primary-bg, 12%);
     text-align: center;
     letter-spacing: 0.1em;
     line-height: 1.7em;
+
     svg {
       stroke-width: 20;
     }
   }
 
   &.selected {
-    color: @primary-bg;
-    stroke: @primary-bg;
-    fill: @primary-bg;
-    background-color: @primary;
-    border: 1px solid @primary;
+    color: $primary-bg;
+    stroke: $primary-bg;
+    fill: $primary-bg;
+    background-color: $primary;
+    border: 1px solid $primary;
     z-index: 1;
+
     .sz {
-        color: @primary;
-        stroke: @primary;
-        background-color: @primary-bg;
-        border-right: 1px solid @primary;
-        svg {
-          stroke-width: 20;
-        }
+      color: $primary;
+      stroke: $primary;
+      background-color: $primary-bg;
+      border-right: 1px solid $primary;
+
+      svg {
+        stroke-width: 20;
+      }
     }
+
     .details {
       background-color: transparent;
     }
+
     svg {
       stroke-width: 20;
     }
   }
 
   &.eligible {
-    border: 1px solid @secondary-disabled;
+    border: 1px solid $secondary-disabled;
+
     .sz {
-        color: @secondary-disabled;
-        border-right: 1px solid @secondary-disabled;
+      color: $secondary-disabled;
+      border-right: 1px solid $secondary-disabled;
     }
+
     .details {
       background-color: transparent;
     }
@@ -153,38 +162,43 @@
 
   &.ineligible {
     cursor: no-drop;
-    color: @disabled;
-    fill: @disabled;
-    border: 1px solid @disabled;
+    color: $disabled;
+    fill: $disabled;
+    border: 1px solid $disabled;
+
     .sz {
-        color: @disabled;
-        border-right: 1px solid @disabled;
+      color: $disabled;
+      border-right: 1px solid $disabled;
     }
   }
 
   &.dropEmpty {
-    color: @warning-disabled;
-    fill: @warning-disabled;
-    border: 1px solid @warning-disabled;
+    color: $warning-disabled;
+    fill: $warning-disabled;
+    border: 1px solid $warning-disabled;
+
     .sz {
-        color: @warning-disabled;
-        border-right: 1px solid @warning-disabled;
+      color: $warning-disabled;
+      border-right: 1px solid $warning-disabled;
     }
+
     .details {
       background-color: transparent;
     }
   }
 
   &.drop {
-    color: @secondary-bg;
-    fill: @secondary-bg;
-    border: 1px solid @secondary;
-    background-color: @secondary-disabled;
+    color: $secondary-bg;
+    fill: $secondary-bg;
+    border: 1px solid $secondary;
+    background-color: $secondary-disabled;
+
     .sz {
-        color: @secondary;
-        background-color: @primary-bg;
-        border-right: 1px solid @secondary;
+      color: $secondary;
+      background-color: $primary-bg;
+      border-right: 1px solid $secondary;
     }
+
     .details {
       background-color: transparent;
     }

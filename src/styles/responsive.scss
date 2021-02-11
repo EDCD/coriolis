@@ -1,0 +1,45 @@
+﻿// Screens less than 1024 wide
+// More will be added over time to support mobile devices better
+// These are designed to trickle down. So tablet styles will apply to tablet and smaller, etc
+// To overwrite, put the smallest devices at the bottom
+
+@mixin smallPhone() {
+  @media only screen and (max-width: 400px) {
+    @content;
+  }
+}
+
+@mixin medPhone() {
+  @media only screen and /*(min-width: 351px) and */
+  (max-width: 550px) {
+    @content;
+  }
+}
+
+@mixin largePhone() {
+  @media only screen and /*(min-width: 551px) and */
+  (max-width: 640px) {
+    @content;
+  }
+}
+
+@mixin smallTablet() {
+  @media only screen and /*(min-width: 641px) and */
+  (max-width: 1000px) {
+    @content;
+  }
+}
+
+@mixin tablet() {
+  @media only screen and /*(min-width: 601px) and */
+  (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin smallScreen() {
+  @media only screen and /*(min-width: 601px) and */
+  (max-width: 1400px) {
+    @content;
+  }
+}

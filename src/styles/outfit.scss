@@ -2,17 +2,17 @@
 #outfit {
   max-width: 1600px;
   margin: 0 auto;
-  .user-select-none();
+  @include user-select-none();
   font-size: 0.9em;
 
-  .tablet({
+  @include tablet() {
     font-size: 0.8em;
     width: 100%;
-  });
+  }
 
-  .smallTablet({
+  @include smallTablet() {
     font-size: 1em;
-  });
+  }
 
   table {
     white-space: nowrap;
@@ -24,6 +24,7 @@
     margin: 0 1em 0.2em 0;
     float: left;
   }
+
   overflow: hidden;
   margin: 0.5em;
 }
@@ -71,40 +72,40 @@
   font-size: 0.9em;
 
   .summaryTable {
-    .user-select-none();
+    @include user-select-none();
     width: 100%;
     border-collapse: collapse;
 
     & > thead.blue {
-      background-color: @secondary;
-      border-left: 1px solid @primary-bg;
-      color: @primary-bg;
+      background-color: $secondary;
+      border-left: 1px solid $primary-bg;
+      color: $primary-bg;
     }
 
     & > thead.green {
-      background-color: @success;
-      border-left: 1px solid @primary-bg;
-      color: @primary-bg;
+      background-color: $success;
+      border-left: 1px solid $primary-bg;
+      color: $primary-bg;
     }
 
     & > thead.purple {
-      background-color: @purple;
-      border-left: 1px solid @primary-bg;
-      color: @primary-bg;
+      background-color: $purple;
+      border-left: 1px solid $primary-bg;
+      color: $primary-bg;
     }
 
     & thead th.bordered {
-      border-left: 1px solid @primary-bg;
+      border-left: 1px solid $primary-bg;
     }
   }
 }
 
 .flip {
   display: inline-block;
-  -moz-transform: scaleX(-1);    /* Gecko */
-  -o-transform: scaleX(-1);      /* Operah */
+  -moz-transform: scaleX(-1); /* Gecko */
+  -o-transform: scaleX(-1); /* Operah */
   -webkit-transform: scaleX(-1); /* webkit */
-  transform: scaleX(-1);         /* standard */
+  transform: scaleX(-1); /* standard */
 }
 
 .section-menu {
@@ -113,8 +114,9 @@
 
   &.selected {
     z-index: 1;
+
     h1 {
-      background-color: @primary;
+      background-color: $primary;
     }
   }
 
@@ -149,25 +151,25 @@
     vertical-align: middle;
 
     &:focus {
-      border: 1px solid @primary;
-      color: @primary;
+      border: 1px solid $primary;
+      color: $primary;
     }
 
-    .smallTablet({
+    @include smallTablet() {
       width: 60%;
-    });
+    }
 
-    .largePhone({
+    @include largePhone() {
       width: 100%;
-    });
+    }
 
   }
 
-  .smallTablet({
+  @include smallTablet() {
     float: left;
     clear: left;
     width: 100%;
-  });
+  }
 }
 
 .shorten {
@@ -177,9 +179,9 @@
 }
 
 .optional-hide {
-  .largePhone({
+  @include largePhone() {
     display: none;
-  });
+  }
 }
 
 .tabs {
@@ -190,15 +192,15 @@
   &, th {
     cursor: pointer;
     border-collapse: collapse;
-    color: @primary-disabled;
-    background-color: @primary-bg;
-    border: 1px solid @primary-disabled;
+    color: $primary-disabled;
+    background-color: $primary-bg;
+    border: 1px solid $primary-disabled;
     padding-top: 1px;
   }
 
   .active {
-    color: @primary-bg;
-    background-color: @primary-disabled;
+    color: $primary-bg;
+    background-color: $primary-disabled;
   }
 
 }
@@ -209,13 +211,13 @@
   vertical-align: top;
   box-sizing: border-box;
   display: inline-block;
-  .user-select-none();
+  @include user-select-none();
   cursor: default;
 
   h1 {
-    font-family: @fStandard;
-    color: @bgBlack;
-    background-color: @primary-disabled;
+    font-family: $fStandard;
+    color: $bgBlack;
+    background-color: $primary-disabled;
     text-transform: uppercase;
     margin: 0;
     padding-top: 2px;
@@ -224,81 +226,81 @@
     font-weight: normal;
   }
 
-  .smallTablet({
+  @include smallTablet() {
     width: 50%;
-  });
+  }
 
-  .largePhone({
+  @include largePhone() {
     width: 100%;
-  });
+  }
 
   &.half {
     width: 50%;
 
-    .tablet({
+    @include tablet() {
       td {
         line-height: 2em;
       }
-    });
+    }
 
-    .smallTablet({
+    @include smallTablet() {
       width: 100% !important;
-    });
+    }
   }
 
   &.quarter {
     width: 25%;
 
-    .tablet({
+    @include tablet() {
       td {
         line-height: 2em;
       }
-    });
+    }
 
-    .smallTablet({
+    @include smallTablet() {
       width: 50% !important;
-    });
+    }
   }
 
   &.third {
     width: 33%;
 
-    .smallTablet({
+    @include smallTablet() {
       width: 50% !important;
-    });
+    }
   }
 
   &.twothirds {
     width: 67%;
 
-    .smallTablet({
+    @include smallTablet() {
       width: 100% !important;
-    });
+    }
   }
 
   &.threequarters {
     width: 75%;
 
-    .smallTablet({
+    @include smallTablet() {
       width: 100% !important;
-    });
+    }
   }
 
   &.full {
     width: 100%;
 
-    .smallTablet({
+    @include smallTablet() {
       width: 100% !important;
-    });
+    }
   }
 
-  .smallScreen({
+  @include smallScreen() {
     .axis.x {
       g.tick:nth-child(2n + 1) text {
         display: none;
       }
     }
-  });
+  }
 }
 
 .power-band {
@@ -314,17 +316,17 @@
 }
 
 .threshold {
-  stroke: @secondary-disabled !important;
-  fill: @secondary-disabled !important;
+  stroke: $secondary-disabled !important;
+  fill: $secondary-disabled !important;
 
   &.exceeded {
-    stroke: @warning !important;
-    fill: @warning !important;
+    stroke: $warning !important;
+    fill: $warning !important;
   }
 }
 
 #componentPriority {
-  .tablet({
+  @include tablet() {
     text.primary, text.warning, text.primary-bg, text.secondary {
       font-size: 0.8em;
     }
@@ -333,9 +335,9 @@
       vertical-align: middle;
       font-size: 1.6em;
     }
-  });
+  }
 
-  .medPhone({
+  @include medPhone() {
     .axis {
       font-size: 0.8em;
 
@@ -360,15 +362,16 @@
         width: 0 !important;
         color: transparent;
       }
+
       &:nth-child(3) {
         display: none;
       }
     }
-  });
+  }
 
-  .smallPhone({
+  @include smallPhone() {
     table tbody tr td {
-        padding: 0;
+      padding: 0;
 
       &:nth-child(6) {
         padding: 0;
@@ -377,8 +380,10 @@
         width: 0 !important;
         color: transparent;
 
-        u { display: none; }
+        u {
+          display: none;
+        }
       }
     }
-  });
+  }
 }

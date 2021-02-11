@@ -4,30 +4,33 @@
   font-size: 0.8em;
   padding: 0.25em 0.5em;
   display: inline-block;
-  background: @bgBlack;
+  background: $bgBlack;
   box-sizing: border-box;
-  border: 1px solid @primary;
-  color: @fg;
+  border: 1px solid $primary;
+  color: $fg;
   pointer-events: none;
-  .border-radius();
+  @include border-radius();
 
   &.n {
     margin-top: -6px;
     left: 50%;
-    .transform(translate3d(-50%, -100%, 0));
+    @include transform(translate3d(-50%, -100%, 0));
   }
+
   &.s {
     margin-top: 6px;
     left: 50%;
-    .transform(translate3d(-50%, 0, 0));
+    @include transform(translate3d(-50%, 0, 0));
   }
+
   &.e {
     margin-left: 6px;
-    .transform(translate3d(0, -50%, 0));
+    @include transform(translate3d(0, -50%, 0));
   }
+
   &.w {
     margin-left: -6px;
-    .transform(translate3d(-100%, -50%, 0));
+    @include transform(translate3d(-100%, -50%, 0));
   }
 }
 
@@ -37,29 +40,32 @@
   height: 0;
   position: absolute;
   z-index: 2;
-  .transform(translate3d(0, 0, 0)); // Fix iOS Safari 8 Scroll bug
+  @include transform(translate3d(0, 0, 0)); // Fix iOS Safari 8 Scroll bug
 
   &.n {
-    border-top: 6px solid @primary;
+    border-top: 6px solid $primary;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     margin-top: -6px;
     margin-left: -8px;
   }
+
   &.s {
-    border-bottom: 6px solid @primary;
+    border-bottom: 6px solid $primary;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     margin-left: -8px;
   }
+
   &.e {
-    border-right: 6px solid @primary;
+    border-right: 6px solid $primary;
     border-bottom: 8px solid transparent;
     border-top: 8px solid transparent;
     margin-top: -8px;
   }
+
   &.w {
-    border-left: 6px solid @primary;
+    border-left: 6px solid $primary;
     border-bottom: 8px solid transparent;
     border-top: 8px solid transparent;
     margin-top: -8px;

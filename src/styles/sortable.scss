@@ -1,8 +1,8 @@
 .sortable {
-  .user-select-none();
+  @include user-select-none();
   cursor: pointer;
 
   .no-touch &:hover {
-    color: @primary;
+    color: $primary;
   }
 }
