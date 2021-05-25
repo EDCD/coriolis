@@ -95,49 +95,49 @@ export function shipFromLoadoutJSON(json) {
           throw 'Unknown bulkheads "' + module.Item + '"';
         }
         ship.bulkheads.enabled = true;
-        if (module.Engineering) _addModifications(ship.bulkheads.m, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering) _addModifications(ship.bulkheads.m, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'powerplant':
         const powerplant = _moduleFromFdName(module.Item);
         ship.use(ship.standard[0], powerplant, true);
         ship.standard[0].enabled = module.On;
         ship.standard[0].priority = module.Priority;
-        if (module.Engineering) _addModifications(powerplant, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering) _addModifications(powerplant, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'mainengines':
         const thrusters = _moduleFromFdName(module.Item);
         ship.use(ship.standard[1], thrusters, true);
         ship.standard[1].enabled = module.On;
         ship.standard[1].priority = module.Priority;
-        if (module.Engineering) _addModifications(thrusters, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering) _addModifications(thrusters, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'frameshiftdrive':
         const frameshiftdrive = _moduleFromFdName(module.Item);
         ship.use(ship.standard[2], frameshiftdrive, true);
         ship.standard[2].enabled = module.On;
         ship.standard[2].priority = module.Priority;
-        if (module.Engineering)  _addModifications(frameshiftdrive, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering)  _addModifications(frameshiftdrive, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'lifesupport':
         const lifesupport = _moduleFromFdName(module.Item);
         ship.use(ship.standard[3], lifesupport, true);
         ship.standard[3].enabled = module.On === true;
         ship.standard[3].priority = module.Priority;
-        if (module.Engineering) _addModifications(lifesupport, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering) _addModifications(lifesupport, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'powerdistributor':
         const powerdistributor = _moduleFromFdName(module.Item);
         ship.use(ship.standard[4], powerdistributor, true);
         ship.standard[4].enabled = module.On;
         ship.standard[4].priority = module.Priority;
-        if (module.Engineering) _addModifications(powerdistributor, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering) _addModifications(powerdistributor, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'radar':
         const sensors = _moduleFromFdName(module.Item);
         ship.use(ship.standard[5], sensors, true);
         ship.standard[5].enabled = module.On;
         ship.standard[5].priority = module.Priority;
-        if (module.Engineering) _addModifications(sensors, module.Engineering.Modifiers, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
+        if (module.Engineering) _addModifications(sensors, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
       case 'fueltank':
         const fueltank = _moduleFromFdName(module.Item);
@@ -224,7 +224,7 @@ export function shipFromLoadoutJSON(json) {
 
   for (const i of modsToAdd) {
     if (i.json.Engineering) {
-      _addModifications(i.coriolisMod, i.json.Engineering.Modifiers, i.json.Engineering.BlueprintName, i.json.Engineering.Level, i.json.Engineering.ExperimentalEffect);
+      _addModifications(i.coriolisMod, i.json.Engineering.Quality, i.json.Engineering.BlueprintName, i.json.Engineering.Level, i.json.Engineering.ExperimentalEffect);
     }
   }
   // We don't have any information on it so guess it's priority 5 and disabled
@@ -240,13 +240,14 @@ export function shipFromLoadoutJSON(json) {
 /**
  * Add the modifications for a module
  * @param {Module} module the module
- * @param {Object} modifiers the modifiers
+ * @param {float} quality the quality of the blueprint
  * @param {Object} blueprint the blueprint of the modification
  * @param {Object} grade the grade of the modification
  * @param {Object} specialModifications special modification
  */
-function _addModifications(module, modifiers, blueprint, grade, specialModifications) {
-  if (!modifiers) return;
+function _addModifications(module, quality, blueprint, grade, specialModifications) {
+ 
+  
   let special;
   if (specialModifications) {
     if (specialModifications == 'special_plasma_slug') {
@@ -258,6 +259,7 @@ function _addModifications(module, modifiers, blueprint, grade, specialModificat
     }
     special = Modifications.specials[specialModifications];
   }
+  
   // Add the blueprint definition, grade and special
   if (blueprint) {
     module.blueprint = getBlueprint(blueprint, module);
@@ -268,36 +270,33 @@ function _addModifications(module, modifiers, blueprint, grade, specialModificat
       module.blueprint.special = special;
     }
   }
-  for (const i in modifiers) {
-    // Some special modifications
-    // Look up the modifiers to find what we need to do
-    const findMod = val => Object.keys(Modifications.modifierActions).find(elem => elem.toString().toLowerCase().replace(/(outfittingfieldtype_|persecond)/igm, '') === val.toString().toLowerCase().replace(/(outfittingfieldtype_|persecond)/igm, ''));
-    const modifierActions = Modifications.modifierActions[findMod(modifiers[i].Label)];
-    // TODO: Figure out how to scale this value.
-    if (!!modifiers[i].LessIsGood) {
 
-    }
-    let value = (modifiers[i].Value / modifiers[i].OriginalValue * 100 - 100)  * 100;
-    if (value === Infinity) {
-      value = modifiers[i].Value * 100;
-    }
-    if (modifiers[i].Label.search('DamageFalloffRange') >= 0) {
-      value = (modifiers[i].Value / module.range - 1) * 100;
-    }
-    if (modifiers[i].Label.search('Resistance') >= 0) {
-      value = (modifiers[i].Value * 100) - (modifiers[i].OriginalValue * 100);
-    }
-    if (modifiers[i].Label.search('ShieldMultiplier') >= 0 || modifiers[i].Label.search('DefenceModifierHealthMultiplier') >= 0) {
-      value = ((100 + modifiers[i].Value) / (100 + modifiers[i].OriginalValue) * 100 - 100)  * 100;
-    }
+  console.groupCollapsed(`--- ${module.name || module.ukName || module.symbol} ---`)
+  console.info('Module', module)
+  console.info('Blueprint', module.blueprint)  
+  console.group('Features')
+  //Get features from the blueprint
+  const features = module.blueprint.grades[Number(grade)].features
+  Object.keys(features).map(featureKey => {
+    console.group(featureKey)
+    console.info('Range', features[featureKey])
+    console.info('Blueprint Quality', `${(quality*100)}%`)
+    
+    /*
+      Here we compute the value to use for this feature based on the range and quality. 
+      We do this by finding the difference between the low and high ends of the range.
+      This gives us the maximum increase at 100% quality. Then we multiply this number by
+      the quality to determine the actual increase. Lastly we add the actual increase to 
+      the low end of the range back in to determine the final value.
 
-    // Carry out the required changes
-    for (const action in modifierActions) {
-      if (isNaN(modifierActions[action])) {
-        module.setModValue(action, modifierActions[action]);
-      } else {
-        module.setModValue(action, value, true);
-      }
-    }
-  }
+      Value = ((High End of Range - Low End of Range) * Quality) + Low End of Range
+    */
+    let value = (((features[featureKey][1] * 100) - (features[featureKey][0] * 100)  * Number(quality)) + (features[featureKey][0] * 100)) * 100
+    console.info('Computed Value', value)
+    console.groupEnd(featureKey)
+    module.setModValue(featureKey, value, false);    
+  })
+  console.groupEnd('Features')
+
+  console.groupEnd(`--- ${module.name} ---`)
 }
