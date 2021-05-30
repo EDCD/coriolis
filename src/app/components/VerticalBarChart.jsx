@@ -1,5 +1,6 @@
 import TranslatedComponent from './TranslatedComponent';
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import ContainerDimensions from 'react-container-dimensions';
 import { BarChart, Bar, XAxis, YAxis, LabelList } from 'recharts';
 

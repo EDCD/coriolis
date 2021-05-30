@@ -1,5 +1,4 @@
 import React from 'react';
-// import Perf from 'react-addons-perf';
 import { Ships } from 'coriolis-data/dist';
 import cn from 'classnames';
 import Page from './Page';
@@ -58,7 +57,6 @@ export default class OutfittingPage extends Page {
    */
   constructor(props, context) {
     super(props, context);
-    // window.Perf = Perf;
     this.state = this._initState(props, context);
     this._keyDown = this._keyDown.bind(this);
     this._exportBuild = this._exportBuild.bind(this);
