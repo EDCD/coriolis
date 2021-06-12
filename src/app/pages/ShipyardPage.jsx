@@ -544,7 +544,7 @@ export default class ShipyardPage extends Page {
                   </th>
                   <th
                     className="sortable"
-                    onMouseEnter={termtip.bind(null, 'power distriubtor')}
+                    onMouseEnter={termtip.bind(null, 'power distributor')}
                     onMouseLeave={hide}
                     onClick={sortShips('standard', 4)}
                   >
@@ -615,7 +615,7 @@ export default class ShipyardPage extends Page {
           </div>
         </div>
         <div className="table-tools" >
-          <label><input type="checkbox" checked={this.state.groupCompared} onClick={() => this._toggleGroupCompared()}/>Group highlighted ships</label>
+          <label><input type="checkbox" checked={this.state.groupCompared} onClick={() => this._toggleGroupCompared()}/>{translate('Group highlighted ships')}</label>
         </div>
         </div>
       </div>

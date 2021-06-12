@@ -436,7 +436,7 @@ export default class ModificationsMenu extends TranslatedComponent {
     let specialLabel;
     let specialTt;
     if (m.blueprint && m.blueprint.special) {
-      specialLabel = m.blueprint.special.name;
+      specialLabel = translate(m.blueprint.special.name);
       specialTt = specialToolTip(translate, m.blueprint.grades[m.blueprint.grade], m.grp, m, m.blueprint.special.edname);
     } else {
       specialLabel = translate('PHRASE_SELECT_SPECIAL');
