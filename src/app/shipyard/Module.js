@@ -839,12 +839,30 @@ export default class Module {
   }
 
   /**
+   * Get the SDPE for this module
+   * @param {Boolean} [modified=true] Whether to take modifications into account
+   * @return {Number} The SDPE of this module
+   */
+  getSDpe(modified = true) {
+    return this.getDpe(modified) * this.getSustainedFactor(modified);
+  }
+
+  /**
    * Get the SDPS for this module
    * @param {Boolean} [modified=true] Whether to take modifications into account
    * @return {Number} The SDPS of this module
    */
   getSDps(modified = true) {
     return this.getDps(modified) * this.getSustainedFactor(modified);
+  }
+
+  /**
+   * Get the SEPS for this module
+   * @param {Boolean} [modified=true] Whether to take modifications into account
+   * @return {Number} The SEPS of this module
+   */
+  getSEps(modified = true) {
+    return this.getEps(modified) * this.getSustainedFactor(modified);
   }
 
   /**

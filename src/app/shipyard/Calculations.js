@@ -854,11 +854,12 @@ export function _weaponSustainedDps(m, opponent, opponentShields, opponentArmour
     }
   };
 
-  // EPS
-  weapon.eps = m.getClip() ?  (m.getClip() * m.getEps() / m.getRoF()) / ((m.getClip() / m.getRoF()) + m.getReload()) : m.getEps();
 
   // Initial sustained DPS
   let sDps = m.getSDps();
+
+  // Initial sustained EPS
+  weapon.eps = m.getSEps();  
 
   // Take fall-off in to account
   const falloff = m.getFalloff();
@@ -918,8 +919,8 @@ export function _weaponSustainedDps(m, opponent, opponentShields, opponentArmour
   weapon.effectiveness.shields.total = weapon.effectiveness.shields.range * weapon.effectiveness.shields.sys * weapon.effectiveness.shields.resistance;
   weapon.effectiveness.armour.total = weapon.effectiveness.armour.range * weapon.effectiveness.armour.resistance * weapon.effectiveness.armour.hardness;
 
-  weapon.effectiveness.shields.dpe = weapon.damage.shields.total / m.getEps() / m.getSustainedFactor();
-  weapon.effectiveness.armour.dpe =  weapon.damage.armour.total / m.getEps() / m.getSustainedFactor();
+  weapon.effectiveness.shields.dpe = weapon.damage.shields.total / m.getSEps();
+  weapon.effectiveness.armour.dpe =  weapon.damage.armour.total / m.getSEps();
 
 
   return weapon;
@@ -937,7 +938,7 @@ export function timeToDrainWep(ship, wep) {
   for (let slotNum in ship.hardpoints) {
     const slot = ship.hardpoints[slotNum];
     if (slot.maxClass > 0 && slot.m && slot.enabled && slot.type === 'WEP' && slot.m.getDps()) {
-      totalSEps += slot.m.getClip() ? (slot.m.getClip() * slot.m.getEps() / slot.m.getRoF()) / ((slot.m.getClip() / slot.m.getRoF()) + slot.m.getReload()) : slot.m.getEps();
+	totalSEps += slot.m.getSEps();
     }
   }
 
