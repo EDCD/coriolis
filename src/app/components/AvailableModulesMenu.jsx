@@ -20,6 +20,7 @@ const GRPCAT = {
   'cc': 'limpet controllers',
   'fx': 'limpet controllers',
   'hb': 'limpet controllers',
+  'mlc': 'limpet controllers',
   'pc': 'limpet controllers',
   'rpl': 'limpet controllers',
   'pce': 'passenger cabins',
@@ -92,7 +93,7 @@ const CATEGORIES = {
   'fi': ['fi'],
   'fuel': ['ft', 'fs'],
   'hangars': ['fh', 'pv'],
-  'limpet controllers': ['cc', 'fx', 'hb', 'pc', 'rpl'],
+  'limpet controllers': ['cc', 'fx', 'hb', 'pc', 'rpl', 'mlc'],
   'passenger cabins': ['pce', 'pci', 'pcm', 'pcq'],
   'rf': ['rf'],
   'shields': ['sg', 'bsg', 'psg', 'scb'],
@@ -515,6 +516,15 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       if (a.mount === 'F' || (a.mount === 'G' && b.mount === 'T')) {
         return -1;
       } else {
+        return 1;
+      }
+    }
+    // Sort multi limpet controllers by name
+    if (a.grp === 'mlc') {
+      if (a.name[0] <= b.name[0]) {
+        return -1;
+      }
+      if (a.name[0] > b.name[0]) {
         return 1;
       }
     }
