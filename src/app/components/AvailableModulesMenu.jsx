@@ -4,7 +4,7 @@ import * as ModuleUtils from '../shipyard/ModuleUtils';
 import TranslatedComponent from './TranslatedComponent';
 import { stopCtxPropagation } from '../utils/UtilityFunctions';
 import cn from 'classnames';
-import { MountFixed, MountGimballed, MountTurret } from './SvgIcons';
+import { CoriolisLogo, MountFixed, MountGimballed, MountTurret } from './SvgIcons';
 import FuzzySearch from 'react-fuzzy';
 
 const PRESS_THRESHOLD = 500; // mouse/touch down threshold
@@ -84,6 +84,8 @@ const GRPCAT = {
   // Assists
   'dc': 'flight assists',
   'sua': 'flight assists',
+  // Stabilizers
+  'ews': 'weapon stabilizers',
 };
 // Order here is the order in which items will be shown in the modules menu
 const CATEGORIES = {
@@ -107,11 +109,12 @@ const CATEGORIES = {
   // Utilities
   'sb': ['sb'],
   'hs': ['hs'],
+  'csl': ['csl'],
   'defence': ['ch', 'po', 'ec'],
   'scanners': ['sc', 'ss', 'cs', 'kw', 'ws'], // Overloaded with internal scanners
   // Experimental
   'experimental': ['axmc', 'axmr', 'rfl', 'tbrfl', 'tbsc', 'tbem', 'xs', 'sfn', 'rcpl', 'dtl', 'rsl', 'mahr',],
-
+  'weapon stabilizers': ['ews'],
   // Guardian
   'guardian': ['gpp', 'gpd', 'gpc', 'ggc', 'gsrp', 'gfsb', 'ghrp', 'gmrp', 'gsc'],
 
@@ -251,6 +254,24 @@ export default class AvailableModulesMenu extends TranslatedComponent {
   }
 
   /**
+   * Return Is expiremental capacity reached
+   * @return {boolean}      Is experimental capacity reached
+   */
+  _experimentalCapacityReached() {
+    const ship = this.props.ship;
+    const ews = ship.internal.filter(o => o.m && o.m.grp === 'ews');
+    let expCap;
+
+    if(ews.length < 1){
+      expCap = 4;
+    } else{
+      expCap = ews[0].m.class == 3 ? 5 : 6;
+    }
+
+    return expCap <= this.props.ship.hardpoints.filter(o => o.m && o.m.experimental).length;
+  }
+
+  /**
    * Generate React Components for Module Group
    * @param  {Ship} ship            Ship the selection is for
    * @param  {Function} translate   Translate function
@@ -286,7 +307,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       // If the mounted module is experimental as well, we can replace it so
       // the maximum does not apply
       } else if (m.experimental && (!mountedModule || !mountedModule.experimental)) {
-        disabled = 4 <= ship.hardpoints.filter(o => o.m && o.m.experimental).length;
+        disabled = this._experimentalCapacityReached();
       } else if (m.grp === 'mlc' && (!mountedModule || mountedModule.grp !== 'mlc')) {
         disabled = 1 <= ship.internal.filter(o => o.m && o.m.grp === 'mlc').length;
       }
@@ -385,6 +406,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     if (this.props.modules instanceof Array) {
       return;
     }
+    const mountedModule = this.props.m;
     return (
       <FuzzySearch
         list={this.state.fuzzy}
@@ -396,11 +418,20 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         onSelect={e => this.props.onSelect.bind(null, e.m)()}
         resultsTemplate={(props, state, styles, clickHandler) => {
           return state.results.map((val, i) => {
+            let disabled;
+
+            if(val.m.experimental && (!mountedModule || !mountedModule.experimental)) {
+              disabled = this._experimentalCapacityReached();
+            } else{
+              disabled = false;
+            }
+            const handler = disabled ? null : () => clickHandler(i);
+
             return (
               <div
                 key={i}
-                className={'lc'}
-                onClick={() => clickHandler(i)}
+                className={cn('lc', {disabled})}
+                onClick={handler}
               >
                 {val.name}
               </div>
