@@ -41,6 +41,12 @@ export default class ModuleSet {
 
     this.standard[0] = filter(stnd.pp, maxStandardArr[0], 0, mass);  // Power Plant
     this.standard[2] = filter(stnd.fsd, maxStandardArr[2], 0, mass);  // FSD
+    for (let n = this.standard[2].length - 1; n >= 0; n--) {
+      const element = this.standard[2][n];
+      if (element.hasOwnProperty("name") && element.class < maxStandardArr[2]) {
+          this.standard[2].splice(n, 1);  // SCO Modules
+      }
+  }
     this.standard[4] = filter(stnd.pd, maxStandardArr[4], 0, mass);  // Power Distributor
     this.standard[6] = filter(stnd.ft, maxStandardArr[6], 0, mass);  // Fuel Tank
     // Thrusters, filter modules by class only (to show full list of ratings for that class)
