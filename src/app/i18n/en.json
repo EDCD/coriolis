@@ -82,7 +82,6 @@
     "TT_SUMMARY_UNLADEN_TOTAL_JUMP": "Farthest possible range with no cargo, a full fuel tank, and jumping as far as possible each time",
     "TT_SUMMARY_LADEN_TOTAL_JUMP": "Farthest possible range with full cargo, a full fuel tank, and jumping as far as possible each time",
     "HELP_MODIFICATIONS_MENU": "Click on a number to enter a new value, or drag along the bar for small changes",
-    "PHRASE_FAIL_EDENGINEER": "Failed to send to EDEngineer (Launch EDEngineer and make sure the API is started then refresh the page.)",
     "PHRASE_ENSURE_EDOMH": "Ensure EDO Material Helper is installed and registered to handle edomh:// urls, else this button will do nothing!",
     "PHRASE_FIREFOX_EDENGINEER": "Sending to EDEngineer is not compatible with Firefox's security settings. Please try again with Chrome.",
     "PHRASE_FAILED_TO_FIND_EDENGINEER": "Failed to find ED Engineer API. Please ensure it is running and try again.",
