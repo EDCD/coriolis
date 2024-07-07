@@ -42,13 +42,41 @@
     margin: 0;
   }
 
+  h4 {
+    text-transform: uppercase;
+    font-family: @fStandard;
+    font-weight: normal;
+    font-size: 1em;
+    margin: 1em;
+    color: @warning;
+  }
+
   p {
     clear: left;
-    padding: 30, 0, 0, 0;
+    padding: 30, 0, 10, 0;
   }
 
   button {
-    margin: 100px, 0;
+    clear: bottom;
+    margin: 10px;
+  }
+
+  hr {
+    clear: both;
+    margin: 15px, 10px, 15px, 10px;
+    padding: top, 5;
+  }
+
+  select {
+    clear: bottom;
+    margin: 10px;
+    width: 50%;
+  }
+
+  label {
+    clear: bottom;
+    margin: 20px;
+    color: @primary;
   }
 }
 
@@ -64,7 +92,7 @@ textarea {
     min-height: 10em;
     resize: vertical;
     user-select: text;
-    margin:2em 0;
+    margin:1em 0;
   }
 }
 
