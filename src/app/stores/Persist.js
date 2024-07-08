@@ -108,9 +108,9 @@ export class Persist extends EventEmitter {
     this.matsPerGrade = matsPerGrade || {
       1: 2,
       2: 2,
-      3: 4,
+      3: 3,
       4: 4,
-      5: 10
+      5: 5
     };
     this.cmdrName = cmdrName || { selected: '', cmdrs: [] };
     this.tooltipsEnabled = tips === null ? true : tips;

@@ -42,32 +42,66 @@
     margin: 0;
   }
 
+  h4 {
+    text-transform: uppercase;
+    font-family: @fStandard;
+    font-weight: normal;
+    font-size: 1em;
+    margin: 1em;
+    color: @warning;
+  }
+
   p {
-    clear: left;
-    padding: 30, 0, 0, 0;
+    margin: 1em;
+    text-wrap: pretty;
   }
 
   button {
-    margin: 100px, 0;
+    clear: bottom;
+    margin: 5px;
   }
-}
 
-textarea {
-  background: @primary-bg;
-  border: none;
-  outline: none;
-  color: @primary-disabled;
-
-  &.json {
-    display:block;
-    width:100%;
-    min-height: 10em;
-    resize: vertical;
-    user-select: text;
-    margin:2em 0;
+  hr {
+    clear: both;
+    margin: 15px, 10px, 15px, 10px;
+    padding: top, 5;
   }
-}
 
-.dismiss {
-  background-color: @primary-bg;
+  select {
+    clear: bottom;
+    margin: 10px;
+    width: 50%;
+  }
+
+  label {
+    clear: bottom;
+    margin: 20px;
+    color: @primary;
+  }
+
+  input {
+    width: 6%;
+    margin: 5px;
+    text-align: center;
+  }
+
+  textarea {
+    background: @primary-bg;
+    border: none;
+    outline: none;
+    color: @primary-disabled;
+
+    &.json {
+      display:block;
+      width:100%;
+      min-height: 10em;
+      resize: vertical;
+      user-select: text;
+      margin:1em 0;
+    }
+  }
+
+  .dismiss {
+    background-color: @primary-bg;
+  }
 }

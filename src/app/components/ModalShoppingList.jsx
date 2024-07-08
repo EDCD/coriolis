@@ -355,40 +355,46 @@ export default class ModalShoppingList extends TranslatedComponent {
     this.sendToEDEng = this.sendToEDEng.bind(this);
     this.sendToEDOMH = this.sendToEDOMH.bind(this);
     return <div className='modal' onClick={ (e) => e.stopPropagation() }>
-      <h2>{translate('PHRASE_SHOPPING_MATS')}</h2>
-      <p>{translate('PHRASE_DIFFERENT_ROLLS')}</p>
-      {/* <label>{translate('Grade 1 rolls ')}</label>
-      <input id={1} type={'number'} min={0} defaultValue={this.state.matsPerGrade[1]} onChange={this.changeHandler} />
-      <br/>
-      <label>{translate('Grade 2 rolls ')}</label>
-      <input id={2} type={'number'} min={0} defaultValue={this.state.matsPerGrade[2]} onChange={this.changeHandler} />
-      <br/>
-      <label>{translate('Grade 3 rolls ')}</label>
-      <input id={3} type={'number'} min={0} value={this.state.matsPerGrade[3]} onChange={this.changeHandler} />
-      <br/>
-      <label>{translate('Grade 4 rolls ')}</label>
-      <input id={4} type={'number'} min={0} value={this.state.matsPerGrade[4]} onChange={this.changeHandler} />
-      <br/>
-      <label>{translate('Grade 5 rolls ')}</label>
-      <input id={5} type={'number'} min={0} value={this.state.matsPerGrade[5]} onChange={this.changeHandler} /> */}
+      <h3>{translate('PHRASE_SHOPPING_MATS')}</h3>
       <div>
+      <p>{translate('PHRASE_DIFFERENT_ROLLS')}</p>
+        <label>{translate('G1')}</label>
+        <input id={1} type={'number'} min={0} defaultValue={this.state.matsPerGrade[1]} onChange={this.changeHandler} />
+        &nbsp;|&nbsp;<label>{translate('G2')}</label>
+        <input id={2} type={'number'} min={0} defaultValue={this.state.matsPerGrade[2]} onChange={this.changeHandler} />
+        &nbsp;|&nbsp;<label>{translate('G3')}</label>
+        <input id={3} type={'number'} min={0} value={this.state.matsPerGrade[3]} onChange={this.changeHandler} />
+        &nbsp;|&nbsp;<label>{translate('G4')}</label>
+        <input id={4} type={'number'} min={0} value={this.state.matsPerGrade[4]} onChange={this.changeHandler} />
+        &nbsp;|&nbsp;<label>{translate('G5')}</label>
+        <input id={5} type={'number'} min={0} value={this.state.matsPerGrade[5]} onChange={this.changeHandler} />
+      </div>
+      <div>
+        <p>{translate('PHRASE_ALL_MODULES_ALL_ROLLS')}</p>
         <textarea className='cb json' readOnly value={this.state.matsList} />
+        <p>{translate('PHRASE_FOR_FINER_CONTROL')}</p>
       </div>
       <p hidden={compatible} id={'browserbad'} className={'l'}>{translate('PHRASE_FIREFOX_EDENGINEER')}</p>
       <p hidden={!this.state.failed} id={'failed'} className={'l'}>{translate('PHRASE_FAILED_TO_FIND_EDENGINEER')}</p>
       <div id='edengineer' display={this.display} hidden={!!this.state.failed && !compatible}>
-        <label hidden={!compatible || !!this.state.failed} className={'l cap'}>{translate('CMDR Name')}</label>
-        <br/>
-        <select hidden={!compatible || !!this.state.failed} className={'cmdr-select l cap'} onChange={this.cmdrChangeHandler} defaultValue={this.state.cmdrName}>
+      <hr />
+        <h3>ED Engineer</h3>
+        <h4 hidden={compatible} id={'browserbad'} className={'l'}>{translate('PHRASE_FIREFOX_EDENGINEER')}</h4>
+        <h4 hidden={!this.state.failed} id={'failed'} className={'l'}>{translate('PHRASE_FAILED_TO_FIND_EDENGINEER')}</h4>
+        <label for='cmdr-select' hidden={!!this.state.failed || !compatible} className={'l cap'}>{translate('CMDR Name:')}</label>
+        <select id='cmdr-select' hidden={!!this.state.failed || !compatible} className={'cmdr-select l cap'} onChange={this.cmdrChangeHandler} defaultValue={this.state.cmdrName}>
           {this.state.cmdrs.map(e => <option key={e}>{e}</option>)}
         </select>
         <br/>
-          <button className={'l cb dismiss cap'} hidden={!this.state.failed} disabled={!!this.state.failed || !compatible} onClick={this.sendToEDEng}>{translate('Send to EDEngineer')}</button>
+          <button className={'l cb dismiss cap'} disabled={!!this.state.failed || !compatible} onClick={this.sendToEDEng}>{translate('Send to EDEngineer')}</button>
       </div>
       <div id='edomh'>
+      <hr />
+        <h3>ED Odyssey Materials Helper</h3>
         <p>{translate('PHRASE_ENSURE_EDOMH')}</p>
-        <button style={{marginTop: 5}} className={'l cb dismiss cap'} onClick={this.sendToEDOMH}>{translate('Send to EDOMH')}</button>
+        <button className={'l cb dismiss cap'} onClick={this.sendToEDOMH}>{translate('Send to EDOMH')}</button>
       </div>
+      <hr />
 
       <button className={'r dismiss cap'} onClick={this.context.hideModal}>{translate('close')}</button>
     </div>;
