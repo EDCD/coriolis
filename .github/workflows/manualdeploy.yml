@@ -1,0 +1,46 @@
+# This is a basic manual deployment workflow triggered by pushes to the beta and live branches.
+
+name: Manual-Deploy 'beta/live' Branch to beta.coliolis.io or coriolis.io
+
+# Controls when the action will run. Workflow runs when the alpha branch receives a push event
+on:
+  workflow_dispatch:
+    # Get the target branch name
+    inputs:
+      branch:
+        type: choice
+        description: 'Branch Name'
+        required: true
+        default: 'beta'
+        # Only allow beta or live branches
+        options:
+          - beta
+          - live
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Download the code
+        shell: bash
+        run: |
+          rm -Rf ./coriolis
+          rm -Rf ./coriolis-data
+          git clone https://github.com/Brighter-Applications/coriolis.git --single-branch --branch ${{ github.events.inputs.branch }}
+          git clone https://github.com/Brighter-Applications/coriolis-data.git --single-branch --branch ${{ github.events.inputs.branch }}
+      - name: Build the code
+        shell: bash
+        run: |
+          cd coriolis-data
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          npm install 2>&1
+          npm start
+          cd ../coriolis
+          npm install 2>&1
+          npm run build 2>&1
+      - name: Deploy the code
+        shell: bash
+        run: |
+          cd ../coriolis
+          if [ ${{ github.events.inputs.branch }} == "beta" ]; then sudo rm -Rf /var/www/beta.coriolis.io/* && sudo -u www-data cp -r ./build/* /var/www/beta.coriolis.io/; else sudo rm -Rf /var/www/coriolis.io/* && sudo -u www-data cp -r ./build/* /var/www/coriolis.io/; fi

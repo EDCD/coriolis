@@ -369,13 +369,13 @@ export default class ModalShoppingList extends TranslatedComponent {
         &nbsp;|&nbsp;<label>{translate('G5')}</label>
         <input id={5} type={'number'} min={0} value={this.state.matsPerGrade[5]} onChange={this.changeHandler} />
       </div>
+
       <div>
         <p>{translate('PHRASE_ALL_MODULES_ALL_ROLLS')}</p>
         <textarea className='cb json' readOnly value={this.state.matsList} />
         <p>{translate('PHRASE_FOR_FINER_CONTROL')}</p>
       </div>
-      <p hidden={compatible} id={'browserbad'} className={'l'}>{translate('PHRASE_FIREFOX_EDENGINEER')}</p>
-      <p hidden={!this.state.failed} id={'failed'} className={'l'}>{translate('PHRASE_FAILED_TO_FIND_EDENGINEER')}</p>
+
       <div id='edengineer' display={this.display} hidden={!!this.state.failed && !compatible}>
       <hr />
         <h3>ED Engineer</h3>
