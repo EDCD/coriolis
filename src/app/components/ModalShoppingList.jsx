@@ -359,15 +359,15 @@ export default class ModalShoppingList extends TranslatedComponent {
       <div>
       <p>{translate('PHRASE_DIFFERENT_ROLLS')}</p>
         <label>{translate('G1')}</label>
-        <input id={1} type={'number'} min={0} defaultValue={this.state.matsPerGrade[1]} onChange={this.changeHandler} />
+        <input className={'groll'} id={1} type={'number'} min={0} defaultValue={this.state.matsPerGrade[1]} onChange={this.changeHandler} />
         &nbsp;|&nbsp;<label>{translate('G2')}</label>
-        <input id={2} type={'number'} min={0} defaultValue={this.state.matsPerGrade[2]} onChange={this.changeHandler} />
+        <input className={'groll'} id={2} type={'number'} min={0} defaultValue={this.state.matsPerGrade[2]} onChange={this.changeHandler} />
         &nbsp;|&nbsp;<label>{translate('G3')}</label>
-        <input id={3} type={'number'} min={0} value={this.state.matsPerGrade[3]} onChange={this.changeHandler} />
+        <input className={'groll'} id={3} type={'number'} min={0} value={this.state.matsPerGrade[3]} onChange={this.changeHandler} />
         &nbsp;|&nbsp;<label>{translate('G4')}</label>
-        <input id={4} type={'number'} min={0} value={this.state.matsPerGrade[4]} onChange={this.changeHandler} />
+        <input className={'groll'} id={4} type={'number'} min={0} value={this.state.matsPerGrade[4]} onChange={this.changeHandler} />
         &nbsp;|&nbsp;<label>{translate('G5')}</label>
-        <input id={5} type={'number'} min={0} value={this.state.matsPerGrade[5]} onChange={this.changeHandler} />
+        <input className={'groll'} id={5} type={'number'} min={0} value={this.state.matsPerGrade[5]} onChange={this.changeHandler} />
       </div>
 
       <div>

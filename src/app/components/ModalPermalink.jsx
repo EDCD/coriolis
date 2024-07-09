@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import TranslatedComponent from './TranslatedComponent';
 import ShortenUrl from '../utils/ShortenUrl';
@@ -35,6 +36,18 @@ export default class ModalPermalink extends TranslatedComponent {
   }
 
   /**
+   * Copy the shortened URL to the clipboard
+   * @param  {Event} e Click event
+   * @return {void}
+   */
+  copyShortLink() {
+    let copyText = document.getElementById("shortenedUrl");
+    // Copy the text inside the shortendUrl input to the clipboard
+    copyText.select();
+    document.execCommand("copy");
+  }
+
+  /**
    * Render the modal
    * @return {React.Component} Modal Content
    */
@@ -42,15 +55,17 @@ export default class ModalPermalink extends TranslatedComponent {
     let translate = this.context.language.translate;
 
     return <div className='modal' onClick={ (e) => e.stopPropagation() }>
-      <h2>{translate('permalink')}</h2>
+      <h3>{translate('permalink')}</h3>
       <br/>
       <h3>{translate('URL')}</h3>
       <input value={this.props.url} size={40} readOnly onFocus={ (e) => e.target.select() }/>
       <br/><br/>
       <h3 >{translate('shortened')}</h3>
-      <input value={this.state.shortenedUrl} readOnly size={25} onFocus={ (e) => e.target.select() }/>
+      <input id={'shortenedUrl'} value={this.state.shortenedUrl} readOnly size={25} onFocus={ (e) => e.target.select() }/><button className={'cb dismiss cap'} onClick={this.copyShortLink}>{translate('copy to clipboard')}</button>
       <br/><br/>
-      <p>s.orbis.zone is the new URL shortener domain, old eddp.co urls are considered end of life and could go down at any moment. Sorry for any inconvenience.</p>
+      <hr />
+      <p>s.orbis.zone is the URL shortener domain. These links should persist indefinitely going forward. If for some reason there is a problem with the link shortening process, please report it in the EDCD Discord Server.</p>
+      <hr />
       <button className={'r dismiss cap'} onClick={this.context.hideModal}>{translate('close')}</button>
     </div>;
   }
