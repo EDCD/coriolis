@@ -12,6 +12,7 @@ import { STATS_FORMATTING } from '../shipyard/StatsFormatting';
  * @returns {Object}              The react components
  */
 export function specialToolTip(translate, blueprint, grp, m, specialName) {
+  const description = [];
   const effects = [];
   if (!blueprint || !blueprint.features) {
     return undefined;
@@ -19,6 +20,16 @@ export function specialToolTip(translate, blueprint, grp, m, specialName) {
   if (m) {
     // We also add in any benefits from specials that aren't covered above
     if (m.blueprint) {
+      if (specialName) {
+        if (Modifications.specials[specialName].description) {
+          description.push(
+            <div className={'success'} style={{ maxWidth: 350, padding: 5, marginBottom: 10 }}>
+              {Modifications.specials[specialName].description}
+            </div>
+          )
+        }
+
+      }
       for (const feature in Modifications.modifierActions[specialName]) {
         // if (!blueprint.features[feature] && !m.mods.feature) {
         const featureDef = Modifications.modifications[feature];
@@ -53,6 +64,7 @@ export function specialToolTip(translate, blueprint, grp, m, specialName) {
 
   return (
     <div>
+      {description}
       <table width='100%'>
         <tbody>
           {effects}
