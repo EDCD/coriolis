@@ -109,11 +109,11 @@ export default class ShipSummaryTable extends TranslatedComponent {
                 <td onMouseEnter={termtip.bind(null, boostTooltip, { cap: 0 })} onMouseLeave={hide}>{ canBoost ? <span>{int(ship.calcSpeed(4, ship.fuelCapacity, 0, true))}{u['m/s']}</span> : <span className='warning'>0 <Warning/></span> }</td>
                 <td>{distBoost !== 'No Boost' ? formats.time(distBoost) : 'No Boost'}</td>
                 <td>{ship.boostInt && ship.boostInt !== 'undefined' ? formats.time(ship.boostInt) : 0 }</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_MAX_SINGLE_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{ f2(Calc.jumpRange(ship.unladenMass - ship.fuelCapacity + ship.standard[2].m.getMaxFuelPerJump(), ship.standard[2].m, ship.standard[2].m.getMaxFuelPerJump(), ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_UNLADEN_SINGLE_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.jumpRange(ship.unladenMass, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_LADEN_SINGLE_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.jumpRange(ship.unladenMass + ship.cargoCapacity, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_MAX_SINGLE_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{ f2(Calc.jumpRange(ship.outfittedMass + ship.standard[2].m.getMaxFuelPerJump(), ship.standard[2].m, ship.standard[2].m.getMaxFuelPerJump(), ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_UNLADEN_SINGLE_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.jumpRange(ship.unladenMass + ship.reserveFuelCapacity, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_LADEN_SINGLE_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.jumpRange(ship.ladenMass, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
                 <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_UNLADEN_TOTAL_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.totalJumpRange(ship.unladenMass, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_LADEN_TOTAL_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.totalJumpRange(ship.unladenMass + ship.cargoCapacity, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_LADEN_TOTAL_JUMP', { cap: 0 })} onMouseLeave={hide}>{ canJump ? <span>{f2(Calc.totalJumpRange(ship.ladenMass, ship.standard[2].m, ship.fuelCapacity, ship))}{u.LY}</span> : <span className='warning'>0 <Warning/></span> }</td>
                 <td className={sgClassNames} onMouseEnter={termtip.bind(null, sgTooltip, { cap: 0 })} onMouseLeave={hide}>{int(ship.shield)}{u.MJ}</td>
                 <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_INTEGRITY', { cap: 0 })} onMouseLeave={hide}>{int(ship.armour)}</td>
                 <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_DPS', { cap: 0 })} onMouseLeave={hide}>{f1(ship.totalDps)}</td>
@@ -123,9 +123,9 @@ export default class ShipSummaryTable extends TranslatedComponent {
                 <td>{round(ship.cargoCapacity)}{u.T}</td>
                 <td>{ship.passengerCapacity}</td>
                 <td>{round(ship.fuelCapacity)}{u.T}</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_HULL_MASS', { cap: 0 })} onMouseLeave={hide}>{ship.hullMass}{u.T}</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_UNLADEN_MASS', { cap: 0 })} onMouseLeave={hide}>{int(ship.unladenMass)}{u.T}</td>
-                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_LADEN_MASS', { cap: 0 })} onMouseLeave={hide}>{int(ship.ladenMass)}{u.T}</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_HULL_MASS', { cap: 0 })} onMouseLeave={hide}>{int(ship.hullMass)}{u.T}</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_UNLADEN_MASS', { cap: 0 })} onMouseLeave={hide}>{(ship.unladenMass + ship.reserveFuelCapacity).toFixed(1)}{u.T}</td>
+                <td onMouseEnter={termtip.bind(null, 'TT_SUMMARY_LADEN_MASS', { cap: 0 })} onMouseLeave={hide}>{(ship.ladenMass + ship.reserveFuelCapacity).toFixed(1)}{u.T}</td>
                 <td>{int(ship.hardness)}</td>
                 <td>{ship.crew}</td>
                 <td>{ship.masslock}</td>

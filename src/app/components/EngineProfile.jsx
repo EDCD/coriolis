@@ -71,7 +71,7 @@ export default class EngineProfile extends TranslatedComponent {
     const thrusters = ship.standard[1].m;
     const minMass = ship.calcLowestPossibleMass({ th: thrusters });
     const maxMass = thrusters.getMaxMass();
-    const mass = ship.unladenMass + fuel + cargo;
+    const mass = ship.outfittedMass + fuel + cargo;
     const minSpeed = Calc.calcSpeed(maxMass, ship.speed, thrusters, ship.pipSpeed, 0, ship.boost / ship.speed, false);
     const maxSpeed = Calc.calcSpeed(minMass, ship.speed, thrusters, ship.pipSpeed, 4, ship.boost / ship.speed, true);
     // Add a mark at our current mass
