@@ -129,7 +129,7 @@ export default class Ship {
    */
   canThrust(cargo, fuel) {
     return this.getSlotStatus(this.standard[1]) == 3 &&   // Thrusters are powered
-        this.unladenMass + cargo + fuel < this.standard[1].m.getMaxMass(); // Max mass not exceeded
+        this.outfittedMass + cargo + fuel < this.standard[1].m.getMaxMass(); // Max mass not exceeded
   }
 
   /**
@@ -164,7 +164,7 @@ export default class Ship {
   calcUnladenRange(massDelta, fuel, fsd) {
     fsd = fsd || this.standard[2].m;
     let fsdMaxFuelPerJump = fsd instanceof Module ? fsd.getMaxFuelPerJump() : fsd.maxfuel;
-    return Calc.jumpRange(this.unladenMass + (massDelta || 0) +  Math.min(fsdMaxFuelPerJump, fuel || this.fuelCapacity), fsd || this.standard[2].m, fuel, this);
+    return Calc.jumpRange(this.outfittedMass + (massDelta || 0) + Math.min(fsdMaxFuelPerJump, fuel || this.fuelCapacity), fsd || this.standard[2].m, fuel, this);
   }
 
   /**
@@ -174,7 +174,7 @@ export default class Ship {
    * @return {array}       Speed at pip settings
    */
   calcSpeedsWith(fuel, cargo) {
-    return Calc.speed(this.unladenMass + fuel + cargo, this.speed, this.standard[1].m, this.pipSpeed);
+    return Calc.speed(this.outfittedMass + fuel + cargo, this.speed, this.standard[1].m, this.pipSpeed);
   }
 
   /**
@@ -186,7 +186,7 @@ export default class Ship {
    * @return {Number}        Speed
    */
   calcSpeed(eng, fuel, cargo, boost) {
-    return Calc.calcSpeed(this.unladenMass + fuel + cargo, this.speed, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
+    return Calc.calcSpeed(this.outfittedMass + fuel + cargo, this.speed, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
   }
 
   /**
@@ -198,7 +198,7 @@ export default class Ship {
    * @return {Number}        Pitch
    */
   calcPitch(eng, fuel, cargo, boost) {
-    return Calc.calcPitch(this.unladenMass + fuel + cargo, this.pitch, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
+    return Calc.calcPitch(this.outfittedMass + fuel + cargo, this.pitch, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
   }
 
   /**
@@ -210,7 +210,7 @@ export default class Ship {
    * @return {Number}        Roll
    */
   calcRoll(eng, fuel, cargo, boost) {
-    return Calc.calcRoll(this.unladenMass + fuel + cargo, this.roll, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
+    return Calc.calcRoll(this.outfittedMass + fuel + cargo, this.roll, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
   }
 
   /**
@@ -222,7 +222,7 @@ export default class Ship {
    * @return {Number}        Yaw
    */
   calcYaw(eng, fuel, cargo, boost) {
-    return Calc.calcYaw(this.unladenMass + fuel + cargo, this.yaw, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
+    return Calc.calcYaw(this.outfittedMass + fuel + cargo, this.yaw, this.standard[1].m, this.pipSpeed, eng, this.boost / this.speed, boost);
   }
 
   /**
@@ -570,12 +570,13 @@ export default class Ship {
     this.fuelCapacity = 0;
     this.cargoCapacity = 0;
     this.passengerCapacity = 0;
+    this.outfittedMass = this.hullMass;
+    this.unladenMass = this.hullMass;
     this.ladenMass = 0;
     this.armour = this.baseArmour;
     this.shield = this.baseShieldStrength;
     this.shieldCells = 0;
     this.totalCost = this.m.incCost ? this.m.discountedCost : 0;
-    this.unladenMass = this.hullMass;
     this.totalDpe = 0;
     this.totalAbsDpe = 0;
     this.totalExplDpe = 0;
@@ -1172,17 +1173,17 @@ export default class Ship {
    * @return {this} The ship instance (for chaining operations)
    */
   recalculateMass() {
-    let unladenMass = this.hullMass;
+    let outfittedMass = this.hullMass;	// used only for hull and module mass
     let cargoCapacity = 0;
     let fuelCapacity = 0;
     let passengerCapacity = 0;
 
-    unladenMass += this.bulkheads.m.getMass();
+    outfittedMass += this.bulkheads.m.getMass();
 
     let slots = this.standard.concat(this.internal, this.hardpoints);
     // TODO: create class for slot and also add slot.get
     // handle unladen mass
-    unladenMass += chain(slots)
+    outfittedMass += chain(slots)
       .map(slot => slot.m ? slot.m.get('mass') : null)
       .map(mass => mass || 0)
       .reduce((sum, mass) => sum + mass)
@@ -1210,11 +1211,12 @@ export default class Ship {
       .value();
 
     // Update global stats
-    this.unladenMass = unladenMass + fuelCapacity;
-    this.cargoCapacity = cargoCapacity;
     this.fuelCapacity = fuelCapacity;
+    this.cargoCapacity = cargoCapacity;
     this.passengerCapacity = passengerCapacity;
-    this.ladenMass = unladenMass + fuelCapacity + cargoCapacity;
+	this.outfittedMass = outfittedMass;	// separated from 'unladenMass' and used in place of it to fix a few issues that included fuel twice in calculations
+    this.unladenMass = outfittedMass + fuelCapacity;
+    this.ladenMass = outfittedMass + fuelCapacity + cargoCapacity;
     return this;
   }
 
@@ -1223,17 +1225,17 @@ export default class Ship {
    * @return {this} The ship instance (for chaining operations)
    */
   updateMovement() {
-    this.speeds = Calc.speed(this.unladenMass + this.fuelCapacity, this.speed, this.standard[1].m, this.pipSpeed);
+    this.speeds = Calc.speed(this.unladenMass, this.speed, this.standard[1].m, this.pipSpeed);
     this.topSpeed = this.speeds[4];
     this.topBoost = this.canBoost(0, 0) ? this.speeds[4] * this.boost / this.speed : 0;
 
-    this.pitches = Calc.pitch(this.unladenMass + this.fuelCapacity, this.pitch, this.standard[1].m, this.pipSpeed);
+    this.pitches = Calc.pitch(this.unladenMass, this.pitch, this.standard[1].m, this.pipSpeed);
     this.topPitch = this.pitches[4];
 
-    this.rolls = Calc.roll(this.unladenMass + this.fuelCapacity, this.roll, this.standard[1].m, this.pipSpeed);
+    this.rolls = Calc.roll(this.unladenMass, this.roll, this.standard[1].m, this.pipSpeed);
     this.topRoll = this.rolls[4];
 
-    this.yaws = Calc.yaw(this.unladenMass + this.fuelCapacity, this.yaw, this.standard[1].m, this.pipSpeed);
+    this.yaws = Calc.yaw(this.unladenMass, this.yaw, this.standard[1].m, this.pipSpeed);
     this.topYaw = this.yaws[4];
 
     return this;
@@ -1298,13 +1300,13 @@ export default class Ship {
    */
   updateJumpStats() {
     let fsd = this.standard[2].m;   // Frame Shift Drive;
-    let { unladenMass, fuelCapacity } = this;
+
     this.unladenRange = this.calcUnladenRange(); // Includes fuel weight for jump
-    this.fullTankRange = Calc.jumpRange(unladenMass + fuelCapacity, fsd, fuelCapacity, this); // Full Tank
-    this.ladenRange = this.calcLadenRange(); // Includes full tank and caro
-    this.unladenFastestRange = Calc.totalJumpRange(unladenMass + this.fuelCapacity, fsd, fuelCapacity, this);
-    this.ladenFastestRange = Calc.totalJumpRange(unladenMass + this.fuelCapacity + this.cargoCapacity, fsd, fuelCapacity, this);
-    this.maxJumpCount = Math.ceil(fuelCapacity / fsd.getMaxFuelPerJump());
+    this.ladenRange = this.calcLadenRange(); // Includes full tank and cargo
+    this.fullTankRange = Calc.jumpRange(this.unladenMass, fsd, this.fuelCapacity, this); // Full Tank
+    this.unladenFastestRange = Calc.totalJumpRange(this.unladenMass, fsd, this.fuelCapacity, this);
+    this.ladenFastestRange = Calc.totalJumpRange(this.ladenMass, fsd, this.fuelCapacity, this);
+    this.maxJumpCount = Math.ceil(this.fuelCapacity / fsd.getMaxFuelPerJump());
     return this;
   }
 

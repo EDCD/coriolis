@@ -14,3 +14,4 @@ export const formats = {
 };
 
 export { default as terms } from './de.json';
+
