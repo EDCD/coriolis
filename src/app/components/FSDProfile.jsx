@@ -70,7 +70,7 @@ export default class FSDProfile extends TranslatedComponent {
     const fsd = ship.standard[2].m;
     const minMass = ship.calcLowestPossibleMass({ th: thrusters });
     const maxMass = thrusters.getMaxMass();
-    const mass = ship.unladenMass + fuel + cargo;
+    const mass = ship.outfittedMass + fuel + cargo;
     const minRange = 0;
     const maxRange = Calc.jumpRange(minMass + fsd.getMaxFuelPerJump(), fsd, fsd.getMaxFuelPerJump(), ship);
     // Add a mark at our current mass

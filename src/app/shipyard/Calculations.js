@@ -14,12 +14,12 @@ export function jumpRange(mass, fsd, fuel, ship) {
   const fsdOptimalMass = fsd instanceof Module ? fsd.getOptMass() : fsd.optmass;
   let jumpAddition = 0;
   if (ship) {
-    mass += ship.reserveFuelCapacity || 0;
-    for (const module of ship.internal) {
-      if (module && module.m && module.m.grp === 'gfsb' && ship.getSlotStatus(module) == 3) {
-        jumpAddition += module.m.getJumpBoost();
-      }
-    }
+	// mass += ship.reserveFuelCapacity || 0;	// matching in-game values, adding this only to unladen calculation at '..\components\ShipSummaryTable.jsx:113'
+	for (const module of ship.internal) {
+	  if (module && module.m && module.m.grp === 'gfsb' && ship.getSlotStatus(module) == 3) {
+		jumpAddition += module.m.getJumpBoost();
+	  }
+	}
   }
   return (Math.pow(Math.min(fuel === undefined ? fsdMaxFuelPerJump : fuel, fsdMaxFuelPerJump) / fsd.fuelmul, 1 / fsd.fuelpower) * fsdOptimalMass / mass) + jumpAddition;
 }
@@ -40,11 +40,11 @@ export function totalJumpRange(mass, fsd, fuel, ship) {
   let fuelRemaining = fuel;
   let totalRange = 0;
   while (fuelRemaining > 0) {
-    const fuelForThisJump = Math.min(fuelRemaining, fsdMaxFuelPerJump);
-    totalRange += this.jumpRange(mass, fsd, fuelForThisJump, ship);
-    // Mass is reduced
-    mass -= fuelForThisJump;
-    fuelRemaining -= fuelForThisJump;
+	const fuelForThisJump = Math.min(fuelRemaining, fsdMaxFuelPerJump);
+	totalRange += this.jumpRange(mass, fsd, fuelForThisJump, ship);
+	// Mass is reduced
+	mass -= fuelForThisJump;
+	fuelRemaining -= fuelForThisJump;
   }
   return totalRange;
 };
@@ -188,10 +188,10 @@ function normValues(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, bas
   const res = base * mul;
 
   return [res * (1 - (engpip * 4)),
-    res * (1 - (engpip * 3)),
-    res * (1 - (engpip * 2)),
-    res * (1 - (engpip * 1)),
-    res];
+	res * (1 - (engpip * 3)),
+	res * (1 - (engpip * 2)),
+	res * (1 - (engpip * 1)),
+	res];
 }
 
 /**
@@ -240,7 +240,7 @@ export function calcSpeed(mass, baseSpeed, thrusters, engpip, eng, boostFactor, 
 
   let result = calcValue(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, baseSpeed, engpip, eng);
   if (boost == true) {
-    result *= boostFactor;
+	result *= boostFactor;
   }
 
   return result;
@@ -268,7 +268,7 @@ export function calcPitch(mass, basePitch, thrusters, engpip, eng, boostFactor, 
 
   let result = calcValue(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, basePitch, engpip, eng);
   if (boost == true) {
-    result *= boostFactor;
+	result *= boostFactor;
   }
 
   return result;
@@ -296,7 +296,7 @@ export function calcRoll(mass, baseRoll, thrusters, engpip, eng, boostFactor, bo
 
   let result = calcValue(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, baseRoll, engpip, eng);
   if (boost == true) {
-    result *= boostFactor;
+	result *= boostFactor;
   }
 
   return result;
@@ -324,7 +324,7 @@ export function calcYaw(mass, baseYaw, thrusters, engpip, eng, boostFactor, boos
 
   let result = calcValue(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, baseYaw, engpip, eng);
   if (boost == true) {
-    result *= boostFactor;
+	result *= boostFactor;
   }
 
   return result;
@@ -344,163 +344,163 @@ export function shieldMetrics(ship, sys) {
 
   const shieldGeneratorSlot = ship.findInternalByGroup('sg');
   if (shieldGeneratorSlot && shieldGeneratorSlot.enabled && shieldGeneratorSlot.m) {
-    const shieldGenerator = shieldGeneratorSlot.m;
-    // Boosters
-    let boost = 1;
-    let boosterExplDmg = 1;
-    let boosterKinDmg = 1;
-    let boosterThermDmg = 1;
-    for (let slot of ship.hardpoints) {
-      if (slot.enabled && slot.m && slot.m.grp == 'sb') {
-        boost += slot.m.getShieldBoost();
-        boosterExplDmg = boosterExplDmg * (1 - slot.m.getExplosiveResistance());
-        boosterKinDmg = boosterKinDmg * (1 - slot.m.getKineticResistance());
-        boosterThermDmg = boosterThermDmg * (1 - slot.m.getThermalResistance());
-      }
-    }
-    // Calculate diminishing returns for boosters
-    // Diminishing returns not currently in-game
-    // boost = Math.min(boost, (1 - Math.pow(Math.E, -0.7 * boost)) * 2.5);
+	const shieldGenerator = shieldGeneratorSlot.m;
+	// Boosters
+	let boost = 1;
+	let boosterExplDmg = 1;
+	let boosterKinDmg = 1;
+	let boosterThermDmg = 1;
+	for (let slot of ship.hardpoints) {
+	  if (slot.enabled && slot.m && slot.m.grp == 'sb') {
+		boost += slot.m.getShieldBoost();
+		boosterExplDmg = boosterExplDmg * (1 - slot.m.getExplosiveResistance());
+		boosterKinDmg = boosterKinDmg * (1 - slot.m.getKineticResistance());
+		boosterThermDmg = boosterThermDmg * (1 - slot.m.getThermalResistance());
+	  }
+	}
+	// Calculate diminishing returns for boosters
+	// Diminishing returns not currently in-game
+	// boost = Math.min(boost, (1 - Math.pow(Math.E, -0.7 * boost)) * 2.5);
 
-    // Remove base shield generator strength
-    boost -= 1;
+	// Remove base shield generator strength
+	boost -= 1;
 
-    let shieldAddition = 0;
-    if (ship) {
-      for (const module of ship.internal) {
-        if (module && module.m && module.m.grp === 'gsrp' && module.enabled) {
-          shieldAddition += module.m.getShieldAddition();
-        }
-      }
-    }
-    let generatorStrength = this.shieldStrength(ship.hullMass, ship.baseShieldStrength, shieldGenerator, 1);
-    const boostersStrength = generatorStrength * boost;
+	let shieldAddition = 0;
+	if (ship) {
+	  for (const module of ship.internal) {
+		if (module && module.m && module.m.grp === 'gsrp' && module.enabled) {
+		  shieldAddition += module.m.getShieldAddition();
+		}
+	  }
+	}
+	let generatorStrength = this.shieldStrength(ship.hullMass, ship.baseShieldStrength, shieldGenerator, 1);
+	const boostersStrength = generatorStrength * boost;
 
-    // Recover time is the time taken to go from 0 to 50%.  It includes a 16-second wait before shields start to recover
-    const shieldToRecover = (generatorStrength + boostersStrength + shieldAddition) / 2;
-    const powerDistributor = ship.standard[4].m;
-    const sysRechargeRate = this.sysRechargeRate(powerDistributor, sys);
+	// Recover time is the time taken to go from 0 to 50%.  It includes a 16-second wait before shields start to recover
+	const shieldToRecover = (generatorStrength + boostersStrength + shieldAddition) / 2;
+	const powerDistributor = ship.standard[4].m;
+	const sysRechargeRate = this.sysRechargeRate(powerDistributor, sys);
 
-    // Our initial regeneration comes from the SYS capacitor store, which is replenished as it goes
-    // 0.6 is a magic number from FD: each 0.6 MW of energy from the power distributor recharges 1 MJ/s of regeneration
-    let capacitorDrain = (shieldGenerator.getBrokenRegenerationRate() * shieldGenerator.getDistDraw()) - sysRechargeRate;
-    
-    let capacitorLifetime = powerDistributor.getSystemsCapacity() / capacitorDrain;
+	// Our initial regeneration comes from the SYS capacitor store, which is replenished as it goes
+	// 0.6 is a magic number from FD: each 0.6 MW of energy from the power distributor recharges 1 MJ/s of regeneration
+	let capacitorDrain = (shieldGenerator.getBrokenRegenerationRate() * shieldGenerator.getDistDraw()) - sysRechargeRate;
+	
+	let capacitorLifetime = powerDistributor.getSystemsCapacity() / capacitorDrain;
 
-    let recover = 16;
-    if (capacitorDrain <= 0 || shieldToRecover < capacitorLifetime * shieldGenerator.getBrokenRegenerationRate()) {
-      // We can recover the entire shield from the capacitor store
-      recover += shieldToRecover / shieldGenerator.getBrokenRegenerationRate();
-    } else {
-      // We can recover some of the shield from the capacitor store
-      recover += capacitorLifetime;
-      const remainingShieldToRecover = shieldToRecover - capacitorLifetime * shieldGenerator.getBrokenRegenerationRate();
-      if (sys === 0) {
-        // No system pips so will never recover shields
-        recover = Math.Infinity;
-      } else {
-        // Recover remaining shields at the rate of the power distributor's recharge
-        recover += remainingShieldToRecover / (sysRechargeRate / shieldGenerator.getDistDraw());
-      }
-    }
+	let recover = 16;
+	if (capacitorDrain <= 0 || shieldToRecover < capacitorLifetime * shieldGenerator.getBrokenRegenerationRate()) {
+	  // We can recover the entire shield from the capacitor store
+	  recover += shieldToRecover / shieldGenerator.getBrokenRegenerationRate();
+	} else {
+	  // We can recover some of the shield from the capacitor store
+	  recover += capacitorLifetime;
+	  const remainingShieldToRecover = shieldToRecover - capacitorLifetime * shieldGenerator.getBrokenRegenerationRate();
+	  if (sys === 0) {
+		// No system pips so will never recover shields
+		recover = Math.Infinity;
+	  } else {
+		// Recover remaining shields at the rate of the power distributor's recharge
+		recover += remainingShieldToRecover / (sysRechargeRate / shieldGenerator.getDistDraw());
+	  }
+	}
 
-    // Recharge time is the time taken to go from 50% to 100%
-    const shieldToRecharge = (generatorStrength + boostersStrength + shieldAddition) / 2;
+	// Recharge time is the time taken to go from 50% to 100%
+	const shieldToRecharge = (generatorStrength + boostersStrength + shieldAddition) / 2;
 
-    // Our initial regeneration comes from the SYS capacitor store, which is replenished as it goes
-    // 0.6 is a magic number from FD: each 0.6 MW of energy from the power distributor recharges 1 MJ/s of regeneration
-    capacitorDrain = (shieldGenerator.getRegenerationRate() * shieldGenerator.getDistDraw()) - sysRechargeRate;
-    capacitorLifetime = powerDistributor.getSystemsCapacity() / capacitorDrain;
+	// Our initial regeneration comes from the SYS capacitor store, which is replenished as it goes
+	// 0.6 is a magic number from FD: each 0.6 MW of energy from the power distributor recharges 1 MJ/s of regeneration
+	capacitorDrain = (shieldGenerator.getRegenerationRate() * shieldGenerator.getDistDraw()) - sysRechargeRate;
+	capacitorLifetime = powerDistributor.getSystemsCapacity() / capacitorDrain;
 
-    let recharge = 0;
-    if (capacitorDrain <= 0 || shieldToRecharge < capacitorLifetime * shieldGenerator.getRegenerationRate()) {
-      // We can recharge the entire shield from the capacitor store
-      recharge += shieldToRecharge / shieldGenerator.getRegenerationRate();
-    } else {
-      // We can recharge some of the shield from the capacitor store
-      recharge += capacitorLifetime;
-      const remainingShieldToRecharge = shieldToRecharge - capacitorLifetime * shieldGenerator.getRegenerationRate();
-      if (sys === 0) {
-        // No system pips so will never recharge shields
-        recharge = Math.Inf;
-      } else {
-        // Recharge remaining shields at the rate of the power distributor's recharge
-        recharge += remainingShieldToRecharge / (sysRechargeRate / shieldGenerator.getDistDraw());
-      }
-    }
+	let recharge = 0;
+	if (capacitorDrain <= 0 || shieldToRecharge < capacitorLifetime * shieldGenerator.getRegenerationRate()) {
+	  // We can recharge the entire shield from the capacitor store
+	  recharge += shieldToRecharge / shieldGenerator.getRegenerationRate();
+	} else {
+	  // We can recharge some of the shield from the capacitor store
+	  recharge += capacitorLifetime;
+	  const remainingShieldToRecharge = shieldToRecharge - capacitorLifetime * shieldGenerator.getRegenerationRate();
+	  if (sys === 0) {
+		// No system pips so will never recharge shields
+		recharge = Math.Inf;
+	  } else {
+		// Recharge remaining shields at the rate of the power distributor's recharge
+		recharge += remainingShieldToRecharge / (sysRechargeRate / shieldGenerator.getDistDraw());
+	  }
+	}
 
-    shield = {
-      generator: generatorStrength,
-      boosters: boostersStrength,
-      addition: shieldAddition,
-      cells: ship.shieldCells,
-      summary: generatorStrength + boostersStrength + shieldAddition,
-      total: generatorStrength + boostersStrength + ship.shieldCells + shieldAddition,
-      recover,
-      recharge,
-    };
+	shield = {
+	  generator: generatorStrength,
+	  boosters: boostersStrength,
+	  addition: shieldAddition,
+	  cells: ship.shieldCells,
+	  summary: generatorStrength + boostersStrength + shieldAddition,
+	  total: generatorStrength + boostersStrength + ship.shieldCells + shieldAddition,
+	  recover,
+	  recharge,
+	};
 
-    // Shield resistances have three components: the shield generator, the shield boosters and the SYS pips.
-    // We re-cast these as damage percentages
-    shield.absolute = {
-      generator: 1,
-      boosters: 1,
-      sys: 1 - sysResistance,
-      total: 1 - sysResistance,
-      max: 1 - maxSysResistance
-    };
+	// Shield resistances have three components: the shield generator, the shield boosters and the SYS pips.
+	// We re-cast these as damage percentages
+	shield.absolute = {
+	  generator: 1,
+	  boosters: 1,
+	  sys: 1 - sysResistance,
+	  total: 1 - sysResistance,
+	  max: 1 - maxSysResistance
+	};
 
-    /**
-     * An object that stores a selection of difference damage multipliers that
-     * deal with a ship's shield strength.
-     * @typedef {Object} ShieldDamageMults
-     * @property {number} generator Base damage multiplier of the shield
-     * contributing it's base resistance.
-     * @property {number} boosters Damage multiplier contributed by all
-     * boosters, i.e. `rawMj / (generator * boosters)` equals shield strength
-     * with 0 pips to sys.
-     * @property {number} sys Damage multiplier contributed by pips to sys.
-     * @property {number} base Damage multiplier with 0 pips to sys; just
-     * boosters and shield generator. Equals `generator * boosters`.
-     * @property {number} total Damage multiplier with current pip settings.
-     * @property {number} max Damage multiplier with 4 pips to sys.
-     */
+	/**
+	 * An object that stores a selection of difference damage multipliers that
+	 * deal with a ship's shield strength.
+	 * @typedef {Object} ShieldDamageMults
+	 * @property {number} generator Base damage multiplier of the shield
+	 * contributing it's base resistance.
+	 * @property {number} boosters Damage multiplier contributed by all
+	 * boosters, i.e. `rawMj / (generator * boosters)` equals shield strength
+	 * with 0 pips to sys.
+	 * @property {number} sys Damage multiplier contributed by pips to sys.
+	 * @property {number} base Damage multiplier with 0 pips to sys; just
+	 * boosters and shield generator. Equals `generator * boosters`.
+	 * @property {number} total Damage multiplier with current pip settings.
+	 * @property {number} max Damage multiplier with 4 pips to sys.
+	 */
 
-    let sgExplosiveDmg = 1 - shieldGenerator.getExplosiveResistance();
-    let sgSbExplosiveDmg = diminishingReturnsShields(sgExplosiveDmg, sgExplosiveDmg * boosterExplDmg);
-    /** @type {ShieldDamageMults} */
-    shield.explosive = {
-      generator: sgExplosiveDmg,
-      boosters: sgSbExplosiveDmg / sgExplosiveDmg,
-      sys: (1 - sysResistance),
-      base: sgSbExplosiveDmg,
-      total: sgSbExplosiveDmg * (1 - sysResistance),
-      max: sgSbExplosiveDmg * (1 - maxSysResistance),
-    };
+	let sgExplosiveDmg = 1 - shieldGenerator.getExplosiveResistance();
+	let sgSbExplosiveDmg = diminishingReturnsShields(sgExplosiveDmg, sgExplosiveDmg * boosterExplDmg);
+	/** @type {ShieldDamageMults} */
+	shield.explosive = {
+	  generator: sgExplosiveDmg,
+	  boosters: sgSbExplosiveDmg / sgExplosiveDmg,
+	  sys: (1 - sysResistance),
+	  base: sgSbExplosiveDmg,
+	  total: sgSbExplosiveDmg * (1 - sysResistance),
+	  max: sgSbExplosiveDmg * (1 - maxSysResistance),
+	};
 
-    let sgKineticDmg = 1 - shieldGenerator.getKineticResistance();
-    let sgSbKineticDmg = diminishingReturnsShields(sgKineticDmg, sgKineticDmg * boosterKinDmg);
-    /** @type {ShieldDamageMults} */
-    shield.kinetic = {
-      generator: sgKineticDmg,
-      boosters: sgSbKineticDmg / sgKineticDmg,
-      sys: (1 - sysResistance),
-      base: sgSbKineticDmg,
-      total: sgSbKineticDmg * (1 - sysResistance),
-      max: sgSbKineticDmg * (1 - maxSysResistance),
-    };
+	let sgKineticDmg = 1 - shieldGenerator.getKineticResistance();
+	let sgSbKineticDmg = diminishingReturnsShields(sgKineticDmg, sgKineticDmg * boosterKinDmg);
+	/** @type {ShieldDamageMults} */
+	shield.kinetic = {
+	  generator: sgKineticDmg,
+	  boosters: sgSbKineticDmg / sgKineticDmg,
+	  sys: (1 - sysResistance),
+	  base: sgSbKineticDmg,
+	  total: sgSbKineticDmg * (1 - sysResistance),
+	  max: sgSbKineticDmg * (1 - maxSysResistance),
+	};
 
-    let sgThermalDmg = 1 - shieldGenerator.getThermalResistance();
-    let sgSbThermalDmg = diminishingReturnsShields(sgThermalDmg , sgThermalDmg * boosterThermDmg);
-    /** @type {ShieldDamageMults} */
-    shield.thermal = {
-      generator: sgThermalDmg,
-      boosters: sgSbThermalDmg / sgThermalDmg,
-      sys: (1 - sysResistance),
-      base: sgSbThermalDmg,
-      total: sgSbThermalDmg * (1 - sysResistance),
-      max: sgSbThermalDmg * (1 - maxSysResistance),
-    };
+	let sgThermalDmg = 1 - shieldGenerator.getThermalResistance();
+	let sgSbThermalDmg = diminishingReturnsShields(sgThermalDmg , sgThermalDmg * boosterThermDmg);
+	/** @type {ShieldDamageMults} */
+	shield.thermal = {
+	  generator: sgThermalDmg,
+	  boosters: sgSbThermalDmg / sgThermalDmg,
+	  sys: (1 - sysResistance),
+	  base: sgSbThermalDmg,
+	  total: sgSbThermalDmg * (1 - sysResistance),
+	  max: sgSbThermalDmg * (1 - maxSysResistance),
+	};
   }
   return shield;
 }
@@ -512,7 +512,7 @@ export function shieldMetrics(ship, sys) {
  */
 export function calcBoost(ship) {
   if (!ship.boostEnergy || !ship.standard[4] || !ship.standard[4].m) {
-    return undefined;
+	return undefined;
   }
   return ship.boostEnergy / ship.standard[4].m.getEnginesRechargeRate();
 }
@@ -537,72 +537,72 @@ export function armourMetrics(ship) {
   let hullCausDmgs = [];
   // Armour from HRPs and module armour from MRPs
   for (let slot of ship.internal) {
-    if (slot.m && slot.enabled && (slot.m.grp === 'hr' || slot.m.grp === 'ghrp' || slot.m.grp == 'mahr')) {
-      armourReinforcement += slot.m.getHullReinforcement();
-      // Hull boost for HRPs is applied against the ship's base armour
-      armourReinforcement += ship.baseArmour * slot.m.getModValue('hullboost') / 10000;
-      hullExplDmgs.push(1 - slot.m.getExplosiveResistance());
-      hullKinDmgs.push(1 - slot.m.getKineticResistance());
-      hullThermDmgs.push(1 - slot.m.getThermalResistance());
-      hullCausDmgs.push(1 - slot.m.getCausticResistance());
-    }
-    if (slot.m && slot.enabled && (slot.m.grp == 'mrp' || slot.m.grp == 'gmrp')) {
-      moduleArmour += slot.m.getIntegrity();
-      moduleProtection = moduleProtection * (1 - slot.m.getProtection());
-    }
+	if (slot.m && slot.enabled && (slot.m.grp === 'hr' || slot.m.grp === 'ghrp' || slot.m.grp == 'mahr')) {
+	  armourReinforcement += slot.m.getHullReinforcement();
+	  // Hull boost for HRPs is applied against the ship's base armour
+	  armourReinforcement += ship.baseArmour * slot.m.getModValue('hullboost') / 10000;
+	  hullExplDmgs.push(1 - slot.m.getExplosiveResistance());
+	  hullKinDmgs.push(1 - slot.m.getKineticResistance());
+	  hullThermDmgs.push(1 - slot.m.getThermalResistance());
+	  hullCausDmgs.push(1 - slot.m.getCausticResistance());
+	}
+	if (slot.m && slot.enabled && (slot.m.grp == 'mrp' || slot.m.grp == 'gmrp')) {
+	  moduleArmour += slot.m.getIntegrity();
+	  moduleProtection = moduleProtection * (1 - slot.m.getProtection());
+	}
   }
   moduleProtection = 1 - moduleProtection;
 
   const armour = {
-    bulkheads: armourBulkheads,
-    reinforcement: armourReinforcement,
-    modulearmour: moduleArmour,
-    moduleprotection: moduleProtection,
-    total: armourBulkheads + armourReinforcement
+	bulkheads: armourBulkheads,
+	reinforcement: armourReinforcement,
+	modulearmour: moduleArmour,
+	moduleprotection: moduleProtection,
+	total: armourBulkheads + armourReinforcement
   };
 
   // Armour resistances have two components: bulkheads and HRPs
   // We re-cast these as damage percentages
   armour.absolute = {
-    bulkheads: 1,
-    reinforcement: 1,
-    total: 1
+	bulkheads: 1,
+	reinforcement: 1,
+	total: 1
   };
 
   let armourExplDmg = 1 - ship.bulkheads.m.getExplosiveResistance();
   let armourReinforcedExplDmg = diminishingReturnsArmour(armourExplDmg, ...hullExplDmgs);
   armour.explosive = {
-    bulkheads: armourExplDmg,
-    reinforcement: armourReinforcedExplDmg / armourExplDmg,
-    total: armourReinforcedExplDmg,
-    res: 1 - armourReinforcedExplDmg
+	bulkheads: armourExplDmg,
+	reinforcement: armourReinforcedExplDmg / armourExplDmg,
+	total: armourReinforcedExplDmg,
+	res: 1 - armourReinforcedExplDmg
   };
 
   let armourKinDmg = 1 - ship.bulkheads.m.getKineticResistance();
   let armourReinforcedKinDmg = diminishingReturnsArmour(armourKinDmg, ...hullKinDmgs);
   armour.kinetic = {
-    bulkheads: armourKinDmg,
-    reinforcement: armourReinforcedKinDmg / armourKinDmg,
-    total: armourReinforcedKinDmg,
-    res: 1 - armourReinforcedKinDmg
+	bulkheads: armourKinDmg,
+	reinforcement: armourReinforcedKinDmg / armourKinDmg,
+	total: armourReinforcedKinDmg,
+	res: 1 - armourReinforcedKinDmg
   };
 
   let armourThermDmg = 1 - ship.bulkheads.m.getThermalResistance();
   let armourReinforcedThermDmg = diminishingReturnsArmour(armourThermDmg, ...hullThermDmgs);
   armour.thermal = {
-    bulkheads: armourThermDmg,
-    reinforcement: armourReinforcedThermDmg / armourThermDmg,
-    total: armourReinforcedThermDmg,
-    res: 1 - armourReinforcedThermDmg
+	bulkheads: armourThermDmg,
+	reinforcement: armourReinforcedThermDmg / armourThermDmg,
+	total: armourReinforcedThermDmg,
+	res: 1 - armourReinforcedThermDmg
   };
 
   let armourCausDmg = 1 - ship.bulkheads.m.getCausticResistance();
   let armourReinforcedCausDmg = diminishingReturnsArmour(armourCausDmg, ...hullCausDmgs);
   armour.caustic = {
-    bulkheads: armourCausDmg,
-    reinforcement: armourReinforcedCausDmg / armourCausDmg,
-    total: armourReinforcedCausDmg,
-    res: 1 - armourReinforcedCausDmg,
+	bulkheads: armourCausDmg,
+	reinforcement: armourReinforcedCausDmg / armourCausDmg,
+	total: armourReinforcedCausDmg,
+	res: 1 - armourReinforcedCausDmg,
   };
   return armour;
 }
@@ -627,21 +627,21 @@ export function defenceMetrics(ship, opponent, sys, opponentWep, engagementrange
   const sustainedDps = this.sustainedDps(opponent, ship, sys, engagementrange);
 
   const shielddamage = shield.generator ? {
-    absolutesdps: sustainedDps.shieldsdps.absolute,
-    explosivesdps: sustainedDps.shieldsdps.explosive,
-    kineticsdps: sustainedDps.shieldsdps.kinetic,
-    thermalsdps: sustainedDps.shieldsdps.thermal,
-    totalsdps: sustainedDps.shieldsdps.absolute + sustainedDps.shieldsdps.explosive + sustainedDps.shieldsdps.kinetic + sustainedDps.shieldsdps.thermal,
-    totalseps: sustainedDps.eps
+	absolutesdps: sustainedDps.shieldsdps.absolute,
+	explosivesdps: sustainedDps.shieldsdps.explosive,
+	kineticsdps: sustainedDps.shieldsdps.kinetic,
+	thermalsdps: sustainedDps.shieldsdps.thermal,
+	totalsdps: sustainedDps.shieldsdps.absolute + sustainedDps.shieldsdps.explosive + sustainedDps.shieldsdps.kinetic + sustainedDps.shieldsdps.thermal,
+	totalseps: sustainedDps.eps
   } : {};
 
   const armourdamage = {
-    absolutesdps: sustainedDps.armoursdps.absolute,
-    explosivesdps: sustainedDps.armoursdps.explosive,
-    kineticsdps: sustainedDps.armoursdps.kinetic,
-    thermalsdps: sustainedDps.armoursdps.thermal,
-    totalsdps: sustainedDps.armoursdps.absolute + sustainedDps.armoursdps.explosive + sustainedDps.armoursdps.kinetic + sustainedDps.armoursdps.thermal,
-    totalseps: sustainedDps.eps
+	absolutesdps: sustainedDps.armoursdps.absolute,
+	explosivesdps: sustainedDps.armoursdps.explosive,
+	kineticsdps: sustainedDps.armoursdps.kinetic,
+	thermalsdps: sustainedDps.armoursdps.thermal,
+	totalsdps: sustainedDps.armoursdps.absolute + sustainedDps.armoursdps.explosive + sustainedDps.armoursdps.kinetic + sustainedDps.armoursdps.thermal,
+	totalseps: sustainedDps.eps
   };
 
   return { shield, armour, shielddamage, armourdamage };
@@ -666,30 +666,30 @@ export function offenceMetrics(ship, opponent, wep, opponentSys, engagementrange
 
   // Per-weapon and total damage to shields
   for (let i = 0; i < ship.hardpoints.length; i++) {
-    if (ship.hardpoints[i].maxClass > 0 && ship.hardpoints[i].m && ship.hardpoints[i].enabled) {
-      const m = ship.hardpoints[i].m;
+	if (ship.hardpoints[i].maxClass > 0 && ship.hardpoints[i].m && ship.hardpoints[i].enabled) {
+	  const m = ship.hardpoints[i].m;
 
-      const classRating = `${m.class}${m.rating}${m.missile ? '/' + m.missile : ''}`;
-      let engineering;
-      if (m.blueprint && m.blueprint.name) {
-        engineering = m.blueprint.name + ' ' + 'grade' + ' ' + m.blueprint.grade;
-        if (m.blueprint.special && m.blueprint.special.id >= 0) {
-          engineering += ', ' + m.blueprint.special.name;
-        }
-      }
+	  const classRating = `${m.class}${m.rating}${m.missile ? '/' + m.missile : ''}`;
+	  let engineering;
+	  if (m.blueprint && m.blueprint.name) {
+		engineering = m.blueprint.name + ' ' + 'grade' + ' ' + m.blueprint.grade;
+		if (m.blueprint.special && m.blueprint.special.id >= 0) {
+		  engineering += ', ' + m.blueprint.special.name;
+		}
+	  }
 
-      const weaponSustainedDps = this._weaponSustainedDps(m, opponent, opponentShields, opponentArmour, engagementrange);
-      damage.push({
-        id: i,
-        mount: m.mount,
-        name: m.name || m.grp,
-        classRating,
-        engineering,
-        sdps: weaponSustainedDps.damage,
-        seps: weaponSustainedDps.eps,
-        effectiveness: weaponSustainedDps.effectiveness
-      });
-    }
+	  const weaponSustainedDps = this._weaponSustainedDps(m, opponent, opponentShields, opponentArmour, engagementrange);
+	  damage.push({
+		id: i,
+		mount: m.mount,
+		name: m.name || m.grp,
+		classRating,
+		engineering,
+		sdps: weaponSustainedDps.damage,
+		seps: weaponSustainedDps.eps,
+		effectiveness: weaponSustainedDps.effectiveness
+	  });
+	}
   }
 
   return damage;
@@ -741,35 +741,35 @@ export function sustainedDps(ship, opponent, sys, engagementrange) {
  */
 export function _sustainedDps(ship, opponent, opponentShields, opponentArmour, engagementrange) {
   const shieldsdps = {
-    absolute: 0,
-    explosive: 0,
-    kinetic: 0,
-    thermal: 0
+	absolute: 0,
+	explosive: 0,
+	kinetic: 0,
+	thermal: 0
   };
 
   const armoursdps = {
-    absolute: 0,
-    explosive: 0,
-    kinetic: 0,
-    thermal: 0
+	absolute: 0,
+	explosive: 0,
+	kinetic: 0,
+	thermal: 0
   };
 
   let eps = 0;
 
   for (let i = 0; i < ship.hardpoints.length; i++) {
-    if (ship.hardpoints[i].m && ship.hardpoints[i].enabled && ship.hardpoints[i].maxClass > 0) {
-      const m = ship.hardpoints[i].m;
-      const sustainedDps = this._weaponSustainedDps(m, opponent, opponentShields, opponentArmour, engagementrange);
-      shieldsdps.absolute += sustainedDps.damage.shields.absolute;
-      shieldsdps.explosive += sustainedDps.damage.shields.explosive;
-      shieldsdps.kinetic += sustainedDps.damage.shields.kinetic;
-      shieldsdps.thermal += sustainedDps.damage.shields.thermal;
-      armoursdps.absolute += sustainedDps.damage.armour.absolute;
-      armoursdps.explosive += sustainedDps.damage.armour.explosive;
-      armoursdps.kinetic += sustainedDps.damage.armour.kinetic;
-      armoursdps.thermal += sustainedDps.damage.armour.thermal;
-      eps += sustainedDps.eps;
-    }
+	if (ship.hardpoints[i].m && ship.hardpoints[i].enabled && ship.hardpoints[i].maxClass > 0) {
+	  const m = ship.hardpoints[i].m;
+	  const sustainedDps = this._weaponSustainedDps(m, opponent, opponentShields, opponentArmour, engagementrange);
+	  shieldsdps.absolute += sustainedDps.damage.shields.absolute;
+	  shieldsdps.explosive += sustainedDps.damage.shields.explosive;
+	  shieldsdps.kinetic += sustainedDps.damage.shields.kinetic;
+	  shieldsdps.thermal += sustainedDps.damage.shields.thermal;
+	  armoursdps.absolute += sustainedDps.damage.armour.absolute;
+	  armoursdps.explosive += sustainedDps.damage.armour.explosive;
+	  armoursdps.kinetic += sustainedDps.damage.armour.kinetic;
+	  armoursdps.thermal += sustainedDps.damage.armour.thermal;
+	  eps += sustainedDps.eps;
+	}
   }
 
   return { shieldsdps, armoursdps, eps };
@@ -815,44 +815,44 @@ export function _sustainedDps(ship, opponent, opponentShields, opponentArmour, e
 export function _weaponSustainedDps(m, opponent, opponentShields, opponentArmour, engagementrange) {
   const opponentHasShields = opponentShields.generator ? true : false;
   const weapon = {
-    eps: 0,
-    damage: {
-      base: {
-        absolute: 0,
-        explosive: 0,
-        kinetic: 0,
-        thermal: 0,
-        total: 0,
-      },
-      shields: {
-        absolute: 0,
-        explosive: 0,
-        kinetic: 0,
-        thermal: 0,
-        total: 0
-      },
-      armour: {
-        absolute: 0,
-        explosive: 0,
-        kinetic: 0,
-        thermal: 0,
-        total: 0
-      },
-    },
-    effectiveness: {
-      shields: {
-        range: 1,
-        sys: opponentHasShields ? opponentShields.absolute.sys : 1,
-        resistance: 1,
-        dpe: 1
-      },
-      armour: {
-        range: 1,
-        hardness: 1,
-        resistance: 1,
-        dpe: 1
-      }
-    }
+	eps: 0,
+	damage: {
+	  base: {
+		absolute: 0,
+		explosive: 0,
+		kinetic: 0,
+		thermal: 0,
+		total: 0,
+	  },
+	  shields: {
+		absolute: 0,
+		explosive: 0,
+		kinetic: 0,
+		thermal: 0,
+		total: 0
+	  },
+	  armour: {
+		absolute: 0,
+		explosive: 0,
+		kinetic: 0,
+		thermal: 0,
+		total: 0
+	  },
+	},
+	effectiveness: {
+	  shields: {
+		range: 1,
+		sys: opponentHasShields ? opponentShields.absolute.sys : 1,
+		resistance: 1,
+		dpe: 1
+	  },
+	  armour: {
+		range: 1,
+		hardness: 1,
+		resistance: 1,
+		dpe: 1
+	  }
+	}
   };
 
   // EPS
@@ -864,10 +864,10 @@ export function _weaponSustainedDps(m, opponent, opponentShields, opponentArmour
   // Take fall-off in to account
   const falloff = m.getFalloff();
   if (falloff && engagementrange > falloff) {
-    const dropoffRange = m.getRange() - falloff;
-    const dropoff = 1 - Math.min((engagementrange - falloff) / dropoffRange, 1);
-    weapon.effectiveness.shields.range = weapon.effectiveness.armour.range = dropoff;
-    sDps *= dropoff;
+	const dropoffRange = m.getRange() - falloff;
+	const dropoff = 1 - Math.min((engagementrange - falloff) / dropoffRange, 1);
+	weapon.effectiveness.shields.range = weapon.effectiveness.armour.range = dropoff;
+	sDps *= dropoff;
   }
 
   weapon.damage.base.absolute = sDps * m.getDamageDist().A;
@@ -884,28 +884,28 @@ export function _weaponSustainedDps(m, opponent, opponentShields, opponentArmour
   let shieldsResistance = 0;
   let armourResistance = 0;
   if (m.getDamageDist().A) {
-    weapon.damage.shields.absolute += sDps * m.getDamageDist().A * (opponentHasShields ? opponentShields.absolute.total : 1);
-    weapon.damage.armour.absolute += sDps * m.getDamageDist().A * armourMultiple * opponentArmour.absolute.total;
-    shieldsResistance += m.getDamageDist().A * (opponentHasShields ? opponentShields.absolute.generator * opponentShields.absolute.boosters : 1);
-    armourResistance += m.getDamageDist().A * opponentArmour.absolute.bulkheads * opponentArmour.absolute.reinforcement;
+	weapon.damage.shields.absolute += sDps * m.getDamageDist().A * (opponentHasShields ? opponentShields.absolute.total : 1);
+	weapon.damage.armour.absolute += sDps * m.getDamageDist().A * armourMultiple * opponentArmour.absolute.total;
+	shieldsResistance += m.getDamageDist().A * (opponentHasShields ? opponentShields.absolute.generator * opponentShields.absolute.boosters : 1);
+	armourResistance += m.getDamageDist().A * opponentArmour.absolute.bulkheads * opponentArmour.absolute.reinforcement;
   }
   if (m.getDamageDist().E) {
-    weapon.damage.shields.explosive += sDps * m.getDamageDist().E * (opponentHasShields ? opponentShields.explosive.total : 1);
-    weapon.damage.armour.explosive += sDps * m.getDamageDist().E * armourMultiple * opponentArmour.explosive.total;
-    shieldsResistance += m.getDamageDist().E * (opponentHasShields ? opponentShields.explosive.generator * opponentShields.explosive.boosters : 1);
-    armourResistance += m.getDamageDist().E * opponentArmour.explosive.bulkheads * opponentArmour.explosive.reinforcement;
+	weapon.damage.shields.explosive += sDps * m.getDamageDist().E * (opponentHasShields ? opponentShields.explosive.total : 1);
+	weapon.damage.armour.explosive += sDps * m.getDamageDist().E * armourMultiple * opponentArmour.explosive.total;
+	shieldsResistance += m.getDamageDist().E * (opponentHasShields ? opponentShields.explosive.generator * opponentShields.explosive.boosters : 1);
+	armourResistance += m.getDamageDist().E * opponentArmour.explosive.bulkheads * opponentArmour.explosive.reinforcement;
   }
   if (m.getDamageDist().K) {
-    weapon.damage.shields.kinetic += sDps * m.getDamageDist().K * (opponentHasShields ? opponentShields.kinetic.total : 1);
-    weapon.damage.armour.kinetic += sDps * m.getDamageDist().K * armourMultiple * opponentArmour.kinetic.total;
-    shieldsResistance += m.getDamageDist().K * (opponentHasShields ? opponentShields.kinetic.generator * opponentShields.kinetic.boosters : 1);
-    armourResistance += m.getDamageDist().K * opponentArmour.kinetic.bulkheads * opponentArmour.kinetic.reinforcement;
+	weapon.damage.shields.kinetic += sDps * m.getDamageDist().K * (opponentHasShields ? opponentShields.kinetic.total : 1);
+	weapon.damage.armour.kinetic += sDps * m.getDamageDist().K * armourMultiple * opponentArmour.kinetic.total;
+	shieldsResistance += m.getDamageDist().K * (opponentHasShields ? opponentShields.kinetic.generator * opponentShields.kinetic.boosters : 1);
+	armourResistance += m.getDamageDist().K * opponentArmour.kinetic.bulkheads * opponentArmour.kinetic.reinforcement;
   }
   if (m.getDamageDist().T) {
-    weapon.damage.shields.thermal += sDps * m.getDamageDist().T * (opponentHasShields ? opponentShields.thermal.total : 1);
-    weapon.damage.armour.thermal += sDps * m.getDamageDist().T * armourMultiple * opponentArmour.thermal.total;
-    shieldsResistance += m.getDamageDist().T * (opponentHasShields ? opponentShields.thermal.generator * opponentShields.thermal.boosters : 1);
-    armourResistance += m.getDamageDist().T * opponentArmour.thermal.bulkheads * opponentArmour.thermal.reinforcement;
+	weapon.damage.shields.thermal += sDps * m.getDamageDist().T * (opponentHasShields ? opponentShields.thermal.total : 1);
+	weapon.damage.armour.thermal += sDps * m.getDamageDist().T * armourMultiple * opponentArmour.thermal.total;
+	shieldsResistance += m.getDamageDist().T * (opponentHasShields ? opponentShields.thermal.generator * opponentShields.thermal.boosters : 1);
+	armourResistance += m.getDamageDist().T * opponentArmour.thermal.bulkheads * opponentArmour.thermal.reinforcement;
   }
   weapon.damage.shields.total = weapon.damage.shields.absolute + weapon.damage.shields.explosive + weapon.damage.shields.kinetic + weapon.damage.shields.thermal;
   weapon.damage.armour.total = weapon.damage.armour.absolute + weapon.damage.armour.explosive + weapon.damage.armour.kinetic + weapon.damage.armour.thermal;
@@ -936,20 +936,20 @@ export function timeToDrainWep(ship, wep) {
   let totalSEps = 0;
 
   for (let slotNum in ship.hardpoints) {
-    const slot = ship.hardpoints[slotNum];
-    if (slot.maxClass > 0 && slot.m && slot.enabled && slot.type === 'WEP' && slot.m.getDps()) {
-      totalSEps += slot.m.getClip() ? (slot.m.getClip() * slot.m.getEps() / slot.m.getRoF()) / ((slot.m.getClip() / slot.m.getRoF()) + slot.m.getReload()) : slot.m.getEps();
-    }
+	const slot = ship.hardpoints[slotNum];
+	if (slot.maxClass > 0 && slot.m && slot.enabled && slot.type === 'WEP' && slot.m.getDps()) {
+	  totalSEps += slot.m.getClip() ? (slot.m.getClip() * slot.m.getEps() / slot.m.getRoF()) / ((slot.m.getClip() / slot.m.getRoF()) + slot.m.getReload()) : slot.m.getEps();
+	}
   }
 
   // Calculate the drain time
   const drainPerSecond = totalSEps - ship.standard[4].m.getWeaponsRechargeRate() * wep / 4;
   if (drainPerSecond <= 0) {
-    // Can fire forever
-    return Infinity;
+	// Can fire forever
+	return Infinity;
   } else {
-    const initialCharge = ship.standard[4].m.getWeaponsCapacity();
-    return initialCharge / drainPerSecond;
+	const initialCharge = ship.standard[4].m.getWeaponsCapacity();
+	return initialCharge / drainPerSecond;
   }
 }
 
@@ -966,22 +966,22 @@ export function timeToDeplete(amount, dps, eps, capacity, recharge) {
   const drainPerSecond = eps - recharge;
   // If there is nothing to remove, we're don instantly
   if (!amount) {
-    return 0;
+	return 0;
   } if (drainPerSecond <= 0) {
-    // Simple result
-    return amount / dps;
+	// Simple result
+	return amount / dps;
   } else {
-    // We are draining the capacitor, but can we deplete before we run out
-    const timeToDrain = capacity / drainPerSecond;
-    const depletedBeforeDrained = dps * timeToDrain;
-    if (depletedBeforeDrained >= amount) {
-      return amount / dps;
-    } else {
-      const restToDeplete = amount - depletedBeforeDrained;
-      // We delete the rest at the reduced rate
-      const reducedDps = dps * (recharge / eps);
-      return timeToDrain + (restToDeplete / reducedDps);
-    }
+	// We are draining the capacitor, but can we deplete before we run out
+	const timeToDrain = capacity / drainPerSecond;
+	const depletedBeforeDrained = dps * timeToDrain;
+	if (depletedBeforeDrained >= amount) {
+	  return amount / dps;
+	} else {
+	  const restToDeplete = amount - depletedBeforeDrained;
+	  // We delete the rest at the reduced rate
+	  const reducedDps = dps * (recharge / eps);
+	  return timeToDrain + (restToDeplete / reducedDps);
+	}
   }
 }
 
@@ -995,9 +995,9 @@ export function timeToDeplete(amount, dps, eps, capacity, recharge) {
 export function diminishingReturnsShields(shieldMult, combinedMult) {
   let max = shieldMult * 0.7;
   if (combinedMult < max) {
-    return mapIntoDiminishingRange(max / 2, max, combinedMult);
+	return mapIntoDiminishingRange(max / 2, max, combinedMult);
   } else {
-    return combinedMult;
+	return combinedMult;
   }
 }
 
@@ -1013,9 +1013,9 @@ export function diminishingReturnsArmour(...mults) {
   let combined = mults.reduce((aggr, v) => aggr * v);
   let diminished = mapIntoDiminishingRange(0.35, max, combined);
   if (diminished < 0.7) {
-    return diminished;
+	return diminished;
   } else {
-    return combined;
+	return combined;
   }
 }
 
