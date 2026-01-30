@@ -690,10 +690,32 @@ export default class OutfittingPage extends Page {
       .map(slot => slot.m.eddbID)
       .filter((v, i, a) => a.indexOf(v) === i);
 
+    // Provide unique default list of non-PP module EDDB IDs
+    let defaultship = new Ship(ship.id, Ships[ship.id].properties, Ships[ship.id].slots); // Create a new Ship instance
+    defaultship.buildWith(Ships[ship.id].defaults); // Populate with default components
+    const defaultModIds = defaultship.internal
+      .concat(defaultship.bulkheads, defaultship.standard, defaultship.hardpoints)
+      .filter(slot => slot !== null && slot.m !== null && !slot.m.pp)
+      .map(slot => slot.m.eddbID)
+      .filter((v, i, a) => a.indexOf(v) === i);
+
+    // Filter list of non-PP module EDDB IDs to exclude default modules
+    for (const modid of defaultModIds) {
+      if (modIds.indexOf(modid) > -1) {
+        modIds.splice(modIds.indexOf(modid), 1);
+      }
+    }
+    
     // Open up the relevant URL
-    window.open(
-      'https://inara.cz/inapi/corisearch.php?s=' + shipId + '&m=' + modIds.join(',')
-    );
+    if (modIds.length > 0) {
+      window.open(
+        'https://inara.cz/inapi/corisearch.php?s=' + shipId + '&m=' + modIds.join(',')
+      );
+    } else {
+      window.open(
+        'https://inara.cz/inapi/corisearch.php?s=' + shipId
+      );
+    }
   }
 
   /**
