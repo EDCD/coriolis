@@ -99,6 +99,561 @@
   }
 }
 
+// Toggle button for switching between classic and responsive views
+.summary-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em;
+
+  .text-toggle {
+    color: @warning;
+    cursor: pointer;
+    padding: 0.3em 0.8em;
+    font-size: 0.9em;
+
+    &:hover {
+      color: lighten(@warning, 15%);
+    }
+  }
+
+  button {
+    background: @primary;
+    color: @primary-bg;
+    border: 1px solid @primary;
+    padding: 0.3em 0.8em;
+    cursor: pointer;
+    font-size: 0.9em;
+    border-radius: 3px;
+
+    &:hover {
+      background: lighten(@primary, 10%);
+      border-color: lighten(@primary, 10%);
+    }
+  }
+}
+
+// Outfitting toggle
+.outfitting-toggle {
+  text-align: center;
+  cursor: pointer;
+  padding: 0.5em;
+  color: @warning;
+
+  &:hover {
+    color: lighten(@warning, 15%);
+  }
+
+  &.pulse {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    color: @warning;
+    text-shadow: none;
+  }
+  50% {
+    color: yellow;
+    text-shadow: 0 0 10px yellow, 0 0 20px yellow;
+  }
+}
+
+// Responsive Ship Summary Styles
+#summary-responsive {
+  padding: 0.5em;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  // Tab bar - hidden at wide screens, visible at narrow widths
+  .stat-tab-bar {
+    display: none;
+
+    .smallTablet({
+      display: flex;
+      gap: 0.3em;
+      margin-bottom: 0.8em;
+      overflow: hidden;
+    });
+  }
+
+  .stat-tab {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid @primary;
+    color: @primary;
+    padding: 0.3em 0.2em;
+    font-size: 0.8em;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 4px;
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    transition: background 0.15s;
+
+    .tab-abbr {
+      display: none;
+    }
+
+    .tab-full {
+      display: inline;
+    }
+
+    .largePhone({
+      padding: 0.25em 0.15em;
+      font-size: 0.75em;
+
+      .tab-abbr {
+        display: inline;
+      }
+
+      .tab-full {
+        display: none;
+      }
+    });
+
+    &.active {
+      background: @primary;
+      color: @primary-bg;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(255, 140, 13, 0.2);
+    }
+  }
+
+  // Tab groups - transparent at wide screens, show/hide at narrow
+  .tab-group {
+    display: contents; // Children participate in parent grid at wide screens
+
+    .smallTablet({
+      display: none; // Hidden by default at narrow widths
+
+      &.tab-active {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8em;
+        margin-bottom: 1em;
+      }
+    });
+
+    .largePhone({
+      &.tab-active {
+        grid-template-columns: 1fr;
+      }
+    });
+  }
+
+  // Defense tab groups need block display (single child) not grid
+  .defense-tables > .tab-group {
+    .smallTablet({
+      &.tab-active {
+        display: block;
+        margin-bottom: 1em;
+      }
+    });
+  }
+
+  // Primary Stats Tables Grid
+  .stats-tables {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.8em;
+    margin-bottom: 1em;
+
+    @media only screen and (max-width: 1300px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .smallTablet({
+      display: block; // Tab groups handle their own layout at narrow widths
+    });
+  }
+
+  .stat-table {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid @primary;
+    border-radius: 4px;
+    overflow: visible;
+
+    .stat-table-header {
+      background: @primary;
+      color: @primary-bg;
+      padding: 0.4em 0.6em;
+      font-weight: bold;
+      font-size: 0.95em;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+
+      col.stat-label-col {
+        width: 55%;
+      }
+
+      col.stat-value-col {
+        width: 45%;
+      }
+
+      tbody tr {
+        &:hover {
+          background: rgba(255, 140, 13, 0.1);
+        }
+
+        td {
+          padding: 0.3em 0.6em;
+          border-bottom: 1px solid rgba(255, 140, 13, 0.2);
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+
+        &:last-child td {
+          border-bottom: none;
+        }
+
+        td.label {
+          color: @muted;
+          font-size: 0.9em;
+          white-space: nowrap;
+          text-align: right;
+          font-weight: bold;
+
+          .label-abbr {
+            display: none;
+          }
+
+          .label-full {
+            display: inline;
+          }
+
+          .smallTablet({
+            font-size: 0.85em;
+
+            .label-abbr {
+              display: inline;
+            }
+
+            .label-full {
+              display: none;
+            }
+          });
+        }
+
+        td.value {
+          font-weight: normal;
+          color: @primary;
+          text-align: left;
+          font-size: 0.95em;
+
+          &.warning {
+            color: @warning;
+          }
+
+          &.muted {
+            color: @muted;
+          }
+
+          .smallTablet({
+            font-size: 0.9em;
+          });
+        }
+      }
+    }
+  }
+
+  // Defense Tables (Shield and Armour)
+  .defense-tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1em;
+
+    .smallTablet({
+      display: block; // Tab groups handle their own layout at narrow widths
+    });
+  }
+
+  .defense-table {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid @primary;
+    border-radius: 4px;
+    overflow: visible;
+
+    .defense-header {
+      background: @primary;
+      color: @primary-bg;
+      padding: 0.5em;
+      font-weight: bold;
+      text-align: center;
+
+      &.blue {
+        background: @secondary;
+      }
+
+      &.green {
+        background: @success;
+      }
+
+      &.purple {
+        background: @purple;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+
+      .largePhone({
+        table-layout: fixed;
+      });
+
+      col.col-abs-label {
+        .largePhone({
+          width: 5%;
+        });
+      }
+
+      col.col-abs-value {
+        .largePhone({
+          width: 7%;
+        });
+      }
+
+      .unit-narrow-hide {
+        .largePhone({
+          display: none;
+        });
+      }
+
+      tbody tr {
+        // Override global nth-child(odd) alternation since hidden info-row/info-row-narrow
+        // rows disrupt the DOM count. Use explicit .alt-row class instead.
+        &:nth-child(odd) {
+          background-color: transparent;
+        }
+
+        &.alt-row {
+          background-color: @alt-primary-bg;
+        }
+
+        &:hover {
+          background: rgba(255, 140, 13, 0.1);
+        }
+
+        &.info-row {
+          .smallTablet({
+            display: none;
+          });
+        }
+
+        &.info-row-narrow {
+          display: none;
+
+          .smallTablet({
+            display: table-row;
+          });
+
+          td.info-pair {
+            text-align: center;
+            padding: 0.3em 0.4em;
+            border-bottom: 1px solid rgba(255, 140, 13, 0.2);
+
+            .largePhone({
+              padding: 0.3em 0.15em;
+            });
+
+            .pair-label {
+              color: @muted;
+              font-weight: bold;
+              font-size: 0.9em;
+              margin-right: 0.3em;
+            }
+
+            .pair-value {
+              color: @primary;
+              font-size: 0.9em;
+            }
+
+            &.warning .pair-value {
+              color: @warning;
+            }
+          }
+        }
+
+        td {
+          padding: 0.4em 0.4em;
+          border-bottom: 1px solid rgba(255, 140, 13, 0.2);
+
+          .largePhone({
+            padding: 0.3em 0.15em;
+          });
+        }
+
+        &:last-child td {
+          border-bottom: none;
+        }
+
+        td.label {
+          color: @muted;
+          font-size: 0.9em;
+          vertical-align: top;
+          text-align: right;
+          font-weight: bold;
+          white-space: nowrap;
+
+          .label-abbr {
+            display: none;
+          }
+
+          .label-full {
+            display: inline;
+          }
+
+          @media only screen and (max-width: 1250px) {
+            font-size: 0.85em;
+
+            .label-abbr {
+              display: inline;
+            }
+
+            .label-full {
+              display: none;
+            }
+          }
+        }
+
+        td.value {
+          color: @primary;
+          font-size: 0.9em;
+          text-align: left;
+          white-space: nowrap;
+
+          .label-abbr {
+            display: none;
+          }
+
+          .label-full {
+            display: inline;
+          }
+
+          @media only screen and (max-width: 1250px) {
+            .label-abbr {
+              display: inline;
+            }
+
+            .label-full {
+              display: none;
+            }
+          }
+
+          &.warning {
+            color: @warning;
+          }
+
+          &.muted {
+            color: @muted;
+          }
+
+          .resistance-group {
+            display: inline-block;
+            margin-right: 0.8em;
+            white-space: nowrap;
+
+            &:last-child {
+              margin-right: 0;
+            }
+
+            .res-label-abbr {
+              display: none;
+            }
+
+            .res-label-full {
+              display: inline;
+            }
+
+            @media only screen and (max-width: 1250px) {
+              margin-right: 0.5em;
+
+              .res-label-abbr {
+                display: inline;
+              }
+
+              .res-label-full {
+                display: none;
+              }
+            }
+          }
+
+          @media only screen and (max-width: 1250px) {
+            font-size: 0.85em;
+          }
+        }
+
+        td.res-label {
+          color: #fff;
+          font-size: 0.85em;
+          text-align: right;
+          font-weight: normal;
+          padding: 0.4em 0.2em 0.4em 0.3em;
+          white-space: nowrap;
+
+          .res-label-abbr {
+            display: none;
+          }
+
+          .res-label-full {
+            display: inline;
+          }
+
+          @media only screen and (max-width: 1250px) {
+            font-size: 0.8em;
+
+            .res-label-abbr {
+              display: inline;
+            }
+
+            .res-label-full {
+              display: none;
+            }
+          }
+
+          .largePhone({
+            font-size: 0.75em;
+            padding: 0.3em 0.1em 0.3em 0.15em;
+          });
+        }
+
+        td.res-value {
+          color: @primary;
+          font-size: 0.85em;
+          text-align: left;
+          padding: 0.4em 0.4em 0.4em 0.2em;
+          white-space: nowrap;
+
+          .smallTablet({
+            font-size: 0.8em;
+            padding-right: 0.5em;
+          });
+
+          .largePhone({
+            font-size: 0.75em;
+            padding: 0.3em 0.15em 0.3em 0.1em;
+          });
+        }
+      }
+    }
+  }
+}
+
 .flip {
   display: inline-block;
   -moz-transform: scaleX(-1);    /* Gecko */
@@ -114,7 +669,7 @@
   &.selected {
     z-index: 1;
     h1 {
-      background-color: @primary;
+      background-color: lighten(@primary, 10%);
     }
   }
 
@@ -137,6 +692,9 @@
   float: right;
   line-height: 2em;
   text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 
   input {
     background: none;
@@ -161,6 +719,28 @@
       width: 100%;
     });
 
+  }
+
+  .build-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    .smallTablet({
+      button {
+        padding: 0.3em;
+        min-width: 32px;
+        min-height: 32px;
+      }
+    });
+
+    .largePhone({
+      button {
+        padding: 0.15em;
+        min-width: 28px;
+        min-height: 28px;
+      }
+    });
   }
 
   .smallTablet({
@@ -190,17 +770,53 @@
   &, th {
     cursor: pointer;
     border-collapse: collapse;
-    color: @primary-disabled;
+    color: @primary;
     background-color: @primary-bg;
-    border: 1px solid @primary-disabled;
+    border: 1px solid @primary;
     padding-top: 1px;
+    font-weight: bold;
   }
+
+  .tab-label-abbr {
+    display: none;
+  }
+
+  .tab-label-full {
+    display: inline;
+  }
+
+  .largePhone({
+    .tab-label-abbr {
+      display: inline;
+    }
+
+    .tab-label-full {
+      display: none;
+    }
+  });
 
   .active {
     color: @primary-bg;
-    background-color: @primary-disabled;
+    background-color: @primary;
   }
 
+}
+
+// Ship control + pips + fuel wrapper - inline at wide, stacks centered at narrow
+.ship-control-row {
+  display: inline;
+
+  @media only screen and (max-width: 500px) {
+    display: block;
+    width: 100%;
+    text-align: center;
+
+    > .group.quarter {
+      display: block;
+      width: 100% !important;
+      text-align: center;
+    }
+  }
 }
 
 .group {
@@ -214,14 +830,16 @@
 
   h1 {
     font-family: @fStandard;
-    color: @bgBlack;
-    background-color: @primary-disabled;
+    color: @primary-bg;
+    background-color: @primary;
     text-transform: uppercase;
     margin: 0;
-    padding-top: 2px;
-    font-size: 1em;
+    padding: 0.4em 0.6em;
+    font-size: 0.95em;
     line-height: 1.3em;
-    font-weight: normal;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 4px 4px 0 0;
   }
 
   .smallTablet({

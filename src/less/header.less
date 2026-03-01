@@ -39,6 +39,14 @@ header {
   box-sizing: border-box;
   .user-select-none();
 
+  .smallTablet({
+    padding: 0 0 0 0.5em;
+  });
+
+  .largePhone({
+    padding: 0 0 0 0.25em;
+  });
+
   .menu {
     position: relative;
     z-index: 1;
@@ -82,6 +90,18 @@ header {
         display: none;
       });
     }
+
+    .smallTablet({
+      padding: 0 0.5em;
+    });
+
+    .largePhone({
+      padding: 0 0.35em;
+    });
+
+    .medPhone({
+      padding: 0 0.25em;
+    });
   }
 
   .menu-list {

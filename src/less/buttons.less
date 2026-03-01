@@ -13,6 +13,21 @@ button {
   cursor: pointer;
   background: none;
   outline: none;
+  position: relative;
+  z-index: auto;
+  min-width: 44px; // Minimum touch target width
+  min-height: 44px; // Minimum touch target height
+
+  // Increase touch target on mobile without changing visual appearance
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+    left: -8px;
+    // This creates a larger invisible hit area for touch devices
+  }
 
   &.danger {
     color: red;

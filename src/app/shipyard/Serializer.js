@@ -4,6 +4,7 @@ import Ship from './Ship';
 import * as Utils from '../utils/UtilityFunctions';
 import LZString from 'lz-string';
 import { outfitURL } from '../utils/UrlGenerators';
+import { SHIP_FD_NAME_TO_CORIOLIS_NAME } from '../utils/CompanionApiUtils';
 
 /**
  * Generates ship-loadout JSON Schema standard object
@@ -192,4 +193,157 @@ export function fromComparison(name, builds, facets, predicate, desc) {
  */
 export function toComparison(code) {
   return JSON.parse(LZString.decompressFromBase64(Utils.fromUrlSafe(code)));
+};
+
+/**
+ * Generates an object conforming to the SLEF (Ship Loadout Export Format) from a Ship model
+ * SLEF spec: https://inara.cz/elite/inara-impexp-slef/
+ * @param  {string} buildName The build name
+ * @param  {Ship} ship        Ship instance
+ * @return {Array}            SLEF format array with single loadout object
+ */
+export function toSLEF(buildName, ship) {
+  const modules = [];
+
+  // Create reverse mapping: Coriolis ship ID -> FD name
+  const shipModelToFdName = {};
+  for (const [fdName, coriolisName] of Object.entries(SHIP_FD_NAME_TO_CORIOLIS_NAME)) {
+    shipModelToFdName[coriolisName] = fdName;
+  }
+  const shipFdName = shipModelToFdName[ship.id] || ship.id;
+
+  // Add bulkheads/armour
+  if (ship.bulkheads && ship.bulkheads.m) {
+    const module = {
+      Slot: 'Armour',
+      Item: ship.bulkheads.m.symbol || `${shipFdName.toLowerCase()}_armour_grade${ship.bulkheads.m.index + 1}`,
+      On: true,
+      Priority: ship.bulkheads.priority
+    };
+
+    if (ship.bulkheads.m.blueprint && Object.keys(ship.bulkheads.m.blueprint).length > 0) {
+      module.Engineering = {
+        BlueprintName: ship.bulkheads.m.blueprint.fdname,
+        Level: ship.bulkheads.m.blueprint.grade,
+        Quality: ship.bulkheads.m.blueprint.quality || 1
+      };
+      if (ship.bulkheads.m.blueprint.special && ship.bulkheads.m.blueprint.special.id >= 0) {
+        module.Engineering.ExperimentalEffect = ship.bulkheads.m.blueprint.special.edname;
+      }
+    }
+
+    modules.push(module);
+  }
+
+  // Add cargo hatch
+  modules.push({
+    Slot: 'CargoHatch',
+    Item: 'modularcargobaydoor',
+    On: Boolean(ship.cargoHatch.enabled),
+    Priority: ship.cargoHatch.priority
+  });
+
+  // Add standard modules (capitalized slot names per SLEF spec)
+  const standardSlots = ['PowerPlant', 'MainEngines', 'FrameShiftDrive', 'LifeSupport', 'PowerDistributor', 'Radar', 'FuelTank'];
+  ship.standard.forEach((slot, index) => {
+    if (slot.m && slot.m.symbol) {
+      const module = {
+        Slot: standardSlots[index],
+        Item: slot.m.symbol,
+        On: Boolean(slot.enabled),
+        Priority: slot.priority
+      };
+
+      if (slot.m.blueprint && Object.keys(slot.m.blueprint).length > 0) {
+        module.Engineering = {
+          BlueprintName: slot.m.blueprint.fdname,
+          Level: slot.m.blueprint.grade,
+          Quality: slot.m.blueprint.quality || 1
+        };
+        if (slot.m.blueprint.special && slot.m.blueprint.special.id >= 0) {
+          module.Engineering.ExperimentalEffect = slot.m.blueprint.special.edname;
+        }
+      }
+
+      modules.push(module);
+    }
+  });
+
+  // Add hardpoints (capitalized with proper size names)
+  let hugeHP = 1, largeHP = 1, mediumHP = 1, smallHP = 1, tinyHP = 1;
+  ship.hardpoints.forEach(slot => {
+    if (slot.m && slot.m.symbol) {
+      let slotName;
+      if (slot.maxClass === 0) {
+        slotName = `TinyHardpoint${tinyHP++}`;
+      } else if (slot.maxClass === 1) {
+        slotName = `SmallHardpoint${smallHP++}`;
+      } else if (slot.maxClass === 2) {
+        slotName = `MediumHardpoint${mediumHP++}`;
+      } else if (slot.maxClass === 3) {
+        slotName = `LargeHardpoint${largeHP++}`;
+      } else {
+        slotName = `HugeHardpoint${hugeHP++}`;
+      }
+
+      const module = {
+        Slot: slotName,
+        Item: slot.m.symbol,
+        On: Boolean(slot.enabled),
+        Priority: slot.priority
+      };
+
+      if (slot.m.blueprint && Object.keys(slot.m.blueprint).length > 0) {
+        module.Engineering = {
+          BlueprintName: slot.m.blueprint.fdname,
+          Level: slot.m.blueprint.grade,
+          Quality: slot.m.blueprint.quality || 1
+        };
+        if (slot.m.blueprint.special && slot.m.blueprint.special.id >= 0) {
+          module.Engineering.ExperimentalEffect = slot.m.blueprint.special.edname;
+        }
+      }
+
+      modules.push(module);
+    }
+  });
+
+  // Add internal compartments (capitalized slot names)
+  let slotNum = 1;
+  ship.internal.forEach(slot => {
+    if (slot.m && slot.m.symbol) {
+      const module = {
+        Slot: `Slot${String(slotNum).padStart(2, '0')}_Size${slot.maxClass}`,
+        Item: slot.m.symbol,
+        On: Boolean(slot.enabled),
+        Priority: slot.priority
+      };
+
+      if (slot.m.blueprint && Object.keys(slot.m.blueprint).length > 0) {
+        module.Engineering = {
+          BlueprintName: slot.m.blueprint.fdname,
+          Level: slot.m.blueprint.grade,
+          Quality: slot.m.blueprint.quality || 1
+        };
+        if (slot.m.blueprint.special && slot.m.blueprint.special.id >= 0) {
+          module.Engineering.ExperimentalEffect = slot.m.blueprint.special.edname;
+        }
+      }
+
+      modules.push(module);
+      slotNum++;
+    }
+  });
+
+  return [{
+    header: {
+      appName: 'Coriolis',
+      appVersion: '4.0',
+      appURL: 'https://coriolis.io' + outfitURL(ship.id, ship.toString(), buildName)
+    },
+    data: {
+      Ship: shipFdName,
+      Modules: modules
+    }
+  }];
 };

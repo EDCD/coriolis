@@ -29,7 +29,12 @@ export default class ShipPicker extends TranslatedComponent {
   constructor(props, context) { // eslint-disable-line
     super(props);
 
-    this.shipOrder = Object.keys(Ships).sort();
+    // Sort ships by their display name (properties.name) instead of ship ID
+    this.shipOrder = Object.keys(Ships).sort((a, b) => {
+      const nameA = Ships[a].properties.name.toLowerCase();
+      const nameB = Ships[b].properties.name.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
     this._toggleMenu = this._toggleMenu.bind(this);
     this._closeMenu = this._closeMenu.bind(this);
 

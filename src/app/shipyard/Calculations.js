@@ -59,6 +59,7 @@ export function totalJumpRange(mass, fsd, fuel, ship) {
  * @return {number} Approximate shield strengh in MJ
  */
 export function shieldStrength(mass, baseShield, sg, multiplier) {
+  if (!sg) { return 0; }
   // sg might be a module or a template; handle either here
   let minMass = sg instanceof Module ? sg.getMinMass() : sg.minmass;
   let optMass = sg instanceof Module ? sg.getOptMass() : sg.optmass;
@@ -81,18 +82,52 @@ export function shieldStrength(mass, baseShield, sg, multiplier) {
  * @param {number}   baseSpeed  base speed m/s for ship
  * @param {object}   thrusters  The ship's thrusters
  * @param {number}   engpip     the multiplier per pip to engines
+ * @param {number}   minthrust  the minimum thrust percentage (0-100)
  * @return {array}             Speed by pips
  */
-export function speed(mass, baseSpeed, thrusters, engpip) {
+export function speed(mass, baseSpeed, thrusters, minthrust) {
+  if (!thrusters) { return [0, 0, 0, 0, 0]; }
   // thrusters might be a module or a template; handle either here
+  // Use modified masses: engineering modifies optmass and the related modifier
+  // propagates to minmass/maxmass, matching EDSY's mass curve behavior
   const minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   const optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
   const maxMass = thrusters instanceof Module ? thrusters.getMaxMass() : thrusters.maxmass;
   const minMul = thrusters instanceof Module ? thrusters.getMinMul('speed') : (thrusters.minmulspeed ? thrusters.minmulspeed : thrusters.minmul);
-  const optMul = thrusters instanceof Module ? thrusters.getOptMul('speed') : (thrusters.optmulspeed ? thrusters.minmulspeed : thrusters.minmul);
-  const maxMul = thrusters instanceof Module ? thrusters.getMaxMul('speed') : (thrusters.maxmulspeed ? thrusters.minmulspeed : thrusters.minmul);
+  const optMul = thrusters instanceof Module ? thrusters.getOptMul('speed') : (thrusters.optmulspeed ? thrusters.optmulspeed : thrusters.optmul);
+  const maxMul = thrusters instanceof Module ? thrusters.getMaxMul('speed') : (thrusters.maxmulspeed ? thrusters.maxmulspeed : thrusters.maxmul);
 
-  let results = normValues(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, baseSpeed, engpip);
+  // DEBUG LOGGING
+  if (thrusters instanceof Module && thrusters.name === 'Enhanced Performance') {
+    console.log('EPT Speed Calculation Debug:');
+    console.log('  Mass:', mass, 'Base Speed:', baseSpeed, 'MinThrust:', minthrust);
+    console.log('  Masses: min=', minMass, 'opt=', optMass, 'max=', maxMass);
+    console.log('  Muls: min=', minMul, 'opt=', optMul, 'max=', maxMul);
+  }
+
+  // Calculate mass curve multiplier (same as EDSY's getMassCurveMultiplier)
+  const xnorm = Math.min(1, (maxMass - mass) / (maxMass - minMass));
+  const exponent = Math.log((optMul - minMul) / (maxMul - minMul)) / Math.log(Math.min(1, (maxMass - optMass) / (maxMass - minMass)));
+  const ynorm = Math.pow(xnorm, exponent);
+  const curNavSpdMul = minMul + ynorm * (maxMul - minMul);
+
+  // DEBUG LOGGING
+  if (thrusters instanceof Module && thrusters.name === 'Enhanced Performance') {
+    console.log('  Curve: xnorm=', xnorm.toFixed(4), 'exponent=', exponent.toFixed(4), 'ynorm=', ynorm.toFixed(4), 'speedMul=', curNavSpdMul.toFixed(4));
+  }
+
+  // Apply EDSY formula: curNavSpdMul * topspd * (powerdistEngMul + minthrust * (1 - powerdistEngMul))
+  const minthrust_pct = (minthrust || 0) / 100;
+  let results = [];
+  for (let eng = 0; eng <= 4; eng++) {
+    const powerdistEngMul = eng / 4;
+    results.push(curNavSpdMul * baseSpeed * (powerdistEngMul + minthrust_pct * (1 - powerdistEngMul)));
+  }
+
+  // DEBUG LOGGING
+  if (thrusters instanceof Module && thrusters.name === 'Enhanced Performance') {
+    console.log('  Results (0-4 pips):', results.map(r => r.toFixed(1)));
+  }
 
   return results;
 }
@@ -116,6 +151,7 @@ export function calcPipSpeed(baseSpeed, topSpeed) {
  * @return {array}             Pitch by pips
  */
 export function pitch(mass, basePitch, thrusters, engpip) {
+  if (!thrusters) { return [0, 0, 0, 0, 0]; }
   // thrusters might be a module or a template; handle either here
   let minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   let optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
@@ -136,6 +172,7 @@ export function pitch(mass, basePitch, thrusters, engpip) {
  * @return {array}             Yaw by pips
  */
 export function yaw(mass, baseYaw, thrusters, engpip) {
+  if (!thrusters) { return [0, 0, 0, 0, 0]; }
   // thrusters might be a module or a template; handle either here
   let minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   let optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
@@ -156,6 +193,7 @@ export function yaw(mass, baseYaw, thrusters, engpip) {
  * @return {array}             Roll by pips
  */
 export function roll(mass, baseRoll, thrusters, engpip) {
+  if (!thrusters) { return [0, 0, 0, 0, 0]; }
   // thrusters might be a module or a template; handle either here
   let minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   let optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
@@ -223,27 +261,60 @@ function calcValue(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, base
  * @param {number}   mass         the mass of the ship
  * @param {number}   baseSpeed    the base speed of the ship
  * @param {object}   thrusters    the thrusters of the ship
- * @param {number}   engpip       the multiplier per pip to engines
+ * @param {number}   minthrust    the minimum thrust percentage (0-100)
  * @param {number}   eng          the pips to engines
  * @param {number}   boostFactor  the boost factor for ths ship
  * @param {boolean}  boost        true if the boost is activated
  * @returns {number}              the resultant speed
  */
-export function calcSpeed(mass, baseSpeed, thrusters, engpip, eng, boostFactor, boost) {
+export function calcSpeed(mass, baseSpeed, thrusters, minthrust, eng, boostFactor, boost) {
+  if (!thrusters) { return 0; }
   // thrusters might be a module or a template; handle either here
-  const minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
-  const optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
-  const maxMass = thrusters instanceof Module ? thrusters.getMaxMass() : thrusters.maxmass;
+  // Use MODIFIED mass values (experimental effects like Drag Drives modify optmass)
+  const minMass = thrusters instanceof Module ? thrusters.getMinMass(true) : thrusters.minmass;
+  const optMass = thrusters instanceof Module ? thrusters.getOptMass(true) : thrusters.optmass;
+  const maxMass = thrusters instanceof Module ? thrusters.getMaxMass(true) : thrusters.maxmass;
   const minMul = thrusters instanceof Module ? thrusters.getMinMul('speed') : (thrusters.minmulspeed ? thrusters.minmulspeed : thrusters.minmul);
-  const optMul = thrusters instanceof Module ? thrusters.getOptMul('speed') : (thrusters.optmulspeed ? thrusters.minmulspeed : thrusters.minmul);
-  const maxMul = thrusters instanceof Module ? thrusters.getMaxMul('speed') : (thrusters.maxmulspeed ? thrusters.minmulspeed : thrusters.minmul);
+  const optMul = thrusters instanceof Module ? thrusters.getOptMul('speed') : (thrusters.optmulspeed ? thrusters.optmulspeed : thrusters.optmul);
+  const maxMul = thrusters instanceof Module ? thrusters.getMaxMul('speed') : (thrusters.maxmulspeed ? thrusters.maxmulspeed : thrusters.maxmul);
 
-  let result = calcValue(minMass, optMass, maxMass, minMul, optMul, maxMul, mass, baseSpeed, engpip, eng);
-  if (boost == true) {
-    result *= boostFactor;
+  // DEBUG for EPT
+  const isEPT = thrusters instanceof Module && thrusters.name === 'Enhanced Performance';
+  if (isEPT && mass > 65) {
+    console.log('*** calcSpeed() called for EPT ***');
+    console.log('  mass:', mass, 'baseSpeed:', baseSpeed, 'minthrust:', minthrust, 'eng:', eng, 'boost:', boost);
+    console.log('  Masses:', minMass, '/', optMass, '/', maxMass);
+    console.log('  Muls:', minMul, '/', optMul, '/', maxMul);
   }
 
-  return result;
+  // Calculate mass curve multiplier (same as EDSY's getMassCurveMultiplier)
+  const xnorm = Math.min(1, (maxMass - mass) / (maxMass - minMass));
+  const exponent = Math.log((optMul - minMul) / (maxMul - minMul)) / Math.log(Math.min(1, (maxMass - optMass) / (maxMass - minMass)));
+  const ynorm = Math.pow(xnorm, exponent);
+  const curNavSpdMul = minMul + ynorm * (maxMul - minMul);
+
+  if (isEPT && mass > 65) {
+    console.log('  speedMul:', curNavSpdMul.toFixed(6));
+  }
+
+  if (boost == true) {
+    // EDSY boost formula: curNavSpdMul * bstspd (no power distribution)
+    // boostFactor is actually (base boost speed / base speed), so multiply back
+    const result = curNavSpdMul * baseSpeed * boostFactor;
+    if (isEPT && mass > 65) {
+      console.log('  BOOST result:', result.toFixed(1), 'm/s');
+    }
+    return result;
+  } else {
+    // EDSY normal speed formula: curNavSpdMul * topspd * (powerdistEngMul + minthrust * (1 - powerdistEngMul))
+    const minthrust_pct = (minthrust || 0) / 100;
+    const powerdistEngMul = eng / 4;
+    const result = curNavSpdMul * baseSpeed * (powerdistEngMul + minthrust_pct * (1 - powerdistEngMul));
+    if (isEPT && mass > 65) {
+      console.log('  TOP SPEED result:', result.toFixed(1), 'm/s');
+    }
+    return result;
+  }
 }
 
 /**
@@ -258,6 +329,7 @@ export function calcSpeed(mass, baseSpeed, thrusters, engpip, eng, boostFactor, 
  * @returns {number}              the resultant pitch
  */
 export function calcPitch(mass, basePitch, thrusters, engpip, eng, boostFactor, boost) {
+  if (!thrusters) { return 0; }
   // thrusters might be a module or a template; handle either here
   let minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   let optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
@@ -286,6 +358,7 @@ export function calcPitch(mass, basePitch, thrusters, engpip, eng, boostFactor, 
  * @returns {number}              the resultant roll
  */
 export function calcRoll(mass, baseRoll, thrusters, engpip, eng, boostFactor, boost) {
+  if (!thrusters) { return 0; }
   // thrusters might be a module or a template; handle either here
   let minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   let optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
@@ -314,6 +387,7 @@ export function calcRoll(mass, baseRoll, thrusters, engpip, eng, boostFactor, bo
  * @returns {number}              the resultant yaw
  */
 export function calcYaw(mass, baseYaw, thrusters, engpip, eng, boostFactor, boost) {
+  if (!thrusters) { return 0; }
   // thrusters might be a module or a template; handle either here
   let minMass = thrusters instanceof Module ? thrusters.getMinMass() : thrusters.minmass;
   let optMass = thrusters instanceof Module ? thrusters.getOptMass() : thrusters.optmass;
@@ -384,7 +458,7 @@ export function shieldMetrics(ship, sys) {
     // Our initial regeneration comes from the SYS capacitor store, which is replenished as it goes
     // 0.6 is a magic number from FD: each 0.6 MW of energy from the power distributor recharges 1 MJ/s of regeneration
     let capacitorDrain = (shieldGenerator.getBrokenRegenerationRate() * shieldGenerator.getDistDraw()) - sysRechargeRate;
-    
+
     let capacitorLifetime = powerDistributor.getSystemsCapacity() / capacitorDrain;
 
     let recover = 16;

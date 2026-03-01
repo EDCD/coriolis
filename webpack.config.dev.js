@@ -7,9 +7,6 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 
 module.exports = merge(common, {
   devtool: 'source-map',
-  devServer: {
-    headers: { 'Access-Control-Allow-Origin': '*' }
-  },
   mode: 'development',
   optimization: {
     minimize: false,
@@ -17,8 +14,8 @@ module.exports = merge(common, {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-      'src/.htaccess', 
-      'src/iframe.html', 
+      'src/.htaccess',
+      'src/iframe.html',
       'src/xdLocalStoragePostMessageApi.min.js'
     ]}),
     new WebpackNotifierPlugin({ alwaysNotify: true }),

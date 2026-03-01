@@ -76,12 +76,15 @@ export default class UtilitySlotSection extends SlotSection {
       if (h.maxClass === 0) {
         slots.push(<HardpointSlot
           key={i}
+          id={h.id}
           maxClass={h.maxClass}
-          availableModules={() => availableModules.getHps(h.maxClass)}
+          availableModules={() => availableModules.getHps(ship, 0, h.eligible)}
           onOpen={this._openMenu.bind(this,h)}
           onSelect={this._selectModule.bind(this, h)}
           onChange={this.props.onChange}
           selected={currentMenu == h}
+          eligible={!!h.eligible}
+          slot={h}
           drag={this._drag.bind(this, h)}
           dragOver={this._dragOverSlot.bind(this, h)}
           drop={this._drop}
@@ -106,28 +109,28 @@ export default class UtilitySlotSection extends SlotSection {
 
     return <div className='select' onClick={(e) => e.stopPropagation()} onContextMenu={stopCtxPropagation}>
       <ul>
-        <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['emptyall'] = smRef}>{translate('empty all')}</li>
+        <li className='lc' tabIndex='0' onClick={this._empty} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('emptyall', smRef)}>{translate('empty all')}</li>
         <li className='optional-hide' style={{ textAlign: 'center', marginTop: '1em' }}>{translate('PHRASE_ALT_ALL')}</li>
       </ul>
       <div className='select-group cap'>{translate('sb')}</div>
       <ul>
-        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'A', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['sb-A'] = smRef}>A</li>
-        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'B', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['sb-B'] = smRef}>B</li>
-        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'C', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['sb-C'] = smRef}>C</li>
-        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'D', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['sb-D'] = smRef}>D</li>
-        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'E', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['sb-E'] = smRef}>E</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'A', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('sb-A', smRef)}>A</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'B', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('sb-B', smRef)}>B</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'C', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('sb-C', smRef)}>C</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'D', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('sb-D', smRef)}>D</li>
+        <li className='c' tabIndex='0' onClick={_use.bind(this, 'sb', 'E', null)} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('sb-E', smRef)}>E</li>
       </ul>
       <div className='select-group cap'>{translate('hs')}</div>
       <ul>
-        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'hs', null, 'Heat Sink Launcher')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['hs'] = smRef}>{translate('Heat Sink Launcher')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'hs', null, 'Heat Sink Launcher')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('hs', smRef)}>{translate('Heat Sink Launcher')}</li>
       </ul>
       <div className='select-group cap'>{translate('ch')}</div>
       <ul>
-        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'ch', null, 'Chaff Launcher')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['ch'] = smRef}>{translate('Chaff Launcher')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'ch', null, 'Chaff Launcher')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('ch', smRef)}>{translate('Chaff Launcher')}</li>
       </ul>
       <div className='select-group cap'>{translate('po')}</div>
       <ul>
-        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['po'] = smRef}>{translate('Point Defence')}</li>
+        <li className='lc' tabIndex='0' onClick={_use.bind(this, 'po', null, 'Point Defence')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefMap.set('po', smRef)}>{translate('Point Defence')}</li>
       </ul>
     </div>;
   }

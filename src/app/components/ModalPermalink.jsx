@@ -27,7 +27,7 @@ export default class ModalPermalink extends TranslatedComponent {
   /**
    * Shorten URL on mount
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     ShortenUrl(this.props.url,
       (shortenedUrl) => this.setState({ shortenedUrl }),
       (error) => this.setState({ shortenedUrl: 'Error - ' + error })
@@ -63,7 +63,7 @@ export default class ModalPermalink extends TranslatedComponent {
       <input id={'shortenedUrl'} value={this.state.shortenedUrl} readOnly size={25} onFocus={ (e) => e.target.select() }/><button className={'cb dismiss cap'} onClick={this.copyShortLink}>{translate('copy to clipboard')}</button>
       <br/><br/>
       <hr />
-      <p>s.orbis.zone is the URL shortener domain. These links should persist indefinitely going forward. If for some reason there is a problem with the link shortening process, please report it in the EDCD Discord Server.</p>
+      <p>sh.orbis.zone is the URL shortener domain. These links should persist indefinitely going forward. If for some reason there is a problem with the link shortening process, please report it in the EDCD Discord Server.</p>
       <hr />
       <button className={'r dismiss cap'} onClick={this.context.hideModal}>{translate('close')}</button>
     </div>;

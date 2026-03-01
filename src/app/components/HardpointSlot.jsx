@@ -11,16 +11,20 @@ import {
   MountGimballed,
   MountTurret,
   ListModifications,
-  Modified
+  Modified,
+  CommunityGoalSmall,
+  TechBrokerSmall,
+  PowerPlaySmall
 } from './SvgIcons';
 import { Modifications } from 'coriolis-data/dist';
 import { stopCtxPropagation } from '../utils/UtilityFunctions';
-import { blueprintTooltip } from '../utils/BlueprintFunctions';
+import { getBlueprint, blueprintTooltip } from '../utils/BlueprintFunctions';
 
 /**
  * Hardpoint / Utility Slot
  */
 export default class HardpointSlot extends Slot {
+
 
   /**
    * Get the CSS class name for the slot.
@@ -39,6 +43,35 @@ export default class HardpointSlot extends Slot {
     return translate(['U', 'S', 'M', 'L', 'H'][this.props.maxClass]);
   }
 
+
+
+  /**
+   * Get the availability icon for a module (CG, Tech Broker, or PowerPlay)
+   * @param  {Object} mod The module
+   * @return {React.Component} Icon component or null
+   */
+  _getAvailabilityIcon(mod) {
+    if (!mod) return null;
+
+    // Check for PowerPlay modules first
+    if (mod.powerplay === 'True' || mod.powerplay === true) {
+      return <PowerPlaySmall className='powerplay' />;
+    }
+
+    // Then check for pre-engineered modules (CG or Tech Broker)
+    if (!mod.preEngineered) return null;
+
+    if (mod.preEngineered.availability === 'CG') {
+      return <CommunityGoalSmall className='community' />;
+    }
+
+    if (typeof mod.preEngineered.availability === 'undefined') {
+      return <TechBrokerSmall className='techbroker' />;
+    }
+
+    return null;
+  }
+
   /**
    * Generate the slot contents
    * @param  {Object} m             Mounted Module
@@ -53,28 +86,66 @@ export default class HardpointSlot extends Slot {
       let classRating = `${m.class}${m.rating}${m.missile ? '/' + m.missile : ''}`;
       let { drag, drop } = this.props;
       let { termtip, tooltip } = this.context;
-      let validMods = Modifications.modules[m.grp].modifications || [];
+      let validMods = Modifications.modules[m.grp] ? (Modifications.modules[m.grp].modifications || []) : [];
       let showModuleResistances = Persist.showModuleResistances();
+      // Check if module has engineering disabled (e.g., Mk II Plasma Shock Accelerator)
+      let canBeEngineered = m.engineering !== false && m.engineering !== 'False';
+      // Show modifications button if there are available modifications OR if module has a blueprint/mods applied
+      // But only if engineering is not explicitly disabled for this module
+      let hasModifications = canBeEngineered && (validMods.length > 0 || (m.blueprint && m.blueprint.name) || (m.mods && Object.keys(m.mods).length > 0));
 
       // Modifications tooltip shows blueprint and grade, if available
       let modTT = translate('modified');
       if (m && m.blueprint && m.blueprint.name) {
-        modTT = translate(m.blueprint.name) + ' ' + translate('grade') + ' ' + m.blueprint.grade;
-        if (m.blueprint.special && m.blueprint.special.id >= 0) {
-          modTT += ', ' + translate(m.blueprint.special.name);
+        if (m.preEngineered && m.preEngineered.blueprints) {
+          const blueprintNames = _.split(m.preEngineered.blueprints, ',');
+          const blueprints = blueprintNames.map(name => getBlueprint(name.trim(), m));
+          const blueprintHeader = blueprints.map(bp => <div className='blueprintList' key={bp.name}>{`Blueprint: ${translate(bp.name)} ${translate('Grade:')} ${m.preEngineered.grade}`}</div>);
+
+          if (m.blueprint.special && m.blueprint.special.id >= 0) {
+            blueprintHeader.push(<div className='blueprintList' key={m.blueprint.special.name}>{`Experimental: ${translate(m.blueprint.special.name)}`}</div>);
+          }
+          const blueprintGrades = blueprints.map(bp => bp.grades[m.preEngineered.grade]);
+          modTT = (
+            <div>
+              {blueprintHeader}
+              {blueprintTooltip(translate, blueprintGrades, null, m.grp, m)}
+            </div>
+          );
+        } else {
+          const blueprintHeader = [];
+          blueprintHeader.push(<div className='blueprintList' key={m.blueprint.name}>{`Blueprint: ${translate(m.blueprint.name)} ${translate('grade')} ${m.blueprint.grade}`}</div>);
+          if (m.blueprint.special && m.blueprint.special.id >= 0) {
+            blueprintHeader.push(<div className='blueprintList' key={m.blueprint.special.name}>{`Experimental: ${translate(m.blueprint.special.name)}`}</div>);
+          }
+          modTT = (
+            <div>
+              {blueprintHeader}
+              {blueprintTooltip(translate, [m.blueprint.grades[m.blueprint.grade]], null, m.grp, m)}
+            </div>
+          );
         }
-        modTT = (
-          <div>
-            <div>{modTT}</div>
-            {blueprintTooltip(translate, m.blueprint.grades[m.blueprint.grade], null, m.grp, m)}
-          </div>
-        );
+      }
+
+      let cgttip = '';
+      // Get availability icon (CG, Tech Broker, or PowerPlay)
+      const availabilityIcon = this._getAvailabilityIcon(m);
+      if (m && (m.powerplay === 'True' || m.powerplay === true)) {
+        cgttip = 'PowerPlay Module';
+      }
+      else if (m && m.preEngineered && m.preEngineered.availability === 'CG') {
+        cgttip = 'Community Goal Module';
+      }
+      else if (m && m.preEngineered && m.preEngineered.availability === undefined) {
+        cgttip = 'Tech Broker Module';
       }
 
       const className = cn('details', enabled ? '' : 'disabled');
       return <div className={className} draggable='true' onDragStart={drag} onDragEnd={drop}>
         <div className={'cb'}>
           <div className={'l'}>
+            {availabilityIcon ? <span onMouseOver={termtip.bind(null, cgttip)}
+                                               onMouseOut={tooltip.bind(null, null)}>{availabilityIcon}</span> : ''}
             {m.mount && m.mount == 'F' ? <span onMouseOver={termtip.bind(null, 'fixed')}
                                                onMouseOut={tooltip.bind(null, null)}><MountFixed/></span> : ''}
             {m.mount && m.mount == 'G' ? <span onMouseOver={termtip.bind(null, 'gimballed')}
@@ -137,8 +208,8 @@ export default class HardpointSlot extends Slot {
             className='l'>{translate('thermres')}: {formats.pct(m.getThermalResistance())}</div> : null}
           {m.getIntegrity() ? <div className='l'>{translate('integrity')}: {formats.int(m.getIntegrity())}</div> : null}
           {m.getInfo() ? <div className='l'>{translate(m.getInfo())}</div> : null}
-          {m && validMods.length > 0 ? <div className='r' tabIndex="0" ref={modButton => this.modButton = modButton}>
-            <button tabIndex="-1" onClick={this._toggleModifications.bind(this)} onContextMenu={stopCtxPropagation}
+          {m && hasModifications ? <div className='r' tabIndex="0" ref={modButton => this.modButton = modButton}>
+            <button tabIndex="-1" onClick={(e) => this._toggleModifications(e)} onContextMenu={stopCtxPropagation}
                     onMouseOver={termtip.bind(null, 'modifications')} onMouseOut={tooltip.bind(null, null)}>
               <ListModifications/></button>
           </div> : null}
@@ -148,5 +219,6 @@ export default class HardpointSlot extends Slot {
       return <div className={'empty'}>{translate('empty')}</div>;
     }
   }
+
 
 }

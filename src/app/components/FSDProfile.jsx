@@ -36,7 +36,7 @@ export default class FSDProfile extends TranslatedComponent {
    * @param  {Object} nextContext Incoming/Next conext
    * @return {boolean}            Returns true if the component should be rerendered
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.marker != this.props.marker) {
       this.setState({ calcMaxRangeFunc: this._calcMaxRange.bind(this, nextProps.ship, nextProps.fuel) });
     }
@@ -70,7 +70,7 @@ export default class FSDProfile extends TranslatedComponent {
     const fsd = ship.standard[2].m;
     const minMass = ship.calcLowestPossibleMass({ th: thrusters });
     const maxMass = thrusters.getMaxMass();
-    const mass = ship.unladenMass + fuel + cargo;
+    const mass = ship.dryMass + fuel + cargo;
     const minRange = 0;
     const maxRange = Calc.jumpRange(minMass + fsd.getMaxFuelPerJump(), fsd, fsd.getMaxFuelPerJump(), ship);
     // Add a mark at our current mass

@@ -441,7 +441,7 @@ export default class ComparisonPage extends Page {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextContext Incoming/Next conext
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if (this.context.route !== nextContext.route) {
       // Only reinit state if the route has changed
       this.setState(this._initState(nextContext));
@@ -451,7 +451,7 @@ export default class ComparisonPage extends Page {
   /**
    * Add listeners when about to mount
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.resizeListener = this.context.onWindowResize(this._updateDimensions);
     this.persistListener = Persist.addListener(
       'discounts',

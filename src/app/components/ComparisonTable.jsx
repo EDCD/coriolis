@@ -94,7 +94,7 @@ export default class ComparisonTable extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextContext Incoming/Next conext
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // If facets or language has changed re-render header
     if (nextProps.facets != this.props.facets || nextContext.language != this.context.language) {
       this.setState(this._buildHeaders(nextProps.facets, nextProps.onSort, nextContext.language.translate));

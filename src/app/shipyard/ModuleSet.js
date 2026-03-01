@@ -19,9 +19,15 @@ function filter(arr, maxClass, minClass, mass) {
  * @param  {number} maxSize    Maximum allowable size for SCO modules.
  * @return {Array}             Subset of modules filtered based on legal size amd type.
  */
-function sco_filter(arr, maxSize) {
+function sco_filter(arr, slotSize) {
   return arr.filter(module => {
-    return !(module.hasOwnProperty('name') && module['name'] === "Frame Shift Drive (SCO)" && module['class'] < maxSize);
+    // Check if this is an SCO FSD (regular or V1)
+    if (module.hasOwnProperty('name') && (module['name'].includes("(SCO)"))) {
+      // SCO FSDs can only be mounted in slots that exactly match their class size
+      return module['class'] === slotSize;
+    }
+    // For non-SCO modules, use the original logic (prevent undersized SCO modules)
+    return true;
   });
 }
 
@@ -36,10 +42,15 @@ export default class ModuleSet {
    * @param  {Object} shipData       Ship Specifications Data (see coriolis-data/Ships)
    */
   constructor(modules, shipData) {
-    let maxInternal = isNaN(shipData.slots.internal[0]) ? shipData.slots.internal[0].class : shipData.slots.internal[0];
+    let maxInternal = Math.max(...shipData.slots.internal.map(slot =>
+      isNaN(slot) ? slot.class : slot
+    ));
     let mass = shipData.properties.hullMass + 6.5;
     let maxStandardArr = shipData.slots.standard;
-    let maxHardPoint = shipData.slots.hardpoints[0];
+    let maxHardPoint = Math.max(...shipData.slots.hardpoints.map(slot =>
+      typeof slot === 'object' ? slot.class : slot
+    ));
+
     let stnd = modules.standard;
     this.mass = mass;
     this.standard = {};
@@ -49,19 +60,34 @@ export default class ModuleSet {
     this.intClass = {};
 
     this.bulkheads = shipData.bulkheads.map((b, i) => {
-      return Object.assign(new Module(), { grp: 'bh', id: i, name: BulkheadNames[i], index: i, class: '', rating: '' }, b);
+      // Use the bulkhead's own name if it exists, otherwise fall back to standard names
+      const name = b.name || BulkheadNames[i];
+      return Object.assign(new Module(), { grp: 'bh', id: i, index: i, class: '', rating: '' }, b, { name });
     });
 
     this.standard[0] = filter(stnd.pp, maxStandardArr[0], 0, mass);  // Power Plant
     this.standard[2] = filter(stnd.fsd, maxStandardArr[2], 0, mass);  // FSD
     this.standard[2] = sco_filter(this.standard[2], maxStandardArr[2]) // FSD - Filter SCO Modules
     this.standard[4] = filter(stnd.pd, maxStandardArr[4], 0, mass);  // Power Distributor
-    this.standard[6] = filter(stnd.ft, maxStandardArr[6], 0, mass);  // Fuel Tank
+
+    // Fuel Tank - filter out unrecognised modules
+    this.standard[6] = filter(stnd.ft, maxStandardArr[6], 0, mass).filter(m => {
+      if (!m || !m.id) return false;
+      const id = m.id.toLowerCase();
+      const name = (m.name || m.ukName || '').toLowerCase();
+      // Filter out unrecognised modules
+      if (name.includes('unrecognised') || id.includes('unrecognised')) return false;
+      if (id === '4m' || id === '1z' || id === '0z' || id.endsWith('z')) return false;
+      if (name.includes('error') || name.includes('placeholder')) return false;
+      if (m.rating === 'Z') return false;  // Rating Z is used for unrecognised modules
+      return true;
+    });
+
     // Thrusters, filter modules by class only (to show full list of ratings for that class)
     let minThrusterClass = stnd.t.reduce((clazz, th) => (th.maxmass >= mass && th.class < clazz) ? th.class : clazz, maxStandardArr[1]);
     this.standard[1] = filter(stnd.t, maxStandardArr[1], minThrusterClass, 0);  // Thrusters
     // Slots where module class must be equal to slot class
-    this.standard[3] = filter(stnd.ls, maxStandardArr[3], maxStandardArr[3], 0);     // Life Supprt
+    this.standard[3] = filter(stnd.ls, maxStandardArr[3], maxStandardArr[3], 0);     // Life Support
     this.standard[5] = filter(stnd.s, maxStandardArr[5], maxStandardArr[5], mass);  // Sensors
 
     for (let h in modules.hardpoints) {
@@ -95,6 +121,10 @@ export default class ModuleSet {
       if (eligible && !eligible[key]) {
         continue;
       }
+      // 'crl' (Large Cargo Racks) can only be mounted in special 'Cargo' slots
+      if (key === 'crl' && !eligible) {
+        continue;
+      }
       if (key == 'pcq' && !(ship.luxuryCabins && ship.luxuryCabins  === true)) {
         continue;
       }
@@ -115,10 +145,10 @@ export default class ModuleSet {
    * @param  {Object} eligible) The map of eligible hardpoint groups
    * @return {object}           A map of all eligible modules by group
    */
-  getHps(c, eligible) {
+  getHps(ship, c, eligible) {
     let o = {};
     for (let key in this.hardpoints) {
-      if (eligible && !eligible[key]) {
+      if (eligible && !eligible[key]) { // If the slot has eligibility restrictions
         continue;
       }
       let data = filter(this.hardpoints[key], c, c ? 1 : 0, this.mass);

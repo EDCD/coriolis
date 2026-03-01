@@ -138,7 +138,7 @@ export default class Offence extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @return {boolean}            Returns true if the component should be rerendered
    */
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.marker != nextProps.marker || this.props.eng != nextProps.eng) {
       const damage = Calc.offenceMetrics(nextProps.ship, nextProps.opponent, nextProps.wep, nextProps.opponentSys, nextProps.engagementrange);
       this.setState({ damage });

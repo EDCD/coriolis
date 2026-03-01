@@ -105,6 +105,7 @@ export const ModuleGroupToName = {
   abl: 'Abrasion Blaster',
   scl: 'Seismic Charge Launcher',
   sdm: 'Sub-Surface Displacement Missile',
+  mvr: 'Mining Volley Repeater',
 };
 
 let GrpNameToCodeMap = {};

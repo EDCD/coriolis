@@ -36,7 +36,7 @@ export default class JumpRange extends TranslatedComponent {
    * @param  {Object} nextContext Incoming/Next conext
    * @return {boolean}            Returns true if the component should be rerendered
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.code != this.props.code) {
       this.setState({ fuelLevel: 1,
         calcJumpRangeFunc: this._calcJumpRange.bind(this, nextProps.ship) });

@@ -146,7 +146,7 @@ export default class BarChart extends TranslatedComponent {
   /**
    * Update dimensions based on props and context.
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this._updateDimensions(this.props, this.context.sizeRatio);
   }
 
@@ -155,7 +155,7 @@ export default class BarChart extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextContext Incoming/Next conext
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     let { data, width, predicate, desc } = nextProps;
     let props = this.props;
 

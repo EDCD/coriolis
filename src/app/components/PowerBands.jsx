@@ -156,7 +156,7 @@ export default class PowerBands extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextContext Incoming/Next context
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     let { innerWidth, maxPwr } = this.state;
     let { language, sizeRatio } = this.context;
     let maxBand = nextProps.bands[nextProps.bands.length - 1];

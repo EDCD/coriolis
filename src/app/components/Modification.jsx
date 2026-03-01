@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TranslatedComponent from './TranslatedComponent';
 import cn from 'classnames';
-import NumberEditor from 'react-number-editor';
+import NumberEditor from './NumberEditor';
 import { isChangeValueBeneficial } from '../utils/BlueprintFunctions';
 import { Modifications } from 'coriolis-data/dist';
 

@@ -39,7 +39,7 @@ export default class Defence extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @return {boolean}            Returns true if the component should be rerendered
    */
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.marker != nextProps.marker || this.props.sys != nextProps.sys) {
       const { shield, armour, shielddamage, armourdamage } = Calc.defenceMetrics(nextProps.ship, nextProps.opponent, nextProps.sys, nextProps.opponentWep, nextProps.engagementrange);
       this.setState({ shield, armour, shielddamage, armourdamage });

@@ -611,7 +611,7 @@ export default class CostSection extends TranslatedComponent {
   /**
    * Add listeners on mount and update costs
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.listeners = [
       Persist.addListener('discounts', this._onDiscountChanged.bind(this)),
       Persist.addListener('insurance', this._onInsuranceChanged.bind(this)),
@@ -627,7 +627,7 @@ export default class CostSection extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextContext Incoming/Next context
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     let retrofitShip = this.state.retrofitShip;
 
     if (nextProps.ship != this.props.ship) { // Ship has changed
@@ -654,7 +654,7 @@ export default class CostSection extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextState Incoming/Next state
    */
-  componentWillUpdate(nextProps, nextState) {
+  UNSAFE_componentWillUpdate(nextProps, nextState) {
     let state = this.state;
 
     switch (nextState.tab) {

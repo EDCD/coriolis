@@ -1,6 +1,6 @@
 {
   "name": "coriolis_shipyard",
-  "version": "3.0.1",
+  "version": "4.0.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/EDCD/coriolis"
@@ -8,23 +8,33 @@
   "homepage": "https://coriolis.io",
   "bugs": "https://github.com/EDCD/coriolis/issues",
   "contributors": [
-    { "name": "cmdrmcdonald" },
-    { "name": "willb321" },
-    { "name": "felixlinker" }
+    {
+      "name": "cmdrmcdonald"
+    },
+    {
+      "name": "willb321"
+    },
+    {
+      "name": "felixlinker"
+    },
+    {
+      "name": "alex-williams"
+    }
   ],
   "private": true,
-  "engine": "node >= 10.13.0",
+  "engine": "node >= 22.2.0",
   "license": "MIT",
   "scripts": {
     "extract-translations": "grep -hroE \"(translate\\('[^']+'\\))|(tip.bind\\(null, '[^']+')\" src/* | grep -oE \"'[^']+'\" | grep -oE \"[^']+\" | sort -u -f",
     "clean": "rimraf build",
     "start": "node devServer.js",
+    "start:prod": "webpack serve --config webpack.config.prod.js",
     "lint": "eslint --ext .js,.jsx src",
     "test": "jest",
     "prod-serve": "nginx -p $(pwd) -c nginx.conf",
     "prod-stop": "kill -QUIT $(cat nginx.pid)",
     "buildfresh": "rimraf node_modules && rm package-lock.json && npm install && npm run build > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)",
-    "build": "npm run clean && cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
+    "build": "webpack --config webpack.config.prod.js",
     "rsync": "rsync -ae \"ssh -i $CORIOLIS_PEM\" --delete build/ $CORIOLIS_USER@$CORIOLIS_HOST:~/wwws",
     "deploy": "npm run lint && npm test && npm run build && npm run rsync"
   },
@@ -75,6 +85,8 @@
     "@babel/plugin-proposal-numeric-separator": "^7.0.0",
     "@babel/plugin-proposal-optional-chaining": "^7.0.0",
     "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-proposal-throw-expressions": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-syntax-import-meta": "^7.0.0",
@@ -105,7 +117,7 @@
     "less-loader": "^11.1.0",
     "mini-css-extract-plugin": "^2.7.2",
     "react-container-dimensions": "^1.4.1",
-    "react-testutils-additions": "^15.0.0",
+    "react-testutils-additions": "^16.0.0",
     "react-transition-group": "^2.5.0",
     "rimraf": "^4.1.2",
     "rollup": "^3.17.2",
@@ -138,19 +150,20 @@
     "d3": "^5.7.0",
     "detect-browser": "^3.0.1",
     "fbemitter": "^2.1.1",
+    "fuse.js": "^7.1.0",
     "https-browserify": "^1.0.0",
     "lodash": "^4.17.11",
     "lz-string": "^1.4.4",
     "os-browserify": "^0.3.0",
     "pako": "^2.1.0",
     "path-browserify": "^1.0.1",
-    "prop-types": "^15.6.2",
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2",
+    "prop-types": "^15.8.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-fuzzy": "^0.5.2",
     "react-ga": "^2.5.3",
-    "react-number-editor": "^4.0.3",
-    "recharts": "^1.2.0",
+    "react-use-measure": "^2.1.7",
+    "recharts": "^3.2.1",
     "register-service-worker": "^1.7.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",

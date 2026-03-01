@@ -35,8 +35,15 @@ export default class SlotSection extends TranslatedComponent {
     this.sectionName = sectionName;
     this.ssHeadRef = null;
 
-    this.sectionRefArr = this.props.sectionMenuRefs[this.sectionId] = [];
-    this.sectionRefArr['selectedRef'] = null;
+    // Create our Map - don't rely on props.sectionMenuRefs
+    this.sectionRefMap = new Map();
+    this.sectionRefMap.set('selectedRef', null);
+
+    // Only assign to props if it exists
+    if (this.props.sectionMenuRefs) {
+      this.props.sectionMenuRefs[this.sectionId] = this.sectionRefMap;
+    }
+
     this._getSlots = this._getSlots.bind(this);
     this._selectModule = this._selectModule.bind(this);
     this._getSectionMenu = this._getSectionMenu.bind(this);
@@ -74,14 +81,14 @@ export default class SlotSection extends TranslatedComponent {
     }
     if (event.key == 'Tab') {
       if (event.shiftKey) {
-        if ((event.currentTarget === this.sectionRefArr[this.firstRefId]) && this.sectionRefArr[this.lastRefId]) {
+        if ((event.currentTarget === this.sectionRefMap.get(this.firstRefId)) && this.sectionRefMap.get(this.lastRefId)) {
           event.preventDefault();
-          this.sectionRefArr[this.lastRefId].focus();
+          this.sectionRefMap.get(this.lastRefId).focus();
         }
       } else {
-        if ((event.currentTarget === this.sectionRefArr[this.lastRefId]) &&  this.sectionRefArr[this.firstRefId]) {
+        if ((event.currentTarget === this.sectionRefMap.get(this.lastRefId)) && this.sectionRefMap.get(this.firstRefId)) {
           event.preventDefault();
-          this.sectionRefArr[this.firstRefId].focus();
+          this.sectionRefMap.get(this.firstRefId).focus();
         }
       }
     }
@@ -95,15 +102,15 @@ export default class SlotSection extends TranslatedComponent {
    *
    */
   _handleSectionFocus(focusPrevProps, firstRef, lastRef) {
-    if (this.selectedRefId !== null && this.sectionRefArr[this.selectedRefId]) {
+    if (this.selectedRefId !== null && this.sectionRefMap.get(this.selectedRefId)) {
       // set focus on the previously selected option for the currently open section menu
-      this.sectionRefArr[this.selectedRefId].focus();
-    } else if (this.sectionRefArr[firstRef] && this.sectionRefArr[firstRef] != null) {
+      this.sectionRefMap.get(this.selectedRefId).focus();
+    } else if (this.sectionRefMap.get(firstRef) && this.sectionRefMap.get(firstRef) != null) {
       // set focus on the first option in the currently open section menu if none have been selected previously
-      this.sectionRefArr[firstRef].focus();
-    }  else if (this.props.currentMenu == null && focusPrevProps.currentMenu == this.sectionName && this.sectionRefArr['ssHeadRef']) {
+      this.sectionRefMap.get(firstRef).focus();
+    }  else if (this.props.currentMenu == null && focusPrevProps.currentMenu == this.sectionName && this.sectionRefMap.get('ssHeadRef')) {
       // set focus on the section menu header when section menu is closed
-      this.sectionRefArr['ssHeadRef'].focus();
+      this.sectionRefMap.get('ssHeadRef').focus();
     }
   }
   /**
@@ -158,7 +165,7 @@ export default class SlotSection extends TranslatedComponent {
       // Show correct icon
       const effect = this.state.copy ? 'copy' : 'move';
       if (!browser || (browser.name !== 'edge' && browser.name !== 'ie')) {
-        e.dataTransfer.dropEffect = os != targetSlot && canMount(this.props.ship, targetSlot, os.m.grp, os.m.class) ? effect : 'none';
+        e.dataTransfer.dropEffect = os != targetSlot && canMount(this.props.ship, targetSlot, os.m.grp, os.m.class, os.m) ? effect : 'none';
       }
       this.setState({ targetSlot });
     } else {
@@ -192,7 +199,7 @@ export default class SlotSection extends TranslatedComponent {
     if (targetSlot && originSlot != targetSlot) {
       if (copy) {
         // We want to copy the module in to the target slot
-        if (targetSlot && canMount(this.props.ship, targetSlot, m.grp, m.class)) {
+        if (targetSlot && canMount(this.props.ship, targetSlot, m.grp, m.class, m)) {
           const mCopy = m.clone();
           this.props.ship.use(targetSlot, mCopy, false);
           let experimentalNum = this.props.ship.hardpoints
@@ -216,9 +223,9 @@ export default class SlotSection extends TranslatedComponent {
         const targetEnabled = originSlot.enabled;
         const targetPriority = originSlot.priority;
         // We want to move the module in to the target slot, and swap back any module that was originally in the target slot
-        if (targetSlot && m && canMount(this.props.ship, targetSlot, m.grp, m.class)) {
+        if (targetSlot && m && canMount(this.props.ship, targetSlot, m.grp, m.class, m)) {
           // Swap modules if possible
-          if (targetSlot.m && canMount(this.props.ship, originSlot, targetSlot.m.grp, targetSlot.m.class)) {
+          if (targetSlot.m && canMount(this.props.ship, originSlot, targetSlot.m.grp, targetSlot.m.class, targetSlot.m)) {
             this.props.ship.use(originSlot, targetSlot.m, true);
             this.props.ship.use(targetSlot, m);
             // Swap power
@@ -302,9 +309,13 @@ export default class SlotSection extends TranslatedComponent {
     let ctx = wrapCtxMenu(this._contextMenu);
 
     return (
-      <div id={this.sectionId} className={'group'}  onDragLeave={this._dragOverNone}>
+      <div id={this.sectionId} className={'group'} onDragLeave={this._dragOverNone}>
         <div className={cn('section-menu', { selected: sectionMenuOpened })} onClick={open} onContextMenu={ctx}>
-          <h1 tabIndex="0" onKeyDown={this._keyDown} ref={ssHead => this.sectionRefArr['ssHeadRef'] = ssHead}>{translate(this.sectionName)} <Equalizer/></h1>
+          <h1 tabIndex="0" onKeyDown={this._keyDown} ref={ssHead => {
+            if (ssHead) {
+              this.sectionRefMap.set('ssHeadRef', ssHead);
+            }
+          }}>{translate(this.sectionName)} <Equalizer/></h1>
           {sectionMenuOpened ? this._getSectionMenu(translate, this.props.ship) : null }
         </div>
         {this._getSlots()}

@@ -48,9 +48,11 @@ select {
   overflow-x: hidden;
   z-index: 0;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   background-color: @bg;
   border: 1px solid @primary;
   text-align: center;
+  transition: max-height 0.2s ease-in-out, opacity 0.2s ease-in-out;
 
   .tablet({
     max-height: 300px;
@@ -177,4 +179,529 @@ select {
     }
   }
 
+  &.slide-enter {
+    max-height: 0;
+  }
+
+  &.slide-enter-active {
+    /* max-height is set via inline style by the component */
+    max-height: 50vh; /* Fallback */
+  }
+
+  &.slide-exit {
+    /* max-height is set to current height via inline style */
+    max-height: 50vh; /* Fallback */
+  }
+
+  &.slide-exit-active {
+    max-height: 0;
+  }
+}
+
+.compact-module-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: @bg;
+  border-radius: 0;
+  border: 1px solid @primary-disabled;
+}
+
+// Row for regular compact modules
+.compact-module-row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 5px;
+  gap: 0;
+
+  // Sizing for regular compact modules (make them slightly larger)
+  &[data-module-count="3"] .compact-module {
+    flex: 1;
+    max-width: 90px;
+    min-width: 70px;
+  }
+
+  &[data-module-count="4"] .compact-module {
+    flex: 1;
+    max-width: 80px;
+    min-width: 65px;
+  }
+
+  &[data-module-count="5"] .compact-module {
+    flex: 1;
+    max-width: 70px;
+    min-width: 55px;
+  }
+
+  &[data-module-count="6"] .compact-module {
+    flex: 1;
+    max-width: 60px; // Smaller for 6 modules
+    min-width: 50px;
+  }
+
+  &[data-module-count="1"] .compact-module {
+    flex: 1;
+    max-width: 140px;
+    min-width: 100px;
+  }
+
+  &[data-module-count="2"] .compact-module {
+    flex: 1;
+    max-width: 120px;
+    min-width: 90px;
+  }
+}
+
+// Row for hardpoint modules (separate class)
+.hardpoint-module-row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-evenly; // Use space-evenly for hardpoint modules
+  align-items: center;
+  min-height: 40px;
+  padding: 0 5px;
+  gap: 4px; // Keep gap for hardpoint modules
+
+  // Sizing for hardpoint modules
+  &[data-module-count="3"] .hardpoint-module {
+    flex: 1;
+    max-width: 130px;
+    min-width: 100px;
+  }
+
+  &[data-module-count="4"] .hardpoint-module {
+    flex: 1;
+    max-width: 110px;
+    min-width: 85px;
+  }
+
+  &[data-module-count="5"] .hardpoint-module {
+    flex: 1;
+    max-width: 90px;
+    min-width: 70px;
+  }
+
+  &[data-module-count="1"] .hardpoint-module {
+    flex: 1;
+    max-width: 200px;
+    min-width: 150px;
+  }
+
+  &[data-module-count="2"] .hardpoint-module {
+    flex: 1;
+    max-width: 160px;
+    min-width: 120px;
+  }
+}
+
+.compact-module {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 70px; // Increased from 60px
+  min-width: 55px; // Increased from 45px
+  height: 35px;
+  margin: 0 2px; // Restored margin for regular modules
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  background-color: @bg;
+  color: @primary-disabled;
+  border: 2px solid @primary-disabled;
+
+  .no-touch &:hover:not(.disabled):not(.active):not(.warning) {
+    border-color: @primary;
+    color: @primary;
+  }
+
+  &.active {
+    background-color: @bg;
+    color: @secondary;
+    border-color: @secondary;
+  }
+
+  &.disabled {
+    background-color: @bg;
+    color: @disabled;
+    border-color: @disabled;
+    cursor: not-allowed;
+  }
+
+  &.warning {
+    border-color: @warning;
+    border-width: 2px;
+    .warning-icon {
+      color: @warning;
+      stroke: @warning;
+      stroke-width: 1.5;
+      fill: none;
+      width: 14px;
+      height: 14px;
+      margin-right: 2px;
+    }
+  }
+
+  .module-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 4px;
+  }
+
+  .module-text {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+
+// Dedicated hardpoint module class
+.hardpoint-module {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 90px;
+  min-width: 70px;
+  height: 35px;
+  margin: 0; // No margin since we use gap on hardpoint rows
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  background-color: @bg;
+  color: @primary-disabled;
+  border: 2px solid @primary-disabled;
+
+  .no-touch &:hover:not(.disabled):not(.active):not(.warning) {
+    border-color: @primary;
+    color: @primary;
+
+    .mount-icon {
+      stroke: @primary;
+      fill: none;
+    }
+  }
+
+  &.active {
+    background-color: @bg;
+    color: @secondary;
+    border-color: @secondary;
+
+    .mount-icon {
+      stroke: @secondary;
+      fill: none;
+    }
+  }
+
+  &.disabled {
+    background-color: @bg;
+    color: @disabled;
+    border-color: @disabled;
+    cursor: not-allowed;
+
+    .mount-icon {
+      stroke: @disabled;
+      fill: none;
+    }
+  }
+
+  &.warning {
+    border-color: @warning;
+    border-width: 2px;
+    .warning-icon {
+      color: @warning;
+      stroke: @warning;
+      stroke-width: 1.5;
+      fill: none;
+      width: 14px;
+      height: 14px;
+      margin-right: 2px;
+    }
+  }
+
+  .module-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+  }
+
+  .module-text {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  .module-mount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .mount-icon {
+      width: 20px;
+      height: 20px;
+      stroke-width: 4;
+      stroke: @primary-disabled;
+      fill: none;
+    }
+  }
+}
+
+.module-separator {
+  margin: 15px 0 10px 0;
+  padding: 5px 0;
+  border-top: 1px solid @primary-disabled;
+  font-size: 12px;
+  color: @primary-disabled;
+  text-align: center;
+}
+
+.empty-slot {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: @bg;
+  color: @primary-disabled;
+  border: 2px solid @primary-disabled;
+
+  .no-touch &:hover:not(.active) {
+    border-color: @primary;
+    color: @primary;
+  }
+
+  &.active {
+    background-color: @bg;
+    color: @secondary;
+    border-color: @secondary;
+  }
+}
+
+// Ensure named modules (those with just .c class) are full-width and NOT compact
+.select .c:not(.compact-module) {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  margin: 2px 0;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+// Special styling for named modules to handle longer text
+.compact-module.named-module,
+.hardpoint-module.named-module {
+  min-width: 80px; // Wider minimum to accommodate names
+  max-width: 120px; // Allow them to be wider than normal compact modules
+
+  .module-text {
+    font-size: 10px; // Slightly smaller text to fit names
+    line-height: 1.1;
+    text-align: center;
+    word-wrap: break-word;
+  }
+}
+
+// Special modules (like Disruptor, Pacifier) - boxed with margins
+.special-module {
+  display: block;
+  width: auto;
+  max-width: calc(100% - 40px);
+  margin: 5px auto;
+  padding: 8px 15px;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  background-color: @bg;
+  color: @primary-disabled;
+  border: 2px solid @primary-disabled;
+
+  .no-touch &:hover:not(.disabled):not(.active):not(.warning) {
+    border-color: @primary;
+    color: @primary;
+
+    .mount-icon {
+      stroke: @primary;
+      fill: none;
+    }
+  }
+
+  &.active {
+    background-color: @bg;
+    color: @secondary;
+    border-color: @secondary;
+
+    .mount-icon {
+      stroke: @secondary;
+      fill: none;
+    }
+  }
+
+  &.disabled {
+    background-color: @bg;
+    color: @disabled;
+    border-color: @disabled;
+    cursor: not-allowed;
+
+    .mount-icon {
+      stroke: @disabled;
+      fill: none;
+    }
+  }
+
+  &.warning {
+    border-color: @warning;
+    border-width: 2px;
+    .warning-icon {
+      color: @warning;
+      stroke: @warning;
+      stroke-width: 1.5;
+      fill: none;
+      width: 14px;
+      height: 14px;
+      margin-right: 4px;
+    }
+  }
+
+  .module-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 12px;
+    line-height: 1.2;
+    gap: 4px; // Add gap between icon and text
+  }
+
+  .module-mount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .mount-icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 4;
+      stroke: @primary-disabled;
+      fill: none;
+    }
+  }
+
+  .module-text {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+}
+
+// Force centering for special modules within the select container
+.select .special-module {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// Slide animation for menu sections
+.menu-section-wrapper {
+  overflow: hidden;
+  transition: max-height 0.35s ease-in-out, opacity 0.3s ease-in-out, margin 0.35s ease-in-out;
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  pointer-events: none; // Prevent closed menu from capturing touch events
+
+  &.open {
+    max-height: 2000px; // Large enough to accommodate content
+    opacity: 1;
+    margin: 0.5em 0;
+    pointer-events: auto; // Re-enable touch events when menu is open
+  }
+
+  // Slightly faster collapse (but still slower than before)
+  &:not(.open) {
+    transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out, margin 0.25s ease-in-out;
+  }
+}
+
+// Module search container
+.module-search-container {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.75em;
+  background-color: @bg;
+  border-bottom: 1px solid @primary;
+  margin: 0;
+}
+
+.module-search-input {
+  width: 100%;
+  padding: 0.5em 0.75em;
+  font-size: 0.9em;
+  font-family: @fStandard;
+  background-color: @primary-bg;
+  border: 1px solid @primary-disabled;
+  color: @primary;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: @primary-disabled;
+    opacity: 0.7;
+  }
+
+  &:focus {
+    border-color: @primary;
+    background-color: darken(@primary-bg, 3%);
+  }
+
+  &:hover:not(:focus) {
+    border-color: fade(@primary, 50%);
+  }
 }

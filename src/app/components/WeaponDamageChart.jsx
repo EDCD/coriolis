@@ -31,7 +31,7 @@ export default class WeaponDamageChart extends TranslatedComponent {
   /**
    * Set the initial weapons state
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const weaponNames = this._weaponNames(this.props.ship, this.context);
     const opponentShields = Calc.shieldMetrics(this.props.opponent, this.props.opponentSys);
     const opponentArmour = Calc.armourMetrics(this.props.opponent);
@@ -47,7 +47,7 @@ export default class WeaponDamageChart extends TranslatedComponent {
    * @param  {Object} nextContext Incoming/Next conext
    * @return {boolean}            Returns true if the component should be rerendered
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.marker != this.props.marker) {
       const weaponNames = this._weaponNames(nextProps.ship, nextContext);
       const opponentShields = Calc.shieldMetrics(nextProps.opponent, nextProps.opponentSys);

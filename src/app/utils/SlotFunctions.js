@@ -11,7 +11,21 @@ import Module from '../shipyard/Module';
  * @param  {Integer} clazz  [Optional] Module Class/Size
  * @return {Boolean}        True if the slot can mount the module
  */
-export function canMount(ship, slot, group, clazz) {
+export function canMount(ship, slot, group, clazz, module) {
+  // The 5L and 5M cargo racks are special and can only be mounted in Cargo slots
+  if (module && (module.id === '5L' || module.id === '5M')) {
+    if (!slot.name || slot.name.toLowerCase() !== 'cargo') {
+      return false;
+    }
+  }
+
+  // The planetary approach suite modules can only be mounted in the PlanetaryApproachSuite slot
+  if (module && (module.id === '4C' || module.id === '4F')) {
+    if (!slot.name || slot.name.toLowerCase() !== 'planetaryapproachsuite') {
+      return false;
+    }
+  }
+
   if (slot &&
       (!slot.eligible || slot.eligible[group]) &&
       (group != 'pcq' || (ship.luxuryCabins && ship.luxuryCabins  === true)) &&

@@ -11,8 +11,8 @@ table {
 }
 
 thead {
-  color: @bgBlack;
-  background-color: @primary-disabled;
+  color: @primary-bg;
+  background-color: @primary;
   text-transform: uppercase;
   line-height: 1.3em;
   .user-select-none();
@@ -27,7 +27,7 @@ thead {
 
   th {
     vertical-align: middle;
-    font-weight: normal;
+    font-weight: bold;
     padding: 2px 0.4em 0; // Padding top for font vertical alignment
 
     &.lft {
@@ -39,7 +39,7 @@ thead {
     }
 
     &.invisible {
-      color: @primary-disabled;
+      color: @primary;
     }
   }
 }
@@ -65,14 +65,15 @@ td {
   padding: 0 0.3em;
 
   &.val {
-    border: 1px solid @primary-disabled;
+    border: 1px solid @primary;
   }
 
   &.lbl {
-    border: 1px solid @primary-disabled;
+    border: 1px solid @primary;
     text-transform: uppercase;
     color: @primary-bg;
-    background-color: @primary-disabled;
+    background-color: @primary;
+    font-weight: bold;
   }
 
   &.tl {

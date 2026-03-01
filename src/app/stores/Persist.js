@@ -15,6 +15,8 @@ const LS_KEY_SIZE_RATIO = 'sizeRatio';
 const LS_KEY_TOOLTIPS = 'tooltips';
 const LS_KEY_MODULE_RESISTANCES = 'moduleResistances';
 const LS_KEY_ROLLS = 'matsPerGrade';
+const LS_KEY_PROMPT_CG = 'promptCG';
+const LS_KEY_ANIMATIONS = 'animations';
 
 let LS;
 
@@ -93,6 +95,7 @@ export class Persist extends EventEmitter {
     let moduleDiscount = _get(LS_KEY_MOD_DISCOUNT);
     let buildJson = _get(LS_KEY_BUILDS);
     let comparisonJson = _get(LS_KEY_COMPARISONS);
+    let promptCG = _get(LS_KEY_PROMPT_CG);
 
     this.onStorageChange = this.onStorageChange.bind(this);
     this.langCode = _getString(LS_KEY_LANG) || 'en';
@@ -115,10 +118,28 @@ export class Persist extends EventEmitter {
     this.cmdrName = cmdrName || { selected: '', cmdrs: [] };
     this.tooltipsEnabled = tips === null ? true : tips;
     this.moduleResistancesEnabled = moduleResistances === null ? true : moduleResistances;
+    this._promptCG = promptCG === null ? true : promptCG;
+
+    let animations = _get(LS_KEY_ANIMATIONS);
+    this.animationsEnabled = animations === null ? true : animations;
+    // Apply body class on startup
+    if (!this.animationsEnabled && typeof document !== 'undefined') {
+      document.body.classList.add('no-animations');
+    }
 
     if (LS) {
       window.addEventListener('storage', this.onStorageChange);
     }
+  }
+
+  promptCG() {
+    return this._promptCG;
+  }
+
+  setPromptCG(value) {
+    this._promptCG = !!value;
+    _put(LS_KEY_PROMPT_CG, this._promptCG);
+    this.emit('promptCG', this._promptCG);
   }
 
   /**
@@ -162,6 +183,10 @@ export class Persist extends EventEmitter {
         case LS_KEY_MODULE_RESISTANCES:
           this.moduleResistancesEnabled = !!newValue && newValue.toLowerCase() == 'true';
           this.emit('moduleresistances', this.moduleResistancesEnabled);
+          break;
+        case LS_KEY_PROMPT_CG:
+          this._promptCG = !!newValue && newValue.toLowerCase() == 'true';
+          this.emit('promptCG', this._promptCG);
           break;
         case LS_KEY_ROLLS:
           this.matsPerGrade = JSON.parse(newValue);
@@ -208,6 +233,18 @@ export class Persist extends EventEmitter {
   }
 
   /**
+   * CG prompt setting
+   * @param  {boolean} show Optional - update setting
+   * @return {boolean} True if CG prompt should be shown
+   */
+  promptCGModules(show) {
+    if (show !== undefined) {
+      this.setPromptCG(show);
+    }
+    return this.promptCG();
+  }
+
+  /**
    * Show module resistances setting
    * @param  {boolean} show Optional - update setting
    * @return {boolean} True if module resistances should be shown
@@ -220,6 +257,28 @@ export class Persist extends EventEmitter {
     }
 
     return this.moduleResistancesEnabled;
+  }
+
+  /**
+   * Animations setting
+   * @param  {boolean} show Optional - update setting
+   * @return {boolean} True if animations are enabled
+   */
+  showAnimations(show) {
+    if (show !== undefined) {
+      this.animationsEnabled = !!show;
+      _put(LS_KEY_ANIMATIONS, this.animationsEnabled);
+      if (typeof document !== 'undefined') {
+        if (this.animationsEnabled) {
+          document.body.classList.remove('no-animations');
+        } else {
+          document.body.classList.add('no-animations');
+        }
+      }
+      this.emit('animations', this.animationsEnabled);
+    }
+
+    return this.animationsEnabled;
   }
 
   /**

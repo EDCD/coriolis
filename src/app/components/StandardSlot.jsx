@@ -10,7 +10,7 @@ import * as ModuleUtils from '../shipyard/ModuleUtils';
 import { ListModifications, Modified } from './SvgIcons';
 import { Modifications } from 'coriolis-data/dist';
 import { stopCtxPropagation } from '../utils/UtilityFunctions';
-import { blueprintTooltip } from '../utils/BlueprintFunctions';
+import { getBlueprint, blueprintTooltip } from '../utils/BlueprintFunctions';
 
 /**
  * Standard Slot
@@ -36,9 +36,22 @@ export default class StandardSlot extends TranslatedComponent {
     super(props);
     this._modificationsSelected = false;
     this._keyDown = this._keyDown.bind(this);
+    this._eligible = this._eligible.bind(this);
     this.modButton = null;
     this.slotDiv = null;
   }
+
+  /**
+   * Check if a module is eligible for this slot
+   * @param {object} module The module to check
+   * @return {boolean} Whether the module can be mounted
+   */
+  _eligible(module) {
+    // For standard slots, check if the module class fits
+    if (!module) return true;
+    return module.class <= this.props.slot.maxClass;
+  }
+
   /**
    * Handle Enter key
    * @param {SyntheticEvent} event KeyDown event
@@ -64,6 +77,8 @@ export default class StandardSlot extends TranslatedComponent {
     let classRating = m.class + m.rating;
     let menu;
     let validMods = m == null || !Modifications.modules[m.grp] ? [] : (Modifications.modules[m.grp].modifications || []);
+    // Check if module has engineering disabled
+    let canBeEngineered = m && m.engineering !== false && m.engineering !== 'False';
     if (m && m.name && m.name === 'Guardian Hybrid Power Plant') {
       validMods = [];
     }
@@ -74,19 +89,37 @@ export default class StandardSlot extends TranslatedComponent {
     let mass = m.getMass() || m.cargo || m.fuel || 0;
 
     // Modifications tooltip shows blueprint and grade, if available
-    let modTT = translate('modified');
-    if (m && m.blueprint && m.blueprint.name) {
-      modTT = translate(m.blueprint.name) + ' ' + translate('grade') + ' ' + m.blueprint.grade;
-      if (m.blueprint.special && m.blueprint.special.id >= 0) {
-        modTT += ', ' + translate(m.blueprint.special.name);
+      let modTT = translate('modified');
+      if (m && m.blueprint && m.blueprint.name) {
+        if (m.preEngineered && m.preEngineered.blueprints) {
+          const blueprintNames = _.split(m.preEngineered.blueprints, ',');
+          const blueprints = blueprintNames.map(name => getBlueprint(name.trim(), m));
+          const blueprintHeader = blueprints.map(bp => <div className='blueprintList' key={bp.name}>{`Blueprint: ${translate(bp.name)} ${translate('Grade:')} ${m.preEngineered.grade}`}</div>);
+
+          if (m.blueprint.special && m.blueprint.special.id >= 0) {
+            blueprintHeader.push(<div className='blueprintList' key={m.blueprint.special.name}>{`Experimental: ${translate(m.blueprint.special.name)}`}</div>);
+          }
+          const blueprintGrades = blueprints.map(bp => bp.grades[m.preEngineered.grade]);
+          modTT = (
+            <div>
+              {blueprintHeader}
+              {blueprintTooltip(translate, blueprintGrades, null, m.grp, m)}
+            </div>
+          );
+        } else {
+          const blueprintHeader = [];
+          blueprintHeader.push(<div className='blueprintList' key={m.blueprint.name}>{`Blueprint: ${translate(m.blueprint.name)} ${translate('grade')} ${m.blueprint.grade}`}</div>);
+          if (m.blueprint.special && m.blueprint.special.id >= 0) {
+            blueprintHeader.push(<div className='blueprintList' key={m.blueprint.special.name}>{`Experimental: ${translate(m.blueprint.special.name)}`}</div>);
+          }
+          modTT = (
+            <div>
+              {blueprintHeader}
+              {blueprintTooltip(translate, [m.blueprint.grades[m.blueprint.grade]], null, m.grp, m)}
+            </div>
+          );
+        }
       }
-      modTT = (
-          <div>
-            <div>{modTT}</div>
-            {blueprintTooltip(translate, m.blueprint.grades[m.blueprint.grade], null, m.grp, m)}
-          </div>
-        );
-    }
 
     if (!selected) {
       // If not selected then sure that modifications flag is unset
@@ -119,7 +152,10 @@ export default class StandardSlot extends TranslatedComponent {
           onSelect={onSelect}
           warning={warning}
           diffDetails={diffDetails.bind(ship, this.context.language)}
+          eligible={this._eligible}
+          slot={slot} // Add this line to pass slot restriction info
           slotDiv = {this.slotDiv}
+          activeSlotId={slot.id}
         />;
       }
     }
@@ -150,19 +186,46 @@ export default class StandardSlot extends TranslatedComponent {
                 { showModuleResistances && m.getThermalResistance() ? <div className='l'>{translate('thermres')}: {formats.pct(m.getThermalResistance())}</div> : null }
                 { m.getIntegrity() ? <div className='l'>{translate('integrity')}: {formats.int(m.getIntegrity())}</div> : null }
                 { m.getInfo() ? <div className='l'>{translate(m.getInfo())}</div> : null }
-	        { m.getInfo() ? <div className='r'></div> : validMods.length > 0 ? <div className='r' tabIndex="0" ref={ modButton => this.modButton = modButton }><button  tabIndex="-1" onClick={this._toggleModifications.bind(this)} onContextMenu={stopCtxPropagation} onMouseOver={termtip.bind(null, 'modifications')} onMouseOut={tooltip.bind(null, null)}><ListModifications /></button></div> : null }
+	        { m.getInfo() ? <div className='r'></div> : canBeEngineered && validMods.length > 0 ? <div className='r' tabIndex="0" ref={ modButton => this.modButton = modButton }><button  tabIndex="-1" onClick={(e) => this._toggleModifications(e)} onContextMenu={stopCtxPropagation} onMouseOver={termtip.bind(null, 'modifications')} onMouseOut={tooltip.bind(null, null)}><ListModifications /></button></div> : null }
             </div>
           </div>
         </div>
-        {menu}
+        <div className={cn('menu-section-wrapper', { open: selected && menu })}>
+          {menu}
+        </div>
       </div>
     );
   }
 
   /**
    * Toggle the modifications flag when selecting the modifications icon
+   * @param {SyntheticEvent} event Event (optional)
    */
-  _toggleModifications() {
-    this._modificationsSelected = !this._modificationsSelected;
+  _toggleModifications(event) {
+    // Clear any lingering tooltip (e.g. from experimental effects)
+    if (this.context.tooltip) {
+      this.context.tooltip(null);
+    }
+
+    if (this.props.selected && this._modificationsSelected) {
+      // Closing engineering menu — reset the flag and let the click
+      // bubble up to onOpen, which will deselect the slot entirely
+      this._modificationsSelected = false;
+      return;
+    }
+
+    // Opening engineering menu
+    this._modificationsSelected = true;
+
+    // If slot is already selected, stop propagation and just force update
+    // Otherwise let it bubble to select the slot first
+    if (this.props.selected) {
+      if (event) {
+        event.stopPropagation();
+      }
+      this.forceUpdate();
+    }
+    // If not selected, let the event bubble so slot gets selected
+    // and when it re-renders, _modificationsSelected will be true
   }
 }

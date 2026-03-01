@@ -312,6 +312,167 @@ export function bulkheadIndex(bulkheadName) {
   return BulkheadNames.indexOf(bulkheadName);
 }
 
+/*
+ * Categorisation of module groups
+ */
+const INTGRPCAT = {
+  'am': 'auto field-maintenance unit',
+  'cr': 'cargo racks',
+  'crl': 'cargo racks',
+  'dc': 'docking computers',
+  'fi': 'fsd interdictor',
+  'ft': 'fuel',
+  'fs': 'fuel',
+  'fh': 'hangars',
+  'pv': 'hangars',
+  'cc': 'limpet controllers',
+  'fx': 'limpet controllers',
+  'hb': 'limpet controllers',
+  'pc': 'limpet controllers',
+  'rpl': 'limpet controllers',
+  'mlc': 'limpet controllers',
+  'pce': 'passenger cabins',
+  'pci': 'passenger cabins',
+  'pcm': 'passenger cabins',
+  'pcq': 'passenger cabins',
+  'rf': 'refineries',
+  'sg': 'shields',
+  'bsg': 'shields',
+  'psg': 'shields',
+  'scb': 'shields',
+  'hr': 'structural reinforcement',
+  'mrp': 'structural reinforcement',
+  // Assists
+  'dc': 'flight assists',
+  'sua': 'flight assists',
+  // Scanners
+  'ss': 'scanners',
+  // Experimental
+  'rcpl': 'experimental',
+  'dtl': 'experimental',
+  'mahr': 'experimental',
+  'rsl': 'experimental',
+  // Stabilizers
+  'ews': 'weapon stabilizers',
+  // Guardian
+  'gsrp': 'guardian',
+  'gfsb': 'guardian',
+  'ghrp': 'guardian',
+  'gmrp': 'guardian',
+};
+
+export const HardpointCategories = {
+  // Lasers
+  'bl': 'lasers',
+  'pl': 'lasers',
+  'ul': 'lasers',
+  // Projectiles
+  'c': 'projectiles',
+  'mc': 'projectiles',
+  'advmc': 'projectiles',
+  'fc': 'projectiles',
+  'pa': 'projectiles',
+  'rg': 'projectiles',
+  // Ordnance
+  'mr': 'ordnance',
+  'amr': 'ordnance',
+  'tp': 'ordnance',
+  'nl': 'ordnance',
+  // Mining
+  'ml': 'mining',
+  'scl': 'mining',
+  'sdm': 'mining',
+  'abl': 'mining',
+  'mvr': 'mining',
+  'pwa': 'mining',
+  // Experimental
+  'axmc': 'experimental',
+  'axmce': 'experimental',
+  'axmr': 'experimental',
+  'axmre': 'experimental',
+  'ntp': 'experimental',
+  'rfl': 'experimental',
+  'tbrfl': 'experimental',
+  'tbsc': 'experimental',
+  'tbem': 'experimental',
+  'xs': 'experimental',
+  'sfn': 'experimental',
+  // Guardian
+  'gpc': 'guardian',
+  'ggc': 'guardian',
+  'gsc': 'guardian',
+};
+
+
+/**
+ * Get the categories for a given Internal slot
+ * @param {*} slot
+ * @param {*} INTGRPCAT
+ */
+export function getIntCategoriesForSlot(slot) {
+  // For each module in INTGRPCAT, check if any of that module type from Modules can fit in the slot.
+  // If the module type has a suitable candidate for the slot, add that category to the categories list
+  // And skip to the next module in INTGRPCAT that isn't in the same category.
+  // Check if the slot is a restricted slot
+  const eligibleGroups = slot.eligible;
+
+  // Set categories to an empty object
+  const categories = {};
+  for (const grp in INTGRPCAT) {
+    if (slot.eligible && !(grp in eligibleGroups)) {
+      // If this group is not eligible for the slot, skip it
+      console.log(`Skipping group ${grp} as it is not eligible for the slot.`);
+      continue;
+    }
+    const group = Modules.internal[grp];
+    if (group) {
+      for (const m of group) {
+        if (m.class <= slot.maxClass) {
+          if (!slot.eligible && (grp === 'crl')) {
+            // 'crl' (Large Cargo Racks) can only be mounted in special 'Cargo' slots
+            console.log(`Skipping group ${grp} as it is not a Cargo slot.`);
+            continue;
+          }
+
+          categories[INTGRPCAT[grp]] = true;
+          break; // No need to check further in this group
+        }
+      }
+    }
+  }
+  return categories;
+}
+
+/**
+ * Get the categories for a given Hardpoint/Utility slot
+ * @param {object} slot The slot object
+ * @returns {object} A map of valid category names
+ */
+export function getHpCategoriesForSlot(slot) {
+  const categories = {};
+  const groupsToCheck = Object.keys(Modules.hardpoints);
+
+  for (const grp of groupsToCheck) {
+    if (slot.eligible && !slot.eligible[grp]) {
+      // If this group is not eligible for the slot, skip it
+      continue;
+    }
+
+    if (HardpointCategories[grp]) {
+      const moduleGroup = Modules.hardpoints[grp];
+      if (moduleGroup) {
+        for (const m of moduleGroup) {
+          // Check if module class fits and if it's the right type (weapon/utility)
+          if (m.class <= slot.maxClass && (slot.maxClass > 0 ? m.class > 0 : m.class === 0)) {
+            categories[HardpointCategories[grp]] = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+  return categories;
+}
 
 /**
  * Determine if a module group is a shield generator

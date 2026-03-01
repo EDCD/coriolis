@@ -212,6 +212,10 @@ export function shipFromLoadoutJSON(json) {
       let hardpointArrayNum = 0;
       for (let i in shipTemplate.slots.hardpoints) {
         if (shipTemplate.slots.hardpoints[i] === hardpointClassNum) {
+          // If the ship is the T8 and the hardpoint is smallHardpoint3, we need to skip it
+          if (shipModel === 'type_8_transport' && hardpointClassNum === 1 && hardpointSlotNum === 2) {
+            hardpointSlotNum++;
+          }
           // Another slot of the same class
           hardpointSlotNum++;
         } else {
@@ -254,36 +258,53 @@ export function shipFromLoadoutJSON(json) {
     }
   }
 
-  let internalSlotNum = 0;
+  let internalSlotNum = 1;
+  // If the ship is a T9, we have to start the internalSlotNum at 0
+  if (shipModel === 'type_9_heavy') {
+    internalSlotNum = 0;
+  }
   let militarySlotNum = 1;
+  let cargoSlotNum = 1;
   for (let i in shipTemplate.slots.internal) {
     if (!shipTemplate.slots.internal.hasOwnProperty(i)) {
       continue;
     }
     const isMilitary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'Military' : false;
     const isPlanetary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'PlanetaryApproachSuite' : false;
+    const isCargo = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'Cargo' : false;
 
     // The internal slot might be a standard or a military slot, or a planetary slot.  Military and Planetary slots have a different naming system
     let internalSlot = null;
     if (isMilitary) {
-      const internalName = 'Military0' + militarySlotNum;
-      internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
-      militarySlotNum++;
+        const internalName = 'Military0' + militarySlotNum;
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+        militarySlotNum++;
     } else if (isPlanetary) {
-      const internalName = 'PlanetaryApproachSuite';
-      internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+        const internalName = 'PlanetaryApproachSuite';
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+    } else if (isCargo) {
+        const internalName = 'Cargo0' + cargoSlotNum;
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+        cargoSlotNum++;
     } else {
-      // Slot numbers are not contiguous so handle skips.
-      for (; internalSlot === null && internalSlotNum < 99; internalSlotNum++) {
-        // Slot sizes have no relationship to the actual size, either, so check all possibilities
-        for (let slotsize = 0; slotsize < 9; slotsize++) {
-          const internalName = 'Slot' + (internalSlotNum <= 9 ? '0' : '') + internalSlotNum + '_Size' + slotsize;
-          if (json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase())) {
-            internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
-            break;
+        let internalName = 'Slot';
+        if (internalSlotNum < 10) {
+          internalName += '0' + internalSlotNum + '_Size' + shipTemplate.slots.internal[i];
+        } else {
+            // For some reason, some ships skip internal slot indexes, so we need to check for them
+            // Anaconda skips 12 and 13, Dropship skips 7 and 8, T9 skips 9 and 10, T10 skips 9 and 10
+          if ((internalSlotNum === 11 && shipModel === 'anaconda') || (internalSlotNum === 7 && shipModel === 'federation_dropship') || (internalSlotNum === 9 && shipModel === 'type_9_heavy') || (internalSlotNum === 9 && shipModel === 'type_10_defender')) {
+            internalSlotNum++;
+            internalSlotNum++;
           }
+          // Vulture skips 4
+          else if (internalSlotNum === 4 && shipModel === 'vulture') {
+            internalSlotNum++;
+          }
+          internalName += internalSlotNum + '_Size' + shipTemplate.slots.internal[i];
         }
-      }
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+        internalSlotNum++;
     }
 
     if (!internalSlot) {

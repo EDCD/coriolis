@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ContainerDimensions from 'react-container-dimensions';
+import ResponsiveWrapper from './ResponsiveWrapper';
 import * as d3 from 'd3';
 
 const CORIOLIS_COLOURS = ['#FF8C0D', '#1FB0FF', '#71A052', '#D5D54D'];
@@ -70,15 +70,16 @@ export default class PieChart extends Component {
    */
   render() {
     return (
-      <ContainerDimensions>
+      <ResponsiveWrapper>
         { ({ width }) => {
+          const chartHeight = width * 0.9; // Calculate height from width
           const pie = this.pie(this.props.data),
               translate = `translate(${width / 2}, ${width * 0.4})`;
 
           this.arc.outerRadius(width * 0.4);
           return (
-            <div width={width} height={width}>
-              <svg style={{ stroke: 'None' }} width={width} height={width * 0.9}>
+            <div style={{ width: '100%', height: chartHeight }}>
+              <svg style={{ stroke: 'None' }} width={width} height={chartHeight}>
                 <g transform={translate}>
                   {pie.map((d, i) => this.sliceGenerator(d, i, width))}
                 </g>
@@ -86,7 +87,7 @@ export default class PieChart extends Component {
             </div>
           );
         }}
-      </ContainerDimensions>
+      </ResponsiveWrapper>
     );
   }
 }

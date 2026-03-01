@@ -1,9 +1,77 @@
-import React from 'react';
 import { Modifications, Modules, Ships } from 'coriolis-data/dist';
 import Module from '../shipyard/Module';
 import Ship from '../shipyard/Ship';
 import { getBlueprint } from '../utils/BlueprintFunctions';
 import * as ModuleUtils from '../shipyard/ModuleUtils';
+import { BulkheadNames } from "../shipyard/Constants";
+
+/**
+ * @typedef {keyof SHIP_FD_NAME_TO_CORIOLIS_NAME} CoriolisShipName
+ * @typedef {typeof SHIP_FD_NAME_TO_CORIOLIS_NAME[CoriolisShipName]} EDShipName
+ */
+
+// Mapping from fd's core internal to coriolis and vice versa
+export const CORE_INTERNAL_NAME_MAPPING = {
+  fdToCoriolis: {
+    PowerPlant: "powerPlant",
+    MainEngines: "thrusters",
+    Thrusters: "thrusters",
+    FrameShiftDrive: "frameShiftDrive",
+    LifeSupport: "lifeSupport",
+    Radar: "sensors",
+    FuelTank: "fuelTank",
+    PowerDistributor: "powerDistributor",
+    Armour: "bulkheads",
+    CargoHatch: "cargoHatch",
+  },
+  coriolisToFD: {
+    powerPlant: "PowerPlant",
+    thrusters: "MainEngines",
+    frameShiftDrive: "FrameShiftDrive",
+    lifeSupport: "LifeSupport",
+    sensors: "Radar",
+    fuelTank: "FuelTank",
+    powerDistributor: "PowerDistributor",
+    bulkheads: "Armour",
+    cargoHatch: "CargoHatch",
+    Sensors: "Radar",
+    FSD: "FrameShiftDrive",
+    Thrusters: "MainEngines",
+  },
+  // The FD name is different in the "item" key of the loadout object
+  // but just for some modules
+  fdToItemName: {
+    PowerPlant: "powerplant",
+    MainEngines: "engine",
+    Thrusters: "engine",
+    FrameShiftDrive: "hyperdrive",
+    FSD: "hyperdrive",
+    LifeSupport: "lifeSupport",
+    Radar: "sensors",
+    FuelTank: "fueltank",
+    PowerDistributor: "powerdistributor",
+    Armour: "armour",
+    CargoHatch: "modularcargobaydoor",
+  },
+};
+
+export const CORIOLIS_TO_FD_BULKHEAD_NAME_MAPPING = BulkheadNames.reduce(
+  (acc, cur, index) => {
+    switch (cur) {
+      case "Mirrored Surface Composite":
+        acc[cur] = "armour_mirrored";
+        break;
+      case "Reactive Surface Composite":
+        acc[cur] = "armour_reactive";
+        break;
+      default:
+        acc[cur] = `armour_grade${index + 1}`;
+        break;
+    }
+    return acc;
+  },
+  {},
+);
 
 // mapping from fd's ship model names to coriolis'
 export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
@@ -12,10 +80,11 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'Asp': 'asp',
   'Asp_Scout': 'asp_scout',
   'BelugaLiner': 'beluga',
+  'Explorer_NX': 'explorer_nx',
   'CobraMkIII': 'cobra_mk_iii',
   'CobraMkIV': 'cobra_mk_iv',
   'CobraMkV': 'cobramkv',
-  'Corsair': 'imperial_corsair',
+  'Corsair': 'corsair',
   'Cutter': 'imperial_cutter',
   'DiamondBackXL': 'diamondback_explorer',
   'DiamondBack': 'diamondback',
@@ -31,11 +100,13 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'FerDeLance': 'fer_de_lance',
   'Hauler': 'hauler',
   'Independant_Trader': 'keelback',
+  'smallcombat01_nx': 'kestrel',
   'Krait_MkII': 'krait_mkii',
   'Mamba': 'mamba',
   'Mandalay': 'mandalay',
   'Krait_Light': 'krait_phantom',
   'Orca': 'orca',
+  'PantherMKII': 'panthermkii',
   'Python': 'python',
   'Python_nx': 'python_nx',
   'SideWinder': 'sidewinder',
@@ -44,6 +115,7 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'Type8': 'type_8_transport',
   'Type9': 'type_9_heavy',
   'Type9_Military': 'type_10_defender',
+  'LakonMiner': 'type_11_prospector',
   'TypeX': 'alliance_chieftain',
   'TypeX_2': 'alliance_crusader',
   'TypeX_3': 'alliance_challenger',
@@ -54,11 +126,11 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
 
 // Mapping from hardpoint class to name in companion API
 export const HARDPOINT_NUM_TO_CLASS = {
-  0: 'Tiny',
-  1: 'Small',
-  2: 'Medium',
-  3: 'Large',
-  4: 'Huge'
+  0: "Tiny",
+  1: "Small",
+  2: "Medium",
+  3: "Large",
+  4: "Huge"
 };
 
 
@@ -116,7 +188,11 @@ function _moduleFromEdId(edId) {
  * @return {string} the Coriolis model of the ship
  */
 function _shipModelFromEDName(edName) {
-  return SHIP_FD_NAME_TO_CORIOLIS_NAME[Object.keys(SHIP_FD_NAME_TO_CORIOLIS_NAME).find(elem => elem.toLowerCase() === edName.toLowerCase())];
+  return SHIP_FD_NAME_TO_CORIOLIS_NAME[
+    Object.keys(SHIP_FD_NAME_TO_CORIOLIS_NAME).find(
+      (elem) => elem.toLowerCase() === edName.toLowerCase(),
+    )
+  ];
 }
 
 /**

@@ -32,7 +32,7 @@ export default class ErrorDetails extends React.Component {
         </div>
         <div style={{ marginTop: '2em' }}>
           <div><span className='warning'>Browser:</span> {window.navigator.userAgent}</div>
-          <div><span className='warning'>Path:</span> {this.context.route.canonicalPath}</div>
+          <div><span className='warning'>Path:</span> {this.context.route && this.context.route.canonicalPath ? this.context.route.canonicalPath : 'Unknown'}</div>
           <div><span className='warning'>Error:</span> {ed["error"] || 'Unknown'}</div>
           <div className='warning'>Details:</div>
           <div><pre>{typeof ed == 'object' ? Object.keys(ed).map((e) => `${e}: ${ed[e]}\n`) : ed}</pre></div>

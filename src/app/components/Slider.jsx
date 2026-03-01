@@ -172,7 +172,7 @@ export default class Slider extends React.Component {
   /**
    * Add listeners when about to mount
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.onResize) {
       this.resizeListener = this.props.onResize(this._updateDimensions);
     }
@@ -262,7 +262,7 @@ class TextInputBox extends React.Component {
    * @param  {Object} nextProps React Component properites
    * @param  {Object} nextState React Component state values
    */
-  componentWillReceiveProps(nextProps, nextState) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextState) {
     let nextValue = nextProps.percent * nextProps.max;
     // See https://stackoverflow.com/questions/32414308/updating-state-on-props-change-in-react-form
     if (nextValue !== this.state.inputValue && nextValue <= nextProps.max) {
@@ -380,7 +380,7 @@ class TextInputBox extends React.Component {
    */
   render() {
     let {  axisUnit, onChange, percent, scale } = this.props;
-    return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} min={this.state.min} max={this.props.max} onChange={this._handleChange} onKeyUp={this._keyup} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur();}} onFocus={() => {this._handleFocus();}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><text className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</text></div>;
+    return <div style={this.state.divStyle}><input style={this.state.inputStyle} value={this._getValue()} min={this.state.min} max={this.props.max} onChange={this._handleChange} onKeyUp={this._keyup} tabIndex={this.state.tabIndex} maxLength={this.state.maxLength} size={this.state.size} onBlur={() => {this._handleBlur();}} onFocus={() => {this._handleFocus();}} type={this.state.type} ref={(ip) => this.sliderVal = ip}/><span className="primary upp" style={this.state.labelStyle}>{this.props.axisUnit}</span></div>;
   }
 }
 

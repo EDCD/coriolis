@@ -1,11 +1,12 @@
 import React from 'react';
 import TranslatedComponent from './TranslatedComponent';
+import { AppContext } from '../AppContext';
 import { Languages } from '../i18n/Language';
 import { Insurance } from '../shipyard/Constants';
 import Link from './Link';
 import ActiveLink from './ActiveLink';
 import cn from 'classnames';
-import { Cogs, CoriolisLogo, Hammer, Help, Rocket, StatsBars } from './SvgIcons';
+import { Cogs, CoriolisLogo, Hammer, Heart, Help, Rocket, StatsBars } from './SvgIcons';
 import { Ships } from 'coriolis-data/dist';
 import Persist from '../stores/Persist';
 import { toDetailedExport } from '../shipyard/Serializer';
@@ -19,7 +20,9 @@ import Announcement from './Announcement';
 import { outfitURL } from '../utils/UrlGenerators';
 
 const SIZE_MIN = 0.65;
-const SIZE_RANGE = 0.55;
+const SIZE_MAX = 1.75;
+const SIZE_RANGE = SIZE_MAX - SIZE_MIN;
+const SIZE_DEFAULT = 1;
 
 /**
  * Normalize percentages to 'clean' values
@@ -55,6 +58,7 @@ function selectAll(e) {
  * Coriolis App Header section / menus
  */
 export default class Header extends TranslatedComponent {
+  static contextType = AppContext;
 
 	/**
 	 * Constructor
@@ -63,7 +67,12 @@ export default class Header extends TranslatedComponent {
 	 */
   constructor(props, context) {
     super(props);
-    this.shipOrder = Object.keys(Ships).sort();
+    // Sort ships by their display name (properties.name) instead of ship ID
+    this.shipOrder = Object.keys(Ships).sort((a, b) => {
+      const nameA = Ships[a].properties.name.toLowerCase();
+      const nameB = Ships[b].properties.name.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
 
     this._setLanguage = this._setLanguage.bind(this);
     this._setInsurance = this._setInsurance.bind(this);
@@ -80,6 +89,10 @@ export default class Header extends TranslatedComponent {
     this._getAnnouncementsMenu = this._getAnnouncementsMenu.bind(this);
     this._openSettings = this._openMenu.bind(this, 'settings');
     this._showHelp = this._showHelp.bind(this);
+    this._toggleTooltips = this._toggleTooltips.bind(this);
+    this._toggleModuleResistances = this._toggleModuleResistances.bind(this);
+    this._toggleAnimations = this._toggleAnimations.bind(this);
+    this._togglePromptCG = this._togglePromptCG.bind(this);
     this.update = this.update.bind(this);
     this.languageOptions = [];
     this.insuranceOptions = [];
@@ -211,10 +224,31 @@ export default class Header extends TranslatedComponent {
   }
 
   /**
+   * Toggle CG prompt setting
+   */
+  _toggleCGPrompt() {
+    Persist.promptCGModules(!Persist.promptCGModules());
+  }
+
+  /**
    * Toggle module resistances setting
    */
   _toggleModuleResistances() {
     Persist.showModuleResistances(!Persist.showModuleResistances());
+  }
+
+  /**
+   * Toggle animations setting
+   */
+  _toggleAnimations() {
+    Persist.showAnimations(!Persist.showAnimations());
+  }
+
+  /**
+   * Toggle CG module prompt setting
+   */
+  _togglePromptCG() {
+    Persist.setPromptCG(!Persist.promptCG());
   }
 
   /**
@@ -411,7 +445,9 @@ export default class Header extends TranslatedComponent {
   _getSettingsMenu() {
     let translate = this.context.language.translate;
     let tips = Persist.showTooltips();
+    let promptCG = Persist.promptCGModules();
     let moduleResistances = Persist.showModuleResistances();
+    let animations = Persist.showAnimations();
 
     return (
       <div className='menu-list no-wrap cap' onClick={ (e) => e.stopPropagation() }>
@@ -425,6 +461,10 @@ export default class Header extends TranslatedComponent {
                 </select>
               </td>
             </tr>
+            <tr className='cap ptr' onClick={this._toggleCGPrompt}>
+              <td>{translate('cgprompts')}</td>
+              <td className={cn('ri', { disabled: !promptCG, 'primary-disabled': promptCG })}>{(promptCG ? '✓' : '✗')}</td>
+            </tr>
             <tr className='cap ptr' onClick={this._toggleTooltips} >
               <td>{translate('tooltips')}</td>
               <td className={cn('ri', { disabled: !tips, 'primary-disabled': tips })}>{(tips ? '✓' : '✗')}</td>
@@ -432,6 +472,10 @@ export default class Header extends TranslatedComponent {
             <tr className='cap ptr' onClick={this._toggleModuleResistances} >
               <td>{translate('module resistances')}</td>
               <td className={cn('ri', { disabled: !moduleResistances, 'primary-disabled': moduleResistances })}>{(moduleResistances ? '✓' : '✗')}</td>
+            </tr>
+            <tr className='cap ptr' onClick={this._toggleAnimations} >
+              <td>{translate('animations')}</td>
+              <td className={cn('ri', { disabled: !animations, 'primary-disabled': animations })}>{(animations ? '✓' : '✗')}</td>
             </tr>
             <tr>
               <td>{translate('insurance')}</td>
@@ -487,7 +531,7 @@ export default class Header extends TranslatedComponent {
   /**
    * Add listeners on mount
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     let update = () => this.forceUpdate();
     Persist.addListener('language', update);
     Persist.addListener('insurance', update);
@@ -496,6 +540,8 @@ export default class Header extends TranslatedComponent {
     Persist.addListener('builds', update);
     Persist.addListener('tooltips', update);
     Persist.addListener('moduleresistances', update);
+    Persist.addListener('animations', update);
+    Persist.addListener('promptCG', update);
   }
 
   /**
@@ -503,7 +549,7 @@ export default class Header extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    * @param  {Object} nextContext Incoming/Next conext
    */
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if(this.context.language != nextContext.language) {
       let translate = nextContext.language.translate;
       this.insuranceOptions = [];
@@ -590,16 +636,24 @@ export default class Header extends TranslatedComponent {
         }
 
         <div className='r menu'>
+          <div className={cn('menu-header')} onClick={this._showHelp}>
+            <Help className='xl warning'/>
+          </div>
+        </div>
+
+        <div className='r menu'>
+          <a href="https://github.com/sponsors/Brighter-Applications" target="_blank" rel="noopener noreferrer">
+            <div className={cn('menu-header')}>
+              <Heart className='xl warning'/><span className='menu-item-label'>{translate('donate')}</span>
+            </div>
+          </a>
+        </div>
+
+        <div className='r menu'>
           <div className={cn('menu-header', { selected: openedMenu == 'settings' })} onClick={this._openSettings}>
             <Cogs className='xl warning'/><span className='menu-item-label'>{translate('settings')}</span>
           </div>
           {openedMenu == 'settings' ? this._getSettingsMenu() : null}
-        </div>
-
-        <div className='r menu'>
-          <div className={cn('menu-header')} onClick={this._showHelp}>
-            <Help className='xl warning'/>
-          </div>
         </div>
       </header>
     );

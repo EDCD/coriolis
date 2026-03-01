@@ -507,7 +507,7 @@ export default class ModalImport extends TranslatedComponent {
   /**
    * If imported data is already provided process immediately on mount
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.builds) {
       this._process();
     }

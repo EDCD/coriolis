@@ -99,7 +99,7 @@ export default class Tooltip extends TranslatedComponent {
    * Reset width and height on propChange
    * @param  {Object} nextProps   Incoming/Next properties
    */
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState(this._initialDimensions(nextProps));
   }
 

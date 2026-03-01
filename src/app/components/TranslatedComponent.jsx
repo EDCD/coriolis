@@ -1,23 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { shallowEqual } from '../utils/UtilityFunctions';
+import { AppContext } from '../AppContext';
 
 /**
  * Abstract Translated Component
  */
 export default class TranslatedComponent extends React.Component {
-
-  static contextTypes = {
-    language: PropTypes.object.isRequired,
-    sizeRatio: PropTypes.number.isRequired,
-    openMenu: PropTypes.func.isRequired,
-    closeMenu: PropTypes.func.isRequired,
-    showModal: PropTypes.func.isRequired,
-    hideModal: PropTypes.func.isRequired,
-    tooltip: PropTypes.func.isRequired,
-    termtip: PropTypes.func.isRequired,
-    onWindowResize: PropTypes.func.isRequired
-  };
+  static contextType = AppContext;
 
   /**
    * Created an instance of a Translated Component. This is an abstract class.
@@ -34,7 +24,10 @@ export default class TranslatedComponent extends React.Component {
    * @return {boolean} true if the language has changed
    */
   didContextChange(nextContext) {
-    return nextContext.language !== this.context.language || nextContext.sizeRatio != this.context.sizeRatio;
+    return (
+      nextContext.language !== this.context.language ||
+      nextContext.sizeRatio != this.context.sizeRatio
+    );
   }
 
   /**
@@ -48,6 +41,10 @@ export default class TranslatedComponent extends React.Component {
    * @return {boolean}            True if props, state, or context has changed
    */
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState) || this.didContextChange(nextContext);
+    return (
+      !shallowEqual(this.props, nextProps) ||
+      !shallowEqual(this.state, nextState) ||
+      this.didContextChange(nextContext)
+    );
   }
 }

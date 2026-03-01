@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { AppContext } from './AppContext';
 import Router from './Router';
 import { register } from 'register-service-worker';
 import { EventEmitter } from 'fbemitter';
@@ -30,21 +31,6 @@ const request = require('superagent');
  * Coriolis App
  */
 export default class Coriolis extends React.Component {
-  static childContextTypes = {
-    closeMenu: PropTypes.func.isRequired,
-    hideModal: PropTypes.func.isRequired,
-    language: PropTypes.object.isRequired,
-    noTouch: PropTypes.bool.isRequired,
-    onCommand: PropTypes.func.isRequired,
-    onWindowResize: PropTypes.func.isRequired,
-    openMenu: PropTypes.func.isRequired,
-    route: PropTypes.object.isRequired,
-    showModal: PropTypes.func.isRequired,
-    sizeRatio: PropTypes.number.isRequired,
-    termtip: PropTypes.func.isRequired,
-    tooltip: PropTypes.func.isRequired
-  };
-
   /**
    * Creates an instance of the Coriolis App
    */
@@ -69,7 +55,8 @@ export default class Coriolis extends React.Component {
       noTouch: !('ontouchstart' in window || navigator.msMaxTouchPoints || navigator.maxTouchPoints),
       page: null,
       // Announcements must have an expiry date in format "YYYY-MM-DDTHH:MM:SSZ"
-      announcements: [{expiry: "2025-04-10T00:00:00Z", text: "Corsair added"}],
+      announcements: [{expiry: "2026-03-31T00:00:00Z", text: "Goodbye React 15. So long and thanks for all the Ships! Welcome to Coriolis 4.0.x"}],
+
       language: getLanguage(Persist.getLangCode()),
       route: {},
       sizeRatio: Persist.getSizeRatio()
@@ -268,7 +255,7 @@ export default class Coriolis extends React.Component {
   _tooltip(content, rect, opts) {
     if (!content && this.state.tooltip) {
       this.setState({ tooltip: null });
-    } else if (content && Persist.showTooltips()) {
+    } else if (content && Persist.showTooltips() && this.state.noTouch) {
       this.setState({ tooltip: <Tooltip rect={rect} options={opts}>{content}</Tooltip> });
     }
   }
@@ -315,31 +302,9 @@ export default class Coriolis extends React.Component {
   }
 
   /**
-   * Creates the context to be passed down to pages / components containing
-   * language, sizeRatio and route references
-   * @return {object} Context to be passed down
-   */
-  getChildContext() {
-    return {
-      closeMenu: this._closeMenu,
-      hideModal: this._hideModal,
-      language: this.state.language,
-      noTouch: this.state.noTouch,
-      onCommand: this._onCommand,
-      onWindowResize: this._onWindowResize,
-      openMenu: this._openMenu,
-      route: this.state.route,
-      showModal: this._showModal,
-      sizeRatio: this.state.sizeRatio,
-      termtip: this._termtip,
-      tooltip: this._tooltip
-    };
-  }
-
-  /**
    * Adds necessary listeners and starts Routing
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // Listen for appcache updated event, present refresh to update view
     // Check that service workers are registered
     if (navigator.storage && navigator.storage.persist) {
@@ -401,29 +366,50 @@ export default class Coriolis extends React.Component {
    */
   render() {
     let currentMenu = this.state.currentMenu;
-    return <div style={{ minHeight: '100%' }} onClick={this._closeMenu}
-                className={this.state.noTouch ? 'no-touch' : null}>
-      <Header announcements={this.state.announcements} appCacheUpdate={this.state.appCacheUpdate}
-              currentMenu={currentMenu}/>
-      <div className="announcement-container">{this.state.announcements.map(a => <Announcement
-        text={a.text}/>)}</div>
-      {this.state.error ? this.state.error : this.state.page ? React.createElement(this.state.page, { currentMenu }) :
-        <NotFoundPage/>}
-      {this.state.modal}
-      {this.state.tooltip}
-      <footer>
 
-        <div className="right cap">
-          <a href="https://github.com/EDCD/coriolis" target="_blank" rel="noopener noreferrer"
-             title="Coriolis Github Project">{window.CORIOLIS_VERSION} - {window.CORIOLIS_DATE}</a>
-          <br/>
-          <a
-            href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'}
-            target="_blank" rel="noopener noreferrer" title={'Coriolis Commits since' + window.CORIOLIS_DATE}>Commits
-            since last release
-            ({window.CORIOLIS_DATE})</a>
+    // Create context value
+    const contextValue = {
+      closeMenu: this._closeMenu,
+      hideModal: this._hideModal,
+      language: this.state.language,
+      noTouch: this.state.noTouch,
+      onCommand: this._onCommand,
+      onWindowResize: this._onWindowResize,
+      openMenu: this._openMenu,
+      route: this.state.route,
+      showModal: this._showModal,
+      sizeRatio: this.state.sizeRatio,
+      termtip: this._termtip,
+      tooltip: this._tooltip
+    };
+
+    return (
+      <AppContext.Provider value={contextValue}>
+        <div style={{ minHeight: '100%' }} onClick={() => { this._closeMenu(); this._tooltip(); }}
+             className={this.state.noTouch ? 'no-touch' : null}>
+          <Header announcements={this.state.announcements} appCacheUpdate={this.state.appCacheUpdate}
+                  currentMenu={currentMenu}/>
+          <div className="announcement-container">{this.state.announcements.map((a, index) => <Announcement
+            key={index}
+            text={a.text}/>)}</div>
+          {this.state.error ? this.state.error : this.state.page ? React.createElement(this.state.page, { currentMenu }) :
+            <NotFoundPage/>}
+          {this.state.modal}
+          {this.state.tooltip}
+          <footer>
+            <div className="right cap">
+              <a href="https://github.com/EDCD/coriolis" target="_blank" rel="noopener noreferrer"
+                 title="Coriolis Github Project">{window.CORIOLIS_VERSION} - {window.CORIOLIS_DATE}</a>
+              <br/>
+              <a
+                href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'}
+                target="_blank" rel="noopener noreferrer" title={'Coriolis Commits since' + window.CORIOLIS_DATE}>Commits
+                since last release
+                ({window.CORIOLIS_DATE})</a>
+            </div>
+          </footer>
         </div>
-      </footer>
-    </div>;
+      </AppContext.Provider>
+    );
   }
 }
