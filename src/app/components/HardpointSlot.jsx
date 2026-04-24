@@ -162,7 +162,7 @@ export default class HardpointSlot extends Slot {
                                                               onMouseOut={tooltip.bind(null, null)}><DamageAbsolute/></span> : ''}
             {classRating} {translate(m.name || m.grp)}{m.mods && Object.keys(m.mods).length > 0 ? <span className='r'
                                                                                                         onMouseOver={termtip.bind(null, modTT)}
-                                                                                                        onMouseOut={tooltip.bind(null, null)}><Modified/></span> : null}
+                                                                                                        onMouseOut={tooltip.bind(null, null)}><Modified/>{m.blueprint && m.blueprint.grade ? <sub className='eng-grade'>{m.blueprint.grade}</sub> : null}</span> : null}
           </div>
 
           <div className={'r'}>{formats.round(m.getMass())}{u.T}</div>

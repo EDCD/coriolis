@@ -453,6 +453,19 @@ export function shieldMetrics(ship, sys) {
     // Recover time is the time taken to go from 0 to 50%.  It includes a 16-second wait before shields start to recover
     const shieldToRecover = (generatorStrength + boostersStrength + shieldAddition) / 2;
     const powerDistributor = ship.standard[4].m;
+    if (!powerDistributor) {
+      // Power distributor not fitted or build failed to load fully; return basic shield info without timing data
+      shield = {
+        generator: generatorStrength,
+        boosters: boostersStrength,
+        addition: shieldAddition,
+        cells: ship.shieldCells,
+        summary: generatorStrength + boostersStrength + shieldAddition,
+        total: generatorStrength + boostersStrength + ship.shieldCells + shieldAddition,
+        recover: Infinity,
+        recharge: Infinity,
+      };
+    } else {
     const sysRechargeRate = this.sysRechargeRate(powerDistributor, sys);
 
     // Our initial regeneration comes from the SYS capacitor store, which is replenished as it goes
@@ -513,6 +526,7 @@ export function shieldMetrics(ship, sys) {
       recover,
       recharge,
     };
+    } // end powerDistributor else block
 
     // Shield resistances have three components: the shield generator, the shield boosters and the SYS pips.
     // We re-cast these as damage percentages
@@ -785,7 +799,20 @@ export function sysResistance(sys) {
  * @returns {number}      The recharge rate in MJ/s
  */
 export function sysRechargeRate(pd, sys) {
+  if (!pd) return 0;
   return pd.getSystemsRechargeRate() * Math.pow(sys, 1.1) / Math.pow(4, 1.1);
+}
+
+/**
+ * Obtain the recharge rate of the WEP capacitor of a power distributor given pips
+ * Uses non-linear pip curve: pow(pips/4, 1.1)
+ * @param {Object}   pd   The power distributor
+ * @param {number}   wep  The number of pips to WEP
+ * @returns {number}      The recharge rate in MW
+ */
+export function wepRechargeRate(pd, wep) {
+  if (!pd) return 0;
+  return pd.getWeaponsRechargeRate() * Math.pow(wep / 4, 1.1);
 }
 
 /**
@@ -1017,7 +1044,8 @@ export function timeToDrainWep(ship, wep) {
   }
 
   // Calculate the drain time
-  const drainPerSecond = totalSEps - ship.standard[4].m.getWeaponsRechargeRate() * wep / 4;
+  // Use non-linear pip curve: pow(wep/4, 1.1) matching EDSY's formula
+  const drainPerSecond = totalSEps - ship.standard[4].m.getWeaponsRechargeRate() * Math.pow(wep / 4, 1.1);
   if (drainPerSecond <= 0) {
     // Can fire forever
     return Infinity;

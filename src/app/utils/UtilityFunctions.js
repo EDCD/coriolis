@@ -7,7 +7,7 @@
  */
 export function wrapCtxMenu(cb) {
   return (event) => {
-    if (!event.getModifierState('Shift')) {
+    if (!(event.getModifierState && event.getModifierState('Shift'))) {
       event.preventDefault();
       cb.call(null, event);
     }
@@ -19,7 +19,7 @@ export function wrapCtxMenu(cb) {
  * @param  {SyntheticEvent} event Event
  */
 export function stopCtxPropagation(event) {
-  if (!event.getModifierState('Shift')) {
+  if (!(event.getModifierState && event.getModifierState('Shift'))) {
     event.preventDefault();
     event.stopPropagation();
   }

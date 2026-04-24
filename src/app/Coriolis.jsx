@@ -22,6 +22,7 @@ import OutfittingPage from './pages/OutfittingPage';
 import ComparisonPage from './pages/ComparisonPage';
 import ShipyardPage from './pages/ShipyardPage';
 import ErrorDetails from './pages/ErrorDetails';
+import { syncAllBuilds } from './utils/BuildSync';
 
 
 const zlib = require('pako');
@@ -162,6 +163,51 @@ export default class Coriolis extends React.Component {
    */
   _onLanguageChange(lang) {
     this.setState({ language: getLanguage(Persist.getLangCode()) });
+  }
+
+  /**
+   * Handle postMessage from the cmdr.coriolis.io link popup.
+   * Validates the origin and stores the CMDR link.
+   * @param  {MessageEvent} event
+   */
+  _onCmdrLinkMessage(event) {
+    const ALLOWED_ORIGINS = [
+      'https://cmdr.coriolis.io',
+      'http://localhost:8000',
+    ];
+    if (!ALLOWED_ORIGINS.includes(event.origin)) {
+      return; // Ignore messages from unknown origins
+    }
+    const data = event.data;
+    if (data && data.type === 'cmdr-link' && data.cmdrName && data.apiKey) {
+      Persist.addCmdrLink(data.cmdrName, data.apiKey, event.origin);
+    }
+  }
+
+  /**
+   * Check the URL hash for redirect-based CMDR link data.
+   * When the link popup's window.opener is null (due to login redirects or
+   * COOP headers), the popup redirects back here with link data encoded in
+   * the hash: #/cmdr-linked/BASE64_JSON
+   */
+  _checkCmdrLinkHash() {
+    const hash = window.location.hash;
+    const prefix = '#/cmdr-linked/';
+    if (hash && hash.indexOf(prefix) === 0) {
+      try {
+        const encoded = hash.substring(prefix.length);
+        const data = JSON.parse(atob(encoded));
+        if (data.cmdrName && data.apiKey && data.host) {
+          Persist.addCmdrLink(data.cmdrName, data.apiKey, data.host);
+        }
+      } catch (e) {
+        console && console.error && console.error('Failed to parse CMDR link hash', e);
+      }
+      // Clean the hash so it doesn't persist in the URL
+      window.location.hash = '';
+      // If this was opened as a popup, try to close it
+      try { window.close(); } catch (e) { /* ignore */ }
+    }
   }
 
   /**
@@ -357,7 +403,22 @@ export default class Coriolis extends React.Component {
     Persist.addListener('language', this._onLanguageChange);
     Persist.addListener('sizeRatio', this._onSizeRatioChange);
 
+    // Listen for postMessage from cmdr.coriolis.io link popup
+    window.addEventListener('message', this._onCmdrLinkMessage.bind(this));
+
+    // Check for redirect-based CMDR link data in the URL hash
+    // (fallback when window.opener is null in the popup)
+    this._checkCmdrLinkHash();
+
     Router.start();
+
+    // Auto-sync all builds to cmdr.coriolis.io on page load if enabled
+    if (Persist.syncBuilds()) {
+      const link = Persist.getActiveCmdrLink();
+      if (link) {
+        syncAllBuilds(link);
+      }
+    }
   }
 
   /**

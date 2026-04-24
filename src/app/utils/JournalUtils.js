@@ -5,6 +5,7 @@ import Module from '../shipyard/Module';
 import { Modules } from 'coriolis-data/dist';
 import { Modifications } from 'coriolis-data/dist';
 import { getBlueprint, setQualityCB } from './BlueprintFunctions';
+import * as ModuleUtils from '../shipyard/ModuleUtils';
 
 /**
  * Check if an imported module is valid
@@ -71,6 +72,23 @@ function _moduleFromFdName(fdname) {
 }
 
 /**
+ * Find the pre-engineered Expanded Capacity Cargo Rack for a given class
+ * @param {Number} clss The class of the cargo rack (5 or 6)
+ * @return {Module} The pre-engineered module, or null
+ */
+function _findPreEngineeredCargoRack(clss) {
+  if (!Modules.internal.cr) return null;
+  for (const mod of Modules.internal.cr) {
+    if (mod.class === clss && mod.preEngineered &&
+        mod.preEngineered.blueprints &&
+        mod.preEngineered.blueprints.indexOf('CargoRack_IncreasedCapacity') !== -1) {
+      return new Module({ template: mod });
+    }
+  }
+  return null;
+}
+
+/**
  * Build a ship from the journal Loadout event JSON
  * @param {object} json the Loadout event JSON
  * @return {Ship} the built ship
@@ -96,23 +114,31 @@ export function shipFromLoadoutJSON(json) {
         ship.cargoHatch.priority = module.Priority;
         break;
       // Add the bulkheads
-      case 'armour':
-        if (module.Item.toLowerCase().endsWith('_armour_grade1')) {
+      case 'armour': {
+        const itemLower = module.Item.toLowerCase();
+        // Ships like the Caspian Explorer have 6 bulkheads: a '_grade1_default'
+        // for Lightweight Alloy and '_grade1' for the Mk II Ablative variant.
+        // Standard ships have 5 bulkheads where '_grade1' is Lightweight Alloy.
+        const bulkheadOffset = shipTemplate.bulkheads.length > 5 ? 1 : 0;
+        if (itemLower.endsWith('_armour_grade1_default')) {
           ship.useBulkhead(0, true);
-        } else if (module.Item.toLowerCase().endsWith('_armour_grade2')) {
-          ship.useBulkhead(1, true);
-        } else if (module.Item.toLowerCase().endsWith('_armour_grade3')) {
-          ship.useBulkhead(2, true);
-        } else if (module.Item.toLowerCase().endsWith('_armour_mirrored')) {
-          ship.useBulkhead(3, true);
-        } else if (module.Item.toLowerCase().endsWith('_armour_reactive')) {
-          ship.useBulkhead(4, true);
+        } else if (itemLower.endsWith('_armour_grade1')) {
+          ship.useBulkhead(0 + bulkheadOffset, true);
+        } else if (itemLower.endsWith('_armour_grade2')) {
+          ship.useBulkhead(1 + bulkheadOffset, true);
+        } else if (itemLower.endsWith('_armour_grade3')) {
+          ship.useBulkhead(2 + bulkheadOffset, true);
+        } else if (itemLower.endsWith('_armour_mirrored')) {
+          ship.useBulkhead(3 + bulkheadOffset, true);
+        } else if (itemLower.endsWith('_armour_reactive')) {
+          ship.useBulkhead(4 + bulkheadOffset, true);
         } else {
           throw 'Unknown bulkheads "' + module.Item + '"';
         }
         ship.bulkheads.enabled = true;
         if (module.Engineering) _addModifications(ship.bulkheads.m, module.Engineering.Modifiers, module.Engineering.Quality, module.Engineering.BlueprintName, module.Engineering.Level, module.Engineering.ExperimentalEffect);
         break;
+      }
       case 'powerplant':
         let powerplant = _moduleFromFdName(module.Item);
         // Check the powerplant returned is valid
@@ -207,25 +233,23 @@ export function shipFromLoadoutJSON(json) {
     if (module.Slot.toLowerCase().search(/hardpoint/) !== -1) {
       // Add hardpoints
       let hardpoint;
-      let hardpointClassNum = -1;
-      let hardpointSlotNum = -1;
       let hardpointArrayNum = 0;
+      const classSlotCounters = {};
       for (let i in shipTemplate.slots.hardpoints) {
-        if (shipTemplate.slots.hardpoints[i] === hardpointClassNum) {
-          // If the ship is the T8 and the hardpoint is smallHardpoint3, we need to skip it
-          if (shipModel === 'type_8_transport' && hardpointClassNum === 1 && hardpointSlotNum === 2) {
-            hardpointSlotNum++;
-          }
-          // Another slot of the same class
-          hardpointSlotNum++;
-        } else {
-          // The first slot of a new class
-          hardpointClassNum = shipTemplate.slots.hardpoints[i];
-          hardpointSlotNum = 1;
+        const slotDef = shipTemplate.slots.hardpoints[i];
+        const hardpointClassNum = typeof slotDef === 'object' ? slotDef.class : slotDef;
+        const slotNamePrefix = typeof slotDef === 'object' && slotDef.name ? slotDef.name : '';
+        classSlotCounters[hardpointClassNum] = (classSlotCounters[hardpointClassNum] || 0) + 1;
+        let hardpointSlotNum = classSlotCounters[hardpointClassNum];
+
+        // If the ship is the T8, skip SmallHardpoint3
+        if (shipModel === 'type_8_transport' && hardpointClassNum === 1 && hardpointSlotNum === 3) {
+          classSlotCounters[hardpointClassNum]++;
+          hardpointSlotNum = classSlotCounters[hardpointClassNum];
         }
 
-        // Now that we know what we're looking for, find it
-        const hardpointName = HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + 'Hardpoint' + hardpointSlotNum;
+        // Construct the slot name (e.g. "LargeMiningHardpoint1" or "MediumHardpoint3")
+        const hardpointName = HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + slotNamePrefix + 'Hardpoint' + hardpointSlotNum;
         const hardpointSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === hardpointName.toLowerCase());
         if (!hardpointSlot) {
           // This can happen with old imports that don't contain new hardpoints
@@ -265,15 +289,22 @@ export function shipFromLoadoutJSON(json) {
   }
   let militarySlotNum = 1;
   let cargoSlotNum = 1;
+  let limpetSlotNum = 1;
+  let fighterSlotNum = 1;
   for (let i in shipTemplate.slots.internal) {
     if (!shipTemplate.slots.internal.hasOwnProperty(i)) {
       continue;
     }
-    const isMilitary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'Military' : false;
-    const isPlanetary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'PlanetaryApproachSuite' : false;
-    const isCargo = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'Cargo' : false;
+    const slotObj = shipTemplate.slots.internal[i];
+    const isNamedSlot = isNaN(slotObj);
+    const slotName = isNamedSlot ? slotObj.name : null;
+    const isMilitary = slotName === 'Military';
+    const isPlanetary = slotName === 'PlanetaryApproachSuite';
+    const isCargo = slotName === 'Cargo';
+    const isLimpets = slotName === 'Limpets';
+    const isFighter = slotName === 'Fighter';
 
-    // The internal slot might be a standard or a military slot, or a planetary slot.  Military and Planetary slots have a different naming system
+    // Named slots have their own naming conventions separate from the standard SlotNN_SizeN pattern
     let internalSlot = null;
     if (isMilitary) {
         const internalName = 'Military0' + militarySlotNum;
@@ -286,21 +317,30 @@ export function shipFromLoadoutJSON(json) {
         const internalName = 'Cargo0' + cargoSlotNum;
         internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
         cargoSlotNum++;
+    } else if (isLimpets) {
+        const internalName = 'LimpetController0' + limpetSlotNum;
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+        limpetSlotNum++;
+    } else if (isFighter) {
+        const internalName = 'FighterBay0' + fighterSlotNum;
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+        fighterSlotNum++;
     } else {
+        // Some ships skip internal slot indexes because military/restricted slots occupy those numbers in the journal
+        // Anaconda skips 12 and 13, Dropship skips 7 and 8, T9 skips 9 and 10, T10 skips 9 and 10, Vulture skips 4
+        if ((internalSlotNum === 11 && shipModel === 'anaconda') ||
+            (internalSlotNum === 7 && shipModel === 'federation_dropship') ||
+            (internalSlotNum === 9 && shipModel === 'type_9_heavy') ||
+            (internalSlotNum === 9 && shipModel === 'type_10_defender')) {
+          internalSlotNum += 2;
+        } else if (internalSlotNum === 4 && shipModel === 'vulture') {
+          internalSlotNum++;
+        }
+
         let internalName = 'Slot';
         if (internalSlotNum < 10) {
           internalName += '0' + internalSlotNum + '_Size' + shipTemplate.slots.internal[i];
         } else {
-            // For some reason, some ships skip internal slot indexes, so we need to check for them
-            // Anaconda skips 12 and 13, Dropship skips 7 and 8, T9 skips 9 and 10, T10 skips 9 and 10
-          if ((internalSlotNum === 11 && shipModel === 'anaconda') || (internalSlotNum === 7 && shipModel === 'federation_dropship') || (internalSlotNum === 9 && shipModel === 'type_9_heavy') || (internalSlotNum === 9 && shipModel === 'type_10_defender')) {
-            internalSlotNum++;
-            internalSlotNum++;
-          }
-          // Vulture skips 4
-          else if (internalSlotNum === 4 && shipModel === 'vulture') {
-            internalSlotNum++;
-          }
           internalName += internalSlotNum + '_Size' + shipTemplate.slots.internal[i];
         }
         internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
@@ -312,6 +352,19 @@ export function shipFromLoadoutJSON(json) {
     } else {
       const internalJson = internalSlot;
       let internal = _moduleFromFdName(internalJson.Item);
+
+      // Check if this is a cargo rack with the Expanded Capacity pre-engineering
+      // If so, swap to the pre-engineered module and skip applying engineering manually
+      if (internal && internalJson.Engineering &&
+          internalJson.Engineering.BlueprintName.toLowerCase() === 'cargorack_increasedcapacity') {
+        const preEngRack = _findPreEngineeredCargoRack(internal.class);
+        if (preEngRack) {
+          internal = preEngRack;
+          // Clear engineering - the pre-engineered module's use() handler applies it automatically
+          internalJson.Engineering = null;
+        }
+      }
+
       // Check the internal module returned is valid
       if (!_isValidImportedModule(internal, 'internal'))
       {

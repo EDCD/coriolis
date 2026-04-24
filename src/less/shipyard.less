@@ -84,6 +84,123 @@ table.shipyard-table{
   max-width: 100%;
 }
 
+.shipyard-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6em 1.5em;
+  padding: 0.5em 0.4em;
+  margin-bottom: 0.4em;
+  border-bottom: 1px solid @primary-darker;
+  font-size: 0.85em;
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    color: @muted;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    margin-right: 0.15em;
+    white-space: nowrap;
+  }
+
+  .filter-option {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    border: 1px solid @primary-darker;
+    color: @primary-disabled;
+    cursor: pointer;
+    text-transform: capitalize;
+    white-space: nowrap;
+    .user-select-none();
+
+    &:hover {
+      color: @primary;
+      border-color: @primary;
+    }
+
+    &.active {
+      background-color: @primary-bg;
+      color: @primary;
+      border-color: @primary;
+    }
+  }
+
+  .filter-clear {
+    color: @warning;
+    cursor: pointer;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    .user-select-none();
+
+    &:hover {
+      color: lighten(@warning, 10%);
+    }
+  }
+}
+
+// Desktop: show toggle buttons, hide dropdowns
+.filter-desktop {
+  display: flex;
+}
+.filter-mobile {
+  display: none;
+}
+
+// Mobile: hide toggle buttons, show dropdowns
+.largePhone({
+  .filter-desktop {
+    display: none;
+  }
+  .filter-mobile {
+    display: flex;
+    gap: 0.4em;
+    padding: 0.4em;
+
+    .filter-group {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .filter-dropdown {
+      width: 100%;
+      padding: 0.4em 0.3em;
+      border: 1px solid @primary-darker;
+      background-color: @bg;
+      color: @primary;
+      font-size: 1em;
+      text-transform: capitalize;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23FF8C0D'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.4em center;
+      padding-right: 1.4em;
+
+      &:focus {
+        border-color: @primary;
+        outline: none;
+      }
+
+      option {
+        background-color: @bg;
+        color: @fg;
+      }
+    }
+
+    .filter-clear {
+      align-self: center;
+      white-space: nowrap;
+    }
+  }
+});
+
 .table-tools{
   text-align: left;
   color: @primary;
