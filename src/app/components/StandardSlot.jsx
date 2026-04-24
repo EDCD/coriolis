@@ -165,7 +165,7 @@ export default class StandardSlot extends TranslatedComponent {
         <div className={cn('details-container', { warning: warning && warning(slot.m), disabled: m.grp !== 'bh' && !slot.enabled })}>
           <div className={'sz'}>{m.grp == 'bh' ? m.name.charAt(0) : slot.maxClass}</div>
           <div>
-            <div className={'l'}>{classRating} {m.getInfo() ? translate(m.ukName) : translate(m.name || m.grp)}{m.mods && Object.keys(m.mods).length > 0 ? <span className='r' onMouseOver={termtip.bind(null, modTT)} onMouseOut={tooltip.bind(null, null)}><Modified /></span> : null }</div>
+            <div className={'l'}>{classRating} {m.getInfo() ? translate(m.ukName) : translate(m.name || m.grp)}{m.mods && Object.keys(m.mods).length > 0 ? <span className='r' onMouseOver={termtip.bind(null, modTT)} onMouseOut={tooltip.bind(null, null)}><Modified />{m.blueprint && m.blueprint.grade ? <sub className='eng-grade'>{m.blueprint.grade}</sub> : null}</span> : null }</div>
             <div className={'r'}>{formats.round(mass)}{units.T}</div>
 	    <div/>
             <div className={'cb'}>

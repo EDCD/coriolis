@@ -26,6 +26,13 @@ export function canMount(ship, slot, group, clazz, module) {
     }
   }
 
+  // The Mk II Mining Multi-Limpet Controller can only be mounted in the Limpets restricted slot
+  if (module && module.id === '7W') {
+    if (!slot.name || slot.name.toLowerCase() !== 'limpets') {
+      return false;
+    }
+  }
+
   if (slot &&
       (!slot.eligible || slot.eligible[group]) &&
       (group != 'pcq' || (ship.luxuryCabins && ship.luxuryCabins  === true)) &&

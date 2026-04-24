@@ -45,9 +45,9 @@ export default class HardpointSlotSection extends SlotSection {
    */
   _empty() {
     this.selectedRefId = 'emptyall';
+    this._close();
     this.props.ship.emptyWeapons();
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -58,9 +58,10 @@ export default class HardpointSlotSection extends SlotSection {
    */
   _fill(group, mount, event) {
     this.selectedRefId = group + '-' + mount;
-    this.props.ship.useWeapon(group, mount, null, event.getModifierState('Alt'));
-    this.props.onChange();
+    let alt = event.getModifierState && event.getModifierState('Alt');
     this._close();
+    this.props.ship.useWeapon(group, mount, null, alt);
+    this.props.onChange();
   }
 
   /**

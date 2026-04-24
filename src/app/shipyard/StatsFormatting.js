@@ -80,4 +80,5 @@ export const STATS_FORMATTING = {
   'weprate': { 'format': 'round1', 'unit': 'MW' },
   'jumpboost': { 'format': 'round1', 'unit': 'LY' },
   'proberadius': { 'format': 'pct1', 'unit': 'pct' },
+  'cargo': { 'format': 'int', 'unit': 'T', 'higherbetter': true },
 };

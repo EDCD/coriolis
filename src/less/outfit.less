@@ -279,6 +279,7 @@
     border: 1px solid @primary;
     border-radius: 4px;
     overflow: visible;
+    min-width: 0;
 
     .stat-table-header {
       background: @primary;
@@ -353,6 +354,9 @@
           color: @primary;
           text-align: left;
           font-size: 0.95em;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
 
           &.warning {
             color: @warning;

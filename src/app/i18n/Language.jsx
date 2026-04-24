@@ -9,6 +9,7 @@ import * as PL from './pl';
 import * as PT from './pt';
 import * as CN from './cn';
 import * as KO from './ko';
+import * as KA from './geo';
 import * as d3 from 'd3';
 
 let fallbackTerms = EN.terms;
@@ -31,6 +32,7 @@ export function getLanguage(langCode) {
     case 'pt': lang = PT; break;
     case 'cn': lang = CN; break;
     case 'ko': lang = KO; break;
+    case 'ka': lang = KA; break;
     default:
       lang = EN;
   }
@@ -100,5 +102,6 @@ export const Languages = {
   pl: 'polski',
   pt: 'português',
   cn: '中文',
-  ko: '한국어'
+  ko: '한국어',
+  ka: 'ქართული'
 };

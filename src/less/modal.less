@@ -25,6 +25,15 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
+  &.modal-wide {
+    width: 95vw;
+    max-width: 1200px;
+
+    .smallTablet({
+      width: 95vw;
+    });
+  }
+
   .smallTablet({
     width: 90%;
   });
@@ -103,5 +112,184 @@
 
   .dismiss {
     background-color: @primary-bg;
+  }
+
+  .mats-columns {
+    display: flex;
+    gap: 1em;
+
+    .mats-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .largePhone({
+      flex-direction: column;
+    });
+  }
+
+  .mats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+
+    td {
+      padding: 0.15em 0.4em;
+      white-space: nowrap;
+    }
+
+    .mat-name {
+      color: @primary-disabled;
+    }
+
+    .mat-count {
+      text-align: right;
+      color: @primary;
+      font-weight: bold;
+      padding-left: 0.8em;
+    }
+
+    .mat-detail {
+      text-align: right;
+      color: @primary-disabled;
+      font-size: 0.85em;
+      padding-left: 0.5em;
+    }
+  }
+
+  .mats-show-more {
+    display: block;
+    margin: 0.4em 0.4em 0;
+    color: @secondary;
+    cursor: pointer;
+    font-size: 0.85em;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* -------------------------------------------------------------------
+   CMDR Coriolis modal — link management, ships & materials
+   ------------------------------------------------------------------- */
+
+.cmdr-links-list {
+  margin: 1em 0;
+  border: 1px solid @primary-bg;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.cmdr-link-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 0.8em;
+  cursor: pointer;
+  border-bottom: 1px solid @primary-bg;
+  transition: background-color 0.15s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background-color: @primary-bg; }
+  &.active {
+    background-color: fadeout(@secondary, 85%);
+    border-left: 3px solid @secondary;
+  }
+}
+
+.cmdr-link-name {
+  flex: 1;
+  color: @secondary;
+  font-weight: bold;
+}
+
+.cmdr-link-active {
+  color: @success;
+  margin-right: 0.5em;
+  font-size: 1.1em;
+}
+
+.cmdr-link-remove {
+  background: none;
+  border: none;
+  color: @warning;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 0 0.3em;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 1; }
+}
+
+.cmdr-link-btn {
+  margin: 0.5em 0 1em;
+}
+
+.cmdr-loading {
+  color: @muted;
+  font-style: italic;
+}
+
+.cmdr-error {
+  color: @warning;
+  margin: 0.5em 1em;
+}
+
+.cmdr-empty {
+  color: @muted;
+  font-style: italic;
+  margin: 0.5em 1em;
+}
+
+.cmdr-data {
+  margin-top: 1em;
+
+  h3 {
+    color: @primary;
+    border-bottom: 1px solid @primary-bg;
+    padding-bottom: 0.3em;
+    margin: 1em 0 0.5em;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.05em;
+  }
+}
+
+.cmdr-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.3em 0;
+
+  td, th {
+    padding: 0.25em 0.5em;
+    border-bottom: 1px solid fadeout(@primary-bg, 50%);
+  }
+
+  th {
+    color: @primary-disabled;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+    font-weight: normal;
+  }
+}
+
+.cmdr-current-ship td {
+  color: @secondary;
+}
+
+.cmdr-materials-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  padding: 0.3em 0.5em;
+}
+
+.cmdr-mat-cat {
+  color: @fg;
+
+  strong {
+    color: @primary-disabled;
   }
 }

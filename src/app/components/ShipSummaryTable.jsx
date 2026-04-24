@@ -164,10 +164,10 @@ export default class ShipSummaryTable extends TranslatedComponent {
               <td>{formats.pct1(ship.shieldThermRes)}</td>
               <td></td>
 
-              <td>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary : 0)}{u.MJ}</td>
-              <td>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary / sgMetrics.explosive.base : 0)}{u.MJ}</td>
-              <td>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.kinetic.base : 0)}{u.MJ}</td>
-              <td>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.thermal.base : 0)}{u.MJ}</td>
+              <td>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary / sgMetrics.absolute.total : 0)}{u.MJ}</td>
+              <td>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary / sgMetrics.explosive.total : 0)}{u.MJ}</td>
+              <td>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.kinetic.total : 0)}{u.MJ}</td>
+              <td>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.thermal.total : 0)}{u.MJ}</td>
               <td></td>
               <td>{sgMetrics && sgMetrics.recover === Math.Inf ? translate('Never') : formats.time(sgMetrics.recover)}</td>
               <td>{sgMetrics && sgMetrics.recharge === Math.Inf ? translate('Never') : formats.time(sgMetrics.recharge)}</td>

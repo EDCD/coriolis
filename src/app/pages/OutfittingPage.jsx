@@ -6,6 +6,7 @@ import Router from '../Router';
 import Persist from '../stores/Persist';
 import * as Utils from '../utils/UtilityFunctions';
 import Ship from '../shipyard/Ship';
+import { getDefaultEdIDs } from '../shipyard/ModuleUtils';
 import * as _ from 'lodash';
 import { toDetailedBuild, toSLEF } from '../shipyard/Serializer';
 import { outfitURL } from '../utils/UrlGenerators';
@@ -18,6 +19,7 @@ import {
   LinkIcon,
   ShoppingIcon,
   MatIcon,
+  PersonIcon,
 } from '../components/SvgIcons';
 import LZString from 'lz-string';
 import ShipSummaryTable from '../components/ShipSummaryTable';
@@ -36,6 +38,8 @@ import OutfittingSubpages from '../components/OutfittingSubpages';
 import ModalExport from '../components/ModalExport';
 import ModalPermalink from '../components/ModalPermalink';
 import ModalShoppingList from '../components/ModalShoppingList';
+import ModalBuildLink from '../components/ModalBuildLink';
+import { syncSingleBuild } from '../utils/BuildSync';
 
 /**
  * Document Title Generator
@@ -70,6 +74,7 @@ export default class OutfittingPage extends Page {
     this._toggleSummaryView = this._toggleSummaryView.bind(this);
     this._toggleStatBar = this._toggleStatBar.bind(this);
     this._toggleOutfitting = this._toggleOutfitting.bind(this);
+    this._saveToCmdr = this._saveToCmdr.bind(this);
     this._sectionMenuRefs = {};
   }
 
@@ -436,6 +441,14 @@ export default class OutfittingPage extends Page {
     Persist.saveBuild(shipId, newBuildName, code);
     this._updateRoute(shipId, newBuildName, code);
 
+    // Auto-sync to cmdr.coriolis.io if enabled
+    if (Persist.syncBuilds()) {
+      const link = Persist.getActiveCmdrLink();
+      if (link) {
+        syncSingleBuild(link, shipId, newBuildName, code);
+      }
+    }
+
     let opponent, opponentBuild, opponentSys, opponentEng, opponentWep;
     if (
       shipId === this.state.opponent.id &&
@@ -480,6 +493,15 @@ export default class OutfittingPage extends Page {
       Persist.deleteBuild(shipId, buildName);
       Persist.saveBuild(shipId, newBuildName, code);
       this._updateRoute(shipId, newBuildName, code);
+
+      // Auto-sync renamed build to cmdr.coriolis.io if enabled
+      if (Persist.syncBuilds()) {
+        const link = Persist.getActiveCmdrLink();
+        if (link) {
+          syncSingleBuild(link, shipId, newBuildName, code);
+        }
+      }
+
       this.setState({
         buildName: newBuildName,
         code,
@@ -719,17 +741,18 @@ export default class OutfittingPage extends Page {
   _inaraShoppingList() {
     const ship = this.state.ship;
 
-    const shipId = Ships[ship.id].eddbID;
-    // Provide unique list of non-PP module EDDB IDs
+    const shipId = Ships[ship.id].edID;
+    const defaultEdIDs = getDefaultEdIDs(ship.id);
+    // Provide unique list of non-PP, non-default module Frontier IDs (edID)
     const modIds = ship.internal
       .concat(ship.bulkheads, ship.standard, ship.hardpoints)
-      .filter(slot => slot !== null && slot.m !== null && !slot.m.pp)
-      .map(slot => slot.m.eddbID)
+      .filter(slot => slot !== null && slot.m !== null && !slot.m.pp && slot.m.edID && !defaultEdIDs.has(slot.m.edID))
+      .map(slot => slot.m.edID)
       .filter((v, i, a) => a.indexOf(v) === i);
 
     // Open up the relevant URL
     window.open(
-      'https://inara.cz/inapi/corisearch.php?s=' + shipId + '&m=' + modIds.join(',')
+      'https://inara.cz/inapi/outfitsearch.php?s=' + shipId + '&m=' + modIds.join(',')
     );
   }
 
@@ -740,6 +763,24 @@ export default class OutfittingPage extends Page {
     this.context.showModal(<ModalShoppingList
       ship={this.state.ship}
       buildName={this.state.buildName} />);
+  }
+
+  /**
+   * Open ModalBuildLink to save/link this build to cmdr-coriolis
+   */
+  _saveToCmdr() {
+    const { ship, shipId, buildName } = this.state;
+    const code = ship.toString();
+    const url = window.location.href;
+    this.context.showModal(
+      <ModalBuildLink
+        shipId={shipId}
+        shipDisplayName={ship.name}
+        buildName={buildName}
+        code={code}
+        url={url}
+      />
+    );
   }
 
   /**
@@ -971,6 +1012,22 @@ export default class OutfittingPage extends Page {
               onMouseOut={hide}
             >
               <MatIcon className="lg" />
+            </button>
+            <button
+              className={(!Persist.getActiveCmdrLink() || !savedCode || !Persist.hasBuilds()) ? 'disabled' : ''}
+              onClick={Persist.getActiveCmdrLink() && savedCode && Persist.hasBuilds() && this._saveToCmdr}
+              disabled={!Persist.getActiveCmdrLink() || !savedCode || !Persist.hasBuilds()}
+              onMouseOver={termtip.bind(
+                null,
+                !Persist.getActiveCmdrLink()
+                  ? 'link a CMDR account first'
+                  : !savedCode || !Persist.hasBuilds()
+                    ? 'name and save the build first'
+                    : 'save build to CMDR Coriolis'
+              )}
+              onMouseOut={hide}
+            >
+              <PersonIcon className="lg" />
             </button>
             </div>
           </div>

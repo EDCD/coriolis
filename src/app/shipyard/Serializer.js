@@ -38,6 +38,27 @@ function standardToSchema(standard) {
 }
 
 /**
+ * Generates ship-loadout JSON Schema bulkhead object
+ * @param  {Object} bulkheads Bulkheads slot
+ * @return {Object}           JSON Schema Bulkhead
+ */
+function bulkheadToSchema(bulkheads) {
+  let o = {
+    name: BulkheadNames[bulkheads.m.index]
+  };
+
+  if (bulkheads.m.mods && Object.keys(bulkheads.m.mods).length > 0) {
+    o.modifications = bulkheads.m.mods;
+  }
+
+  if (bulkheads.m.blueprint && Object.keys(bulkheads.m.blueprint).length > 0) {
+    o.blueprint = bulkheads.m.blueprint;
+  }
+
+  return o;
+}
+
+/**
  * Generates ship-loadout JSON Schema slot object
  * @param  {Object} slot Slot model
  * @return {Object}      JSON Schema Slot
@@ -97,7 +118,7 @@ export function toDetailedBuild(buildName, ship) {
     }],
     components: {
       standard: {
-        bulkheads: BulkheadNames[ship.bulkheads.m.index],
+        bulkheads: bulkheadToSchema(ship.bulkheads),
         cargoHatch: { enabled: Boolean(ship.cargoHatch.enabled), priority: ship.cargoHatch.priority + 1 },
         powerPlant: standardToSchema(standard[0]),
         thrusters: standardToSchema(standard[1]),
@@ -109,7 +130,7 @@ export function toDetailedBuild(buildName, ship) {
       },
       hardpoints: hardpoints.filter(slot => slot.maxClass > 0).map(slotToSchema),
       utility: hardpoints.filter(slot => slot.maxClass === 0).map(slotToSchema),
-      internal: internal.map(slotToSchema)
+      internal: internal.filter(slot => !(slot.m && slot.m.grp === 'pas')).map(slotToSchema)
     },
     stats: {}
   };
@@ -214,9 +235,19 @@ export function toSLEF(buildName, ship) {
 
   // Add bulkheads/armour
   if (ship.bulkheads && ship.bulkheads.m) {
+    // Prefer the symbol (fdname) from ship data if available.
+    // Otherwise construct from index using the standard FD naming convention.
+    let bulkheadItem;
+    if (ship.bulkheads.m.symbol) {
+      bulkheadItem = ship.bulkheads.m.symbol;
+    } else {
+      const gradeSuffixes = ['grade1', 'grade2', 'grade3', 'mirrored', 'reactive'];
+      const suffix = gradeSuffixes[ship.bulkheads.m.index] || `grade${ship.bulkheads.m.index + 1}`;
+      bulkheadItem = `${shipFdName.toLowerCase()}_armour_${suffix}`;
+    }
     const module = {
       Slot: 'Armour',
-      Item: ship.bulkheads.m.symbol || `${shipFdName.toLowerCase()}_armour_grade${ship.bulkheads.m.index + 1}`,
+      Item: bulkheadItem,
       On: true,
       Priority: ship.bulkheads.priority
     };
@@ -269,22 +300,17 @@ export function toSLEF(buildName, ship) {
     }
   });
 
-  // Add hardpoints (capitalized with proper size names)
-  let hugeHP = 1, largeHP = 1, mediumHP = 1, smallHP = 1, tinyHP = 1;
+  // Add hardpoints (with proper size names and named slot prefixes)
+  const hpClassCounters = {};
+  const HP_SIZE_NAMES = {0: 'Tiny', 1: 'Small', 2: 'Medium', 3: 'Large', 4: 'Huge'};
   ship.hardpoints.forEach(slot => {
+    const classNum = slot.maxClass;
+    hpClassCounters[classNum] = (hpClassCounters[classNum] || 0) + 1;
+    const slotNum = hpClassCounters[classNum];
+
     if (slot.m && slot.m.symbol) {
-      let slotName;
-      if (slot.maxClass === 0) {
-        slotName = `TinyHardpoint${tinyHP++}`;
-      } else if (slot.maxClass === 1) {
-        slotName = `SmallHardpoint${smallHP++}`;
-      } else if (slot.maxClass === 2) {
-        slotName = `MediumHardpoint${mediumHP++}`;
-      } else if (slot.maxClass === 3) {
-        slotName = `LargeHardpoint${largeHP++}`;
-      } else {
-        slotName = `HugeHardpoint${hugeHP++}`;
-      }
+      const namePrefix = slot.name || '';
+      const slotName = `${HP_SIZE_NAMES[classNum]}${namePrefix}Hardpoint${slotNum}`;
 
       const module = {
         Slot: slotName,
@@ -308,12 +334,33 @@ export function toSLEF(buildName, ship) {
     }
   });
 
-  // Add internal compartments (capitalized slot names)
+  // Add internal compartments (with proper FD slot names)
+  const NAMED_INTERNAL_PREFIXES = {
+    'Military': 'Military',
+    'Limpets': 'LimpetController',
+    'Fighter': 'FighterBay',
+    'Cargo': 'Cargo'
+  };
   let slotNum = 1;
+  const namedSlotCounters = {};
   ship.internal.forEach(slot => {
+    if (slot.m && slot.m.grp === 'pas') return; // Exclude Planetary Approach Suite for compatibility
+    if (slot.name === 'PlanetaryApproachSuite') return;
+
+    // Determine the FD-style slot name
+    let fdSlotName;
+    const namedPrefix = slot.name && NAMED_INTERNAL_PREFIXES[slot.name];
+    if (namedPrefix) {
+      namedSlotCounters[slot.name] = (namedSlotCounters[slot.name] || 0) + 1;
+      fdSlotName = `${namedPrefix}${String(namedSlotCounters[slot.name]).padStart(2, '0')}`;
+    } else {
+      fdSlotName = `Slot${String(slotNum).padStart(2, '0')}_Size${slot.maxClass}`;
+      slotNum++;
+    }
+
     if (slot.m && slot.m.symbol) {
       const module = {
-        Slot: `Slot${String(slotNum).padStart(2, '0')}_Size${slot.maxClass}`,
+        Slot: fdSlotName,
         Item: slot.m.symbol,
         On: Boolean(slot.enabled),
         Priority: slot.priority
@@ -331,7 +378,6 @@ export function toSLEF(buildName, ship) {
       }
 
       modules.push(module);
-      slotNum++;
     }
   });
 

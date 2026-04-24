@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { Ships } from 'coriolis-data/dist';
 import Persist from '../stores/Persist';
 import Ship from '../shipyard/Ship';
+import { getDefaultEdIDs } from '../shipyard/ModuleUtils';
 import { Insurance } from '../shipyard/Constants';
 import { slotName, slotComparator } from '../utils/SlotFunctions';
 import TranslatedComponent from './TranslatedComponent';
@@ -32,7 +33,7 @@ export default class CostSection extends TranslatedComponent {
     this._buildRetrofitShip = this._buildRetrofitShip.bind(this);
     this._onBaseRetrofitChange = this._onBaseRetrofitChange.bind(this);
     this._defaultRetrofitName = this._defaultRetrofitName.bind(this);
-    this._eddbShoppingList = this._inaraShoppingList.bind(this);
+    this._inaraShoppingList = this._inaraShoppingList.bind(this);
 
     let data = Ships[props.ship.id];   // Retrieve the basic ship properties, slots and defaults
     let retrofitName = this._defaultRetrofitName(props.ship.id, props.buildName);
@@ -334,11 +335,12 @@ export default class CostSection extends TranslatedComponent {
     const { retrofitCosts } = this.state;
     const { ship } = this.props;
 
-    // Provide unique list of non-PP module EDDB IDs to buy
-    const modIds = retrofitCosts.filter(item => item.retroItem.incCost && item.buyId && !item.buyPp).map(item => item.buyId).filter((v, i, a) => a.indexOf(v) === i);
+    const defaultEdIDs = getDefaultEdIDs(ship.id);
+    // Provide unique list of non-PP, non-default module Frontier IDs (edID) to buy
+    const modIds = retrofitCosts.filter(item => item.retroItem.incCost && item.buyId && !item.buyPp && !defaultEdIDs.has(item.buyId)).map(item => item.buyId).filter((v, i, a) => a.indexOf(v) === i);
 
     // Open up the relevant URL
-    window.open('https://inara.cz/inapi/corisearch.php?m=' + modIds.join(','));
+    window.open('https://inara.cz/inapi/outfitsearch.php?m=' + modIds.join(','));
   }
 
   /**
@@ -421,7 +423,7 @@ export default class CostSection extends TranslatedComponent {
     if (ship.bulkheads.m.index != retrofitShip.bulkheads.m.index) {
       item = {
         buyClassRating: ship.bulkheads.m.class + ship.bulkheads.m.rating,
-        buyId: ship.bulkheads.m.eddbID,
+        buyId: ship.bulkheads.m.edID,
         buyPp: ship.bulkheads.m.pp,
         buyName: ship.bulkheads.m.name,
         sellClassRating: retrofitShip.bulkheads.m.class + retrofitShip.bulkheads.m.rating,
@@ -439,12 +441,14 @@ export default class CostSection extends TranslatedComponent {
       let retroSlotGroup = retrofitShip[g];
       let slotGroup = ship[g];
       for (i = 0, l = slotGroup.length; i < l; i++) {
-        const modId = slotGroup[i].m ? slotGroup[i].m.eddbID : null;
-        const retroModId = retroSlotGroup[i].m ? retroSlotGroup[i].m.eddbID : null;
-        if (modId != retroModId) {
+        // Use module id (coriolis internal ID) for comparison since it is
+        // always present on every module.
+        const modId = slotGroup[i].m ? slotGroup[i].m.id : null;
+        const retroModId = retroSlotGroup[i].m ? retroSlotGroup[i].m.id : null;
+        if (modId !== retroModId) {
           item = { netCost: 0, retroItem: retroSlotGroup[i] };
           if (slotGroup[i].m) {
-            item.buyId = slotGroup[i].m.eddbID,
+            item.buyId = slotGroup[i].m.edID,
             item.buyPp = slotGroup[i].m.pp,
             item.buyName = slotGroup[i].m.name || slotGroup[i].m.grp;
             item.buyClassRating = slotGroup[i].m.class + slotGroup[i].m.rating;

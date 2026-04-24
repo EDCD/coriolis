@@ -84,7 +84,7 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'CobraMkIII': 'cobra_mk_iii',
   'CobraMkIV': 'cobra_mk_iv',
   'CobraMkV': 'cobramkv',
-  'Corsair': 'corsair',
+  'Corsair': 'imperial_corsair',
   'Cutter': 'imperial_cutter',
   'DiamondBackXL': 'diamondback_explorer',
   'DiamondBack': 'diamondback',
@@ -133,6 +133,23 @@ export const HARDPOINT_NUM_TO_CLASS = {
   4: "Huge"
 };
 
+
+/**
+ * Find the pre-engineered Expanded Capacity Cargo Rack for a given class
+ * @param {Number} clss The class of the cargo rack (5 or 6)
+ * @return {Module} The pre-engineered module, or null
+ */
+function _findPreEngineeredCargoRack(clss) {
+  if (!Modules.internal.cr) return null;
+  for (const mod of Modules.internal.cr) {
+    if (mod.class === clss && mod.preEngineered &&
+        mod.preEngineered.blueprints &&
+        mod.preEngineered.blueprints.indexOf('CargoRack_IncreasedCapacity') !== -1) {
+      return new Module({ template: mod });
+    }
+  }
+  return null;
+}
 
 /**
  * Obtain a module given its ED ID
@@ -201,7 +218,12 @@ function _shipModelFromEDName(edName) {
  * @return {string} the Coriolis model of the ship
  */
 export function shipModelFromJson(json) {
-  return _shipModelFromEDName(json.name || json.Ship);
+  const edName = json.name || json.Ship;
+  const model = _shipModelFromEDName(edName);
+  if (model) return model;
+  // Fallback: check if the name is already a valid Coriolis ship ID (e.g. 'imperial_corsair')
+  const id = edName.toLowerCase();
+  return Ships[id] ? id : undefined;
 }
 
 /**
@@ -234,16 +256,23 @@ export function shipFromJson(json) {
 
   // Add the bulkheads
   const armourJson = json.modules.Armour.module;
-  if (armourJson.name.toLowerCase().endsWith('_armour_grade1')) {
+  const armourName = armourJson.name.toLowerCase();
+  // Ships like the Caspian Explorer have 6 bulkheads: a '_grade1_default'
+  // for Lightweight Alloy and '_grade1' for the Mk II Ablative variant.
+  // Standard ships have 5 bulkheads where '_grade1' is Lightweight Alloy.
+  const bulkheadOffset = shipTemplate.bulkheads.length > 5 ? 1 : 0;
+  if (armourName.endsWith('_armour_grade1_default')) {
     ship.useBulkhead(0, true);
-  } else if (armourJson.name.toLowerCase().endsWith('_armour_grade2')) {
-    ship.useBulkhead(1, true);
-  } else if (armourJson.name.toLowerCase().endsWith('_armour_grade3')) {
-    ship.useBulkhead(2, true);
-  } else if (armourJson.name.toLowerCase().endsWith('_armour_mirrored')) {
-    ship.useBulkhead(3, true);
-  } else if (armourJson.name.toLowerCase().endsWith('_armour_reactive')) {
-    ship.useBulkhead(4, true);
+  } else if (armourName.endsWith('_armour_grade1')) {
+    ship.useBulkhead(0 + bulkheadOffset, true);
+  } else if (armourName.endsWith('_armour_grade2')) {
+    ship.useBulkhead(1 + bulkheadOffset, true);
+  } else if (armourName.endsWith('_armour_grade3')) {
+    ship.useBulkhead(2 + bulkheadOffset, true);
+  } else if (armourName.endsWith('_armour_mirrored')) {
+    ship.useBulkhead(3 + bulkheadOffset, true);
+  } else if (armourName.endsWith('_armour_reactive')) {
+    ship.useBulkhead(4 + bulkheadOffset, true);
   } else {
     throw 'Unknown bulkheads "' + armourJson.name + '"';
   }
@@ -379,7 +408,18 @@ export function shipFromJson(json) {
       // No module
     } else {
       const internalJson = internalSlot.module;
-      const internal = _moduleFromEdId(internalJson.id);
+      let internal = _moduleFromEdId(internalJson.id);
+
+      // Check if this is a cargo rack with the Expanded Capacity pre-engineering
+      if (internal && rootModule && rootModule.engineer &&
+          rootModule.engineer.recipeName.toLowerCase() === 'cargorack_increasedcapacity') {
+        const preEngRack = _findPreEngineeredCargoRack(internal.class);
+        if (preEngRack) {
+          internal = preEngRack;
+          rootModule.WorkInProgress_modifications = null;
+        }
+      }
+
       rootModule = internalSlot;
       if (rootModule.WorkInProgress_modifications) _addModifications(internal, rootModule.WorkInProgress_modifications, rootModule.engineer.recipeName, rootModule.engineer.recipeLevel);
       ship.use(ship.internal[i], internal, true);

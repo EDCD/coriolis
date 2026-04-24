@@ -1073,3 +1073,16 @@ export class Loader extends SvgIcon {
     </g>;
   }
 }
+
+/**
+ * Person Silhouette — CMDR Coriolis link icon
+ */
+export class PersonIcon extends SvgIcon {
+  /**
+   * Generate the SVG
+   * @return {React.Component} SVG Contents
+   */
+  svg() {
+    return <path d='M16 14c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zM16 17c-4.671 0-14 2.339-14 7v3c0 0.552 0.448 1 1 1h26c0.552 0 1-0.448 1-1v-3c0-4.661-9.329-7-14-7z'/>;
+  }
+}

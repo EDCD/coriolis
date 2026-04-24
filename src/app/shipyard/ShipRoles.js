@@ -2,6 +2,16 @@ import * as ModuleUtils from './ModuleUtils';
 import { canMount } from '../utils/SlotFunctions';
 
 /**
+ * Find the best SCO FSD for a given slot class, falling back to standard A-rated FSD
+ * @param {number} maxClass  The FSD slot's max class
+ * @return {Object} The SCO FSD module, or standard A-rated FSD if no SCO variant exists
+ */
+function bestFSD(maxClass) {
+  const sco = ModuleUtils.findStandard('fsd', maxClass, 'A', 'Frame Shift Drive (SCO)');
+  return sco || ModuleUtils.standard(2, maxClass + 'A');
+}
+
+/**
  * Standard / typical role for multi-purpose or combat (if shielded with better bulkheads)
  * @param {Ship} ship             Ship instance
  * @param {Boolean} shielded      True if shield generator should be included
@@ -9,6 +19,7 @@ import { canMount } from '../utils/SlotFunctions';
  */
 export function multiPurpose(ship, shielded, bulkheadIndex) {
   ship.useStandard('A')
+    .use(ship.standard[2], bestFSD(ship.standard[2].maxClass))  // SCO FSD
     .use(ship.standard[3], ModuleUtils.standard(3, ship.standard[3].maxClass + 'D'))  // D Life Support
     .use(ship.standard[5], ModuleUtils.standard(5, ship.standard[5].maxClass + 'D'))  // D Sensors
     .useBulkhead(bulkheadIndex);
@@ -35,9 +46,10 @@ export function trader(ship, shielded, standardOpts) {
   let bstCount = 2;
   let sg = ship.getAvailableModules().lightestShieldGenerator(ship.hullMass);
   ship.useStandard('A')
+    .use(ship.standard[2], bestFSD(ship.standard[2].maxClass))  // SCO FSD
     .use(ship.standard[3], ModuleUtils.standard(3, ship.standard[3].maxClass + 'D'))  // D Life Support
-    .use(ship.standard[1], ModuleUtils.standard(1, ship.standard[1].maxClass + 'D'))  // D Life Support
-    .use(ship.standard[4], ModuleUtils.standard(4, ship.standard[4].maxClass + 'D'))  // D Life Support
+    .use(ship.standard[1], ModuleUtils.standard(1, ship.standard[1].maxClass + 'D'))  // D Thrusters
+    .use(ship.standard[4], ModuleUtils.standard(4, ship.standard[4].maxClass + 'D'))  // D Power Distributor
     .use(ship.standard[5], ModuleUtils.standard(5, ship.standard[5].maxClass + 'D'));  // D Sensors
 
   const shieldOrder = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -92,6 +104,10 @@ export function explorer(ship, planetary) {
       sgSlot,
       fuelScoopSlot,
       sg = ship.getAvailableModules().lightestShieldGenerator(ship.hullMass);
+
+  // Use SCO FSD for explorers
+  const scoFsd = bestFSD(ship.standard[2].maxClass);
+  if (scoFsd) standardOpts.fsd = scoFsd.id;
 
   if (!planetary) { // Non-planetary explorers don't really need to boost
     standardOpts.pd = '1D';
@@ -219,6 +235,10 @@ export function miner(ship, shielded) {
       miningLaserCount = 2,
       usedSlots = [],
       sg = ship.getAvailableModules().lightestShieldGenerator(ship.hullMass);
+
+  // Use SCO FSD for miners
+  const scoFsd = bestFSD(ship.standard[2].maxClass);
+  if (scoFsd) standardOpts.fsd = scoFsd.id;
 
   // Cargo hatch should be enabled
   ship.setSlotEnabled(ship.cargoHatch, true);

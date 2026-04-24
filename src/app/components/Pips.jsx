@@ -81,6 +81,9 @@ export default class Pips extends TranslatedComponent {
         eng -= mcEng;
         wep -= mcWep;
         this.props.onChange(sys, eng, wep, 0, 0, 0);
+      } else {
+        // No multi-crew pips to reset — fall through to full pip reset
+        this._reset(false);
       }
     } else if (sys != 2 || eng != 2 || wep != 2) {
       sys = eng = wep = 2;
@@ -258,7 +261,7 @@ export default class Pips extends TranslatedComponent {
               <td>&nbsp;</td>
               <td className='clickable' onClick={this._incSys}
                 onContextMenu={this._wrapMcClick('sys')}>{translate('SYS')}</td>
-              <td className='clickable' onClick={this._reset.bind(this, false)}>
+              <td className='clickable' onClick={() => this._reset(false)}>
                 {translate('RST')}
               </td>
               <td className='clickable' onClick={this._incWep}

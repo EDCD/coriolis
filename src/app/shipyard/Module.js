@@ -733,8 +733,24 @@ export default class Module {
       }
 
       if (mod == null || isNaN(mod)) {
-        // No direct modifier; inherit from optmass (related modifier)
-        mod = this.getModValue('optmass');
+        // No direct modifier; inherit from optmass (related modifier).
+        // For shield generators, optmass only affects minmass (always) and maxmass (only when positive).
+        // This matches the in-game behaviour where a negative optmass mod shrinks the min end of the
+        // mass curve but leaves the max end unchanged.
+        const isShield = this.grp === 'sg' || this.grp === 'bsg' || this.grp === 'psg';
+        if (isShield) {
+          const optmassMod = this.getModValue('optmass');
+          if (optmassMod != null && !isNaN(optmassMod)) {
+            if (name === 'minmass') {
+              mod = optmassMod;
+            } else if (name === 'maxmass' && optmassMod > 0) {
+              mod = optmassMod;
+            }
+            // else: maxmass with negative optmass → no modification
+          }
+        } else {
+          mod = this.getModValue('optmass');
+        }
 
         // DEBUG
         if (this.name === 'Enhanced Performance') {

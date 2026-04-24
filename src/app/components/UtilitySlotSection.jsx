@@ -32,9 +32,9 @@ export default class UtilitySlotSection extends SlotSection {
    */
   _empty() {
     this.selectedRefId = this.firstRefId;
+    this._close();
     this.props.ship.emptyUtility();
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -48,9 +48,10 @@ export default class UtilitySlotSection extends SlotSection {
     this.selectedRefId = group;
     if (rating !== null) this.selectedRefId += '-' + rating;
 
-    this.props.ship.useUtility(group, rating, name, event.getModifierState('Alt'));
-    this.props.onChange();
+    let alt = event.getModifierState && event.getModifierState('Alt');
     this._close();
+    this.props.ship.useUtility(group, rating, name, alt);
+    this.props.onChange();
   }
 
   /**

@@ -43,15 +43,13 @@ export default class Slot extends TranslatedComponent {
 
   /**
    * Check if a module is eligible for this slot
-   * Since availableModules() already filters based on slot restrictions,
-   * this function just needs to return true for all modules in the list
+   * Uses canMount to check for slot-specific restrictions (e.g. modules
+   * that can only be fitted in restricted slots like Limpets or Cargo)
    * @param {object} module The module to check
    * @return {boolean} Whether the module can be mounted
    */
   _eligible(module) {
-    // All modules passed to AvailableModulesMenu are already pre-filtered
-    // by the availableModules() function based on slot.eligible restrictions
-    return true;
+    return canMount(this.props.ship, this.props.slot, module.grp, module.class, module);
   }
 
   /**

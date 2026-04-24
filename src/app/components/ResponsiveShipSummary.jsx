@@ -59,6 +59,18 @@ export default class ResponsiveShipSummary extends TranslatedComponent {
     const restingHeat = Math.sqrt(((ship.standard[0].m.pgen * ship.standard[0].m.eff) / ship.heatCapacity) / 0.2);
     const armourMetrics = Calc.armourMetrics(ship);
 
+    /**
+     * Format large credit values compactly (e.g. 1.05Bn, 52.4M)
+     * @param {number} value Credit amount
+     * @return {string} Formatted string
+     */
+    const compactCredits = (value) => {
+      const abs = Math.abs(value);
+      if (abs >= 1e9) return f2(value / 1e9) + ' Bn ';
+      if (abs >= 1e6) return f2(value / 1e6) + ' M ';
+      return int(value);
+    };
+
     const bulkheadName = ship && ship.bulkheads && ship.bulkheads.m && ship.bulkheads.m.name || 'No Armour';
     const armourTypeShortMap = {
       'Lightweight Alloy': 'Ltwt',
@@ -414,7 +426,7 @@ export default class ResponsiveShipSummary extends TranslatedComponent {
                     onMouseEnter={termtip.bind(null, 'TT_SUMMARY_HULL_MASS', { cap: 0 })}
                     onMouseLeave={hide}
                   >
-                    {ship.hullMass}{u.T}
+                    {int(ship.hullMass)}{u.T}
                   </td>
                 </tr>
                 <tr>
@@ -427,7 +439,7 @@ export default class ResponsiveShipSummary extends TranslatedComponent {
                     onMouseEnter={termtip.bind(null, 'TT_SUMMARY_DRY_MASS', { cap: 0 })}
                     onMouseLeave={hide}
                   >
-                    {ship.dryMass}{u.T}
+                    {int(Math.round(ship.dryMass))}{u.T}
                   </td>
                 </tr>
                 <tr>
@@ -522,10 +534,10 @@ export default class ResponsiveShipSummary extends TranslatedComponent {
                   </td>
                   <td
                     className='value'
-                    onMouseEnter={termtip.bind(null, 'TT_TOTAL_COST', { cap: 0 })}
+                    onMouseEnter={termtip.bind(null, translate('TT_TOTAL_COST') + ': ' + int(ship.totalCost) + ' CR', { cap: 0 })}
                     onMouseLeave={hide}
                   >
-                    {int(ship.totalCost)}{u.CR}
+                    {compactCredits(ship.totalCost)}{u.CR}
                   </td>
                 </tr>
                 <tr>
@@ -535,10 +547,10 @@ export default class ResponsiveShipSummary extends TranslatedComponent {
                   </td>
                   <td
                     className='value'
-                    onMouseEnter={termtip.bind(null, 'TT_INSURANCE', { cap: 0 })}
+                    onMouseEnter={termtip.bind(null, 'Insurance cost: ' + int(ship.totalCost * Insurance[Persist.getInsurance()]) + ' CR', { cap: 0 })}
                     onMouseLeave={hide}
                   >
-                    {int(ship.totalCost * Insurance[Persist.getInsurance()])}{u.CR}
+                    {compactCredits(ship.totalCost * Insurance[Persist.getInsurance()])}{u.CR}
                   </td>
                 </tr>
               </tbody>
@@ -654,22 +666,22 @@ export default class ResponsiveShipSummary extends TranslatedComponent {
                     <span className='res-label-full'>ABS</span>
                     <span className='res-label-abbr'>ABS</span>
                   </td>
-                  <td className='res-value'>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
+                  <td className='res-value'>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary / sgMetrics.absolute.total : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
                   <td className='res-label'>
                     <span className='res-label-full'>EXPL</span>
                     <span className='res-label-abbr'>EXPL</span>
                   </td>
-                  <td className='res-value'>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary / sgMetrics.explosive.base : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
+                  <td className='res-value'>{int(ship && sgMetrics.summary > 0 ? sgMetrics.summary / sgMetrics.explosive.total : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
                   <td className='res-label'>
                     <span className='res-label-full'>KIN</span>
                     <span className='res-label-abbr'>KIN</span>
                   </td>
-                  <td className='res-value'>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.kinetic.base : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
+                  <td className='res-value'>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.kinetic.total : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
                   <td className='res-label'>
                     <span className='res-label-full'>THRM</span>
                     <span className='res-label-abbr'>THRM</span>
                   </td>
-                  <td className='res-value'>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.thermal.base : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
+                  <td className='res-value'>{int(ship && sgMetrics.summary ? sgMetrics.summary / sgMetrics.thermal.total : 0)}<span className='unit-narrow-hide'>{u.MJ}</span></td>
                 </tr>
                 <tr>
                   <td className='label'>

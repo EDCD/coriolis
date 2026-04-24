@@ -6,11 +6,12 @@ import { Insurance } from '../shipyard/Constants';
 import Link from './Link';
 import ActiveLink from './ActiveLink';
 import cn from 'classnames';
-import { Cogs, CoriolisLogo, Hammer, Heart, Help, Rocket, StatsBars } from './SvgIcons';
+import { Cogs, CoriolisLogo, Hammer, Heart, Help, PersonIcon, Rocket, StatsBars } from './SvgIcons';
 import { Ships } from 'coriolis-data/dist';
 import Persist from '../stores/Persist';
 import { toDetailedExport } from '../shipyard/Serializer';
 import Ship from '../shipyard/Ship';
+import ModalCmdr from './ModalCmdr';
 import ModalDeleteAll from './ModalDeleteAll';
 import ModalExport from './ModalExport';
 import ModalHelp from './ModalHelp';
@@ -89,10 +90,12 @@ export default class Header extends TranslatedComponent {
     this._getAnnouncementsMenu = this._getAnnouncementsMenu.bind(this);
     this._openSettings = this._openMenu.bind(this, 'settings');
     this._showHelp = this._showHelp.bind(this);
+    this._showCmdr = this._showCmdr.bind(this);
     this._toggleTooltips = this._toggleTooltips.bind(this);
     this._toggleModuleResistances = this._toggleModuleResistances.bind(this);
     this._toggleAnimations = this._toggleAnimations.bind(this);
     this._togglePromptCG = this._togglePromptCG.bind(this);
+    this._toggleSyncBuilds = this._toggleSyncBuilds.bind(this);
     this.update = this.update.bind(this);
     this.languageOptions = [];
     this.insuranceOptions = [];
@@ -252,6 +255,13 @@ export default class Header extends TranslatedComponent {
   }
 
   /**
+   * Toggle auto-sync builds to CMDR Coriolis
+   */
+  _toggleSyncBuilds() {
+    Persist.syncBuilds(!Persist.syncBuilds());
+  }
+
+  /**
    * Show delete all modal
    * @param  {SyntheticEvent} e Event
    */
@@ -298,6 +308,15 @@ export default class Header extends TranslatedComponent {
     e.preventDefault();
 
     this.context.showModal(<ModalHelp title={translate('help')} />);
+  }
+
+  /**
+   * Show CMDR Coriolis modal
+   * @param  {SyntheticEvent} e Event
+   */
+  _showCmdr(e) {
+    e.preventDefault();
+    this.context.showModal(<ModalCmdr />);
   }
 
   /**
@@ -362,17 +381,24 @@ export default class Header extends TranslatedComponent {
    */
   _getBuildsMenu() {
     let builds = Persist.getBuilds();
-    let buildList = [];
-    for (let shipId of this.shipOrder) {
-      if (builds[shipId]) {
-        let shipBuilds = [];
-        let buildNameOrder = Object.keys(builds[shipId]).sort();
-        for (let buildName of buildNameOrder) {
-          let href = outfitURL(shipId, builds[shipId][buildName], buildName);
-          shipBuilds.push(<li key={shipId + '-' + buildName} ><ActiveLink href={href} className='block'>{buildName}</ActiveLink></li>);
+    let buildList;
+    let translate = this.context.language.translate;
+
+    if (Persist.hasBuilds()) {
+      buildList = [];
+      for (let shipId of this.shipOrder) {
+        if (builds[shipId]) {
+          let shipBuilds = [];
+          let buildNameOrder = Object.keys(builds[shipId]).sort();
+          for (let buildName of buildNameOrder) {
+            let href = outfitURL(shipId, builds[shipId][buildName], buildName);
+            shipBuilds.push(<li key={shipId + '-' + buildName} ><ActiveLink href={href} className='block'>{buildName}</ActiveLink></li>);
+          }
+          buildList.push(<ul key={shipId}>{Ships[shipId].properties.name}{shipBuilds}</ul>);
         }
-        buildList.push(<ul key={shipId}>{Ships[shipId].properties.name}{shipBuilds}</ul>);
       }
+    } else {
+      buildList = <span className='cap'>{translate('none created')}</span>;
     }
 
     return (
@@ -448,6 +474,7 @@ export default class Header extends TranslatedComponent {
     let promptCG = Persist.promptCGModules();
     let moduleResistances = Persist.showModuleResistances();
     let animations = Persist.showAnimations();
+    let syncBuilds = Persist.syncBuilds();
 
     return (
       <div className='menu-list no-wrap cap' onClick={ (e) => e.stopPropagation() }>
@@ -476,6 +503,10 @@ export default class Header extends TranslatedComponent {
             <tr className='cap ptr' onClick={this._toggleAnimations} >
               <td>{translate('animations')}</td>
               <td className={cn('ri', { disabled: !animations, 'primary-disabled': animations })}>{(animations ? '✓' : '✗')}</td>
+            </tr>
+            <tr className='cap ptr' onClick={this._toggleSyncBuilds} >
+              <td>{translate('sync builds')}</td>
+              <td className={cn('ri', { disabled: !syncBuilds, 'primary-disabled': syncBuilds })}>{(syncBuilds ? '✓' : '✗')}</td>
             </tr>
             <tr>
               <td>{translate('insurance')}</td>
@@ -634,6 +665,12 @@ export default class Header extends TranslatedComponent {
             </a>
           </div> : null
         }
+
+        <div className='r menu'>
+          <div className={cn('menu-header')} onClick={this._showCmdr}>
+            <PersonIcon className={'xl' + (Persist.hasCmdrLinks() ? ' primary' : ' warning')}/>
+          </div>
+        </div>
 
         <div className='r menu'>
           <div className={cn('menu-header')} onClick={this._showHelp}>

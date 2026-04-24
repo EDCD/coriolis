@@ -93,13 +93,14 @@ export default class NumberEditor extends Component {
   };
 
   handleMouseDown = (e) => {
-    // Enable drag-to-change functionality
+    // Track potential drag start, but don't preventDefault yet —
+    // that would block the input from receiving focus on click
     if (e.button === 0) { // Left mouse button only
-      e.preventDefault();
       this.setState({
-        isDragging: true,
+        isDragging: false,
         dragStartY: e.clientY,
-        dragStartValue: this.parseValue(this.state.value)
+        dragStartValue: this.parseValue(this.state.value),
+        dragPending: true
       });
       document.addEventListener('mousemove', this.handleMouseMove);
       document.addEventListener('mouseup', this.handleMouseUp);
@@ -107,15 +108,23 @@ export default class NumberEditor extends Component {
   };
 
   handleMouseMove = (e) => {
-    if (!this.state.isDragging) return;
+    if (!this.state.dragPending && !this.state.isDragging) return;
 
     const { step, stepModifier } = this.props;
     const { dragStartY, dragStartValue } = this.state;
 
-    // Calculate change based on vertical mouse movement
-    // Moving up increases value, moving down decreases it
     const pixelsMoved = dragStartY - e.clientY;
-    const steps = Math.round(pixelsMoved / 5); // Every 5 pixels = 1 step
+
+    // Only start dragging after a minimum threshold to distinguish from clicks
+    if (!this.state.isDragging) {
+      if (Math.abs(pixelsMoved) < 3) return;
+      // Now we know it's a drag — blur the input and start
+      if (this.inputRef.current) this.inputRef.current.blur();
+      this.setState({ isDragging: true, dragPending: false });
+    }
+
+    // Calculate change based on vertical mouse movement
+    const steps = Math.round(pixelsMoved / 5);
     const modifier = e.shiftKey ? stepModifier : 1;
     const newValue = dragStartValue + (steps * step * modifier);
 
@@ -125,7 +134,7 @@ export default class NumberEditor extends Component {
   };
 
   handleMouseUp = () => {
-    this.setState({ isDragging: false });
+    this.setState({ isDragging: false, dragPending: false });
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
   };

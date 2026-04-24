@@ -1,0 +1,107 @@
+# This is a basic deployment workflow triggered by pushes to the beta and live branches.
+
+name: Auto-Deploy 'beta/live' Branch to beta.coliolis.io or coriolis.io
+
+# Controls when the action will run. Workflow runs when the alpha branch receives a push event
+on:
+  push:
+    branches:
+      - alpha
+      - beta
+      - live
+# Always use the branch that received the push event.
+# This works for both direct pushes and PR merges.
+env:
+  BRANCH_NAME: ${{ github.ref_name }}
+  TARGET_ZIP: build.zip
+  BUCKET_FOLDER: build
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  wake-builder:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    steps:
+    - name: Wake the Builder
+      shell: bash
+      run: |
+        /usr/local/bin/stop-start-builder.sh start
+  build:
+    needs: wake-builder
+    runs-on: [self-hosted, aws, brapps, build]
+    steps:
+      - name: Download the code
+        shell: bash
+        run: |
+          rm -Rf ./coriolis
+          rm -Rf ./coriolis-data
+          git clone https://github.com/Brighter-Applications/coriolis.git --single-branch --branch ${BRANCH_NAME}
+          git clone https://github.com/Brighter-Applications/coriolis-data.git --single-branch --branch ${BRANCH_NAME}
+      - name: Build the code
+        shell: bash
+        run: |
+          cd ./coriolis-data
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          rm -Rf node_modules package-lock.json
+          npm install --legacy-peer-deps 2>&1
+          npm start
+          cd ../coriolis
+          rm -Rf node_modules package-lock.json
+          npm install --legacy-peer-deps 2>&1
+          npm run build 2>&1
+      - name: Zip the code
+        shell: bash
+        run: |
+
+          zip -r ./${TARGET_ZIP} ./coriolis/build/*
+      - name: Authorize GCP
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.CORIOLIS_GCP_SA_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: '>=363.0.0'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Upload to Google Cloud Storage
+        run: |-
+          TARGET_ZIP=${{ env.TARGET_ZIP }}
+          BUCKET_PATH=${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}
+          EXTENSION="${TARGET_ZIP##*.}"
+          FILENAME="${TARGET_ZIP%.*}"
+          LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
+          gsutil cp ./$TARGET_ZIP gs://${BUCKET_PATH}/${LATEST_FILENAME}
+  sleep-builder:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: build
+    steps:
+    - name: Sleep the Builder
+      shell: bash
+      run: |
+        /usr/local/bin/stop-start-builder.sh stop
+  deploy:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: build
+    steps:
+      - name: Authorize GCP
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.CORIOLIS_GCP_SA_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: '>=363.0.0'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Download and unzip the build
+        shell: bash
+        run: |
+          rm -Rf ./*
+          EXTENSION="${TARGET_ZIP##*.}"
+          FILENAME="${TARGET_ZIP%.*}"
+          LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
+          gsutil cp gs://${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}/${LATEST_FILENAME} ${LATEST_FILENAME}
+          unzip ./${LATEST_FILENAME}
+      - name: Move the build to the web server
+        shell: bash
+        run: |
+          if [ ${{ env.BRANCH_NAME }} == "beta" ]; then rsync -av --omit-dir-times --no-perms --delete --exclude='.git/' --exclude='.github/' ./coriolis/build/* /var/www/beta.coriolis.io/; elif [ ${{ env.BRANCH_NAME }} == "alpha" ]; then rsync -av --omit-dir-times --no-perms --delete --exclude='.git/' --exclude='.github/' ./coriolis/build/* /var/www/alpha.coriolis.io/; else rsync -av --omit-dir-times --no-perms --delete --exclude='.git/' --exclude='.github/' ./coriolis/build/* /var/www/coriolis.io/; fi
+

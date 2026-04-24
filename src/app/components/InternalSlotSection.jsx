@@ -49,9 +49,9 @@ export default class InternalSlotSection extends SlotSection {
    */
   _empty() {
     this.selectedRefId = 'emptyall';
+    this._close();
     this.props.ship.emptyInternal();
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -60,7 +60,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithCargo(event) {
     this.selectedRefId = 'cargo';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'cr')) {
@@ -68,7 +69,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -77,7 +77,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithFuelTanks(event) {
     this.selectedRefId = 'ft';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'ft')) {
@@ -85,7 +86,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -94,7 +94,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithLuxuryCabins(event) {
     this.selectedRefId = 'pcq';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'pcq')) {
@@ -102,7 +103,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -111,7 +111,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithFirstClassCabins(event) {
     this.selectedRefId = 'pcm';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'pcm')) {
@@ -119,7 +120,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -128,7 +128,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithBusinessClassCabins(event) {
     this.selectedRefId = 'pci';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'pci')) {
@@ -136,7 +137,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -145,7 +145,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithEconomyClassCabins(event) {
     this.selectedRefId = 'pce';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'pce')) {
@@ -153,7 +154,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -162,7 +162,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithCells(event) {
     this.selectedRefId = 'scb';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     let chargeCap = 0; // Capacity of single activation
     ship.internal.forEach(function(slot) {
@@ -173,7 +174,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -182,7 +182,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithArmor(event) {
     this.selectedRefId = 'hr';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'hr')) {
@@ -190,7 +191,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**
@@ -199,7 +199,8 @@ export default class InternalSlotSection extends SlotSection {
    */
   _fillWithModuleReinforcementPackages(event) {
     this.selectedRefId = 'mrp';
-    let clobber = event.getModifierState('Alt');
+    let clobber = event.getModifierState && event.getModifierState('Alt');
+    this._close();
     let ship = this.props.ship;
     ship.internal.forEach((slot) => {
       if ((clobber || !slot.m) && canMount(ship, slot, 'mrp')) {
@@ -207,7 +208,6 @@ export default class InternalSlotSection extends SlotSection {
       }
     });
     this.props.onChange();
-    this._close();
   }
 
   /**

@@ -495,3 +495,62 @@ export function isShieldGenerator(g) {
 export function forShip(shipId) {
   return new ModuleSet(Modules, Ships[shipId]);
 }
+
+/**
+ * Returns a Set of edID values for all modules that a ship comes with
+ * by default (stock build). Useful for filtering shopping lists so that
+ * standard-fit modules are not included.
+ *
+ * @param  {String} shipId  Unique ship Id/Key (e.g. 'mandalay')
+ * @return {Set}            Set of edID numbers for default modules
+ */
+export function getDefaultEdIDs(shipId) {
+  const shipData = Ships[shipId];
+  if (!shipData || !shipData.defaults) return new Set();
+
+  const defaults = shipData.defaults;
+  const edIDs = new Set();
+
+  // Bulkhead index 0 is always the default (Lightweight Alloy)
+  if (shipData.bulkheads && shipData.bulkheads[0]) {
+    edIDs.add(shipData.bulkheads[0].edID);
+  }
+
+  // Standard modules (pp, t, fsd, ls, pd, s, ft)
+  if (defaults.standard) {
+    for (let i = 0; i < defaults.standard.length; i++) {
+      const id = defaults.standard[i];
+      if (!id) continue;
+      const type = StandardArray[i];
+      if (type && Modules.standard[type]) {
+        const m = Modules.standard[type].find(e => e.id === id)
+               || Modules.standard[type].find(e => (e.class == id.charAt(0) && e.rating == id.charAt(1)));
+        if (m) edIDs.add(m.edID);
+      }
+    }
+  }
+
+  // Hardpoints
+  if (defaults.hardpoints) {
+    for (const id of defaults.hardpoints) {
+      if (!id) continue;
+      for (const grp in Modules.hardpoints) {
+        const m = Modules.hardpoints[grp].find(e => e.id == id);
+        if (m) { edIDs.add(m.edID); break; }
+      }
+    }
+  }
+
+  // Internal modules
+  if (defaults.internal) {
+    for (const id of defaults.internal) {
+      if (!id) continue;
+      for (const grp in Modules.internal) {
+        const m = Modules.internal[grp].find(e => e.id == id);
+        if (m) { edIDs.add(m.edID); break; }
+      }
+    }
+  }
+
+  return edIDs;
+}

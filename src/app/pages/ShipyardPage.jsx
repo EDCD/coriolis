@@ -122,6 +122,11 @@ export default class ShipyardPage extends Page {
       }
     }
 
+    // Derive available filter options from ship data
+    let manufacturers = [...new Set(ShipyardPage.cachedShipSummaries.map(s => s.manufacturer))].sort();
+    let sizes = [...new Set(ShipyardPage.cachedShipSummaries.map(s => s.class))].sort();
+    let crewCounts = [...new Set(ShipyardPage.cachedShipSummaries.map(s => s.crew))].sort();
+
     this.state = {
       title: 'Coriolis EDCD Edition - Shipyard',
       shipPredicate: 'name',
@@ -129,6 +134,15 @@ export default class ShipyardPage extends Page {
       shipSummaries: ShipyardPage.cachedShipSummaries,
       compare: {},
       groupCompared: false,
+      // Filter options
+      manufacturers,
+      sizes,
+      crewCounts,
+      // Active filters (null = no filter)
+      filterManufacturer: null,
+      filterSize: null,
+      filterCrew: null,
+      filterFighterBay: null, // null = any, true = yes, false = no
     };
   }
 
@@ -158,6 +172,38 @@ export default class ShipyardPage extends Page {
    */
   _toggleGroupCompared() {
     this.setState({groupCompared: !this.state.groupCompared})
+  }
+
+  /**
+   * Toggle a filter value. If already set to this value, clear it.
+   * @param {String} filterKey  State key for the filter
+   * @param {*}      value      Value to toggle
+   */
+  _toggleFilter(filterKey, value) {
+    this.setState(prev => ({
+      [filterKey]: prev[filterKey] === value ? null : value
+    }));
+  }
+
+  /**
+   * Set a filter value directly (used by dropdowns).
+   * @param {String} filterKey  State key for the filter
+   * @param {*}      value      Value to set, or null to clear
+   */
+  _setFilter(filterKey, value) {
+    this.setState({ [filterKey]: value });
+  }
+
+  /**
+   * Clear all active filters
+   */
+  _clearFilters() {
+    this.setState({
+      filterManufacturer: null,
+      filterSize: null,
+      filterCrew: null,
+      filterFighterBay: null,
+    });
   }
 
   /**
@@ -255,19 +301,21 @@ export default class ShipyardPage extends Page {
     let hide = this.context.tooltip.bind(null, null);
     let fInt = formats.int;
     let fRound = formats.round;
-    let { shipSummaries, shipPredicate, shipPredicateIndex, compare, groupCompared } = this.state;
+    let { shipSummaries, shipPredicate, shipPredicateIndex, compare, groupCompared,
+          manufacturers, sizes, crewCounts,
+          filterManufacturer, filterSize, filterCrew, filterFighterBay } = this.state;
     let sortShips = (predicate, index) =>
       this._sortShips.bind(this, predicate, index);
 
-    let filters = {
-      // 'class': { 1: 1, 2: 1}
-    };
+    let hasActiveFilter = filterManufacturer !== null || filterSize !== null || filterCrew !== null || filterFighterBay !== null;
 
     shipSummaries = shipSummaries.filter(s => {
-      for (let prop in filters) {
-        if (!(s[prop] in filters[prop])) {
-          return false;
-        }
+      if (filterManufacturer !== null && s.manufacturer !== filterManufacturer) return false;
+      if (filterSize !== null && s.class !== filterSize) return false;
+      if (filterCrew !== null && s.crew !== filterCrew) return false;
+      if (filterFighterBay !== null) {
+        let hasBay = s.fighterHangars === true;
+        if (filterFighterBay !== hasBay) return false;
       }
       return true;
     });
@@ -344,6 +392,93 @@ export default class ShipyardPage extends Page {
     return (
       <div className="page" style={{fontSize: sizeRatio + 'em'}}>
         <div className="content-wrapper">
+        <div className="shipyard-filter-bar filter-desktop">
+          <div className="filter-group">
+            <span className="filter-label">{translate('manufacturer')}:</span>
+            {manufacturers.map(m => (
+              <span key={m}
+                className={cn('filter-option', { active: filterManufacturer === m })}
+                onClick={() => this._toggleFilter('filterManufacturer', m)}
+              >{m}</span>
+            ))}
+          </div>
+          <div className="filter-group">
+            <span className="filter-label">{translate('size')}:</span>
+            {sizes.map(s => (
+              <span key={s}
+                className={cn('filter-option', { active: filterSize === s })}
+                onClick={() => this._toggleFilter('filterSize', s)}
+              >{translate(SizeMap[s])}</span>
+            ))}
+          </div>
+          <div className="filter-group">
+            <span className="filter-label">{translate('crew')}:</span>
+            {crewCounts.map(c => (
+              <span key={c}
+                className={cn('filter-option', { active: filterCrew === c })}
+                onClick={() => this._toggleFilter('filterCrew', c)}
+              >{c}</span>
+            ))}
+          </div>
+          <div className="filter-group">
+            <span className="filter-label">{translate('fighter bay')}:</span>
+            <span className={cn('filter-option', { active: filterFighterBay === true })}
+              onClick={() => this._toggleFilter('filterFighterBay', true)}
+            >{translate('yes')}</span>
+            <span className={cn('filter-option', { active: filterFighterBay === false })}
+              onClick={() => this._toggleFilter('filterFighterBay', false)}
+            >{translate('no')}</span>
+          </div>
+          {hasActiveFilter && (
+            <span className="filter-clear" onClick={() => this._clearFilters()}>
+              {translate('clear all')}
+            </span>
+          )}
+        </div>
+        <div className="shipyard-filter-bar filter-mobile">
+          <div className="filter-group">
+            <select className="filter-dropdown"
+              value={filterManufacturer || ''}
+              onChange={(e) => this._setFilter('filterManufacturer', e.target.value || null)}
+            >
+              <option value="">{translate('manufacturer')}</option>
+              {manufacturers.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+          <div className="filter-group">
+            <select className="filter-dropdown"
+              value={filterSize != null ? filterSize : ''}
+              onChange={(e) => this._setFilter('filterSize', e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">{translate('size')}</option>
+              {sizes.map(s => <option key={s} value={s}>{translate(SizeMap[s])}</option>)}
+            </select>
+          </div>
+          <div className="filter-group">
+            <select className="filter-dropdown"
+              value={filterCrew != null ? filterCrew : ''}
+              onChange={(e) => this._setFilter('filterCrew', e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">{translate('crew')}</option>
+              {crewCounts.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="filter-group">
+            <select className="filter-dropdown"
+              value={filterFighterBay != null ? String(filterFighterBay) : ''}
+              onChange={(e) => this._setFilter('filterFighterBay', e.target.value === '' ? null : e.target.value === 'true')}
+            >
+              <option value="">{translate('fighter bay')}</option>
+              <option value="true">{translate('yes')}</option>
+              <option value="false">{translate('no')}</option>
+            </select>
+          </div>
+          {hasActiveFilter && (
+            <span className="filter-clear" onClick={() => this._clearFilters()}>
+              {translate('clear all')}
+            </span>
+          )}
+        </div>
         <div className="shipyard-table-wrapper">
           <table style={{width: '12em', position: 'absolute', zIndex: 1}} className="shipyard-table">
             <thead>

@@ -295,6 +295,17 @@ export default class SlotSection extends TranslatedComponent {
   _close() {
     if (this.props.currentMenu) {
       this.context.closeMenu();
+      // Force a layout recalculation on WebKit (iOS Safari/Firefox)
+      // to fix stale float positioning after menu removal + slot content change
+      requestAnimationFrame(() => {
+        const el = document.getElementById(this.sectionId);
+        if (el) {
+          el.style.display = 'none';
+          // Reading offsetHeight forces the browser to recalculate layout
+          el.offsetHeight; // eslint-disable-line no-unused-expressions
+          el.style.display = '';
+        }
+      });
     }
   }
 
