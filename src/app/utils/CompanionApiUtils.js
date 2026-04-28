@@ -104,6 +104,7 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'Krait_MkII': 'krait_mkii',
   'Mamba': 'mamba',
   'Mandalay': 'mandalay',
+  'mediumtransport01': 'lynx_highliner',
   'Krait_Light': 'krait_phantom',
   'Orca': 'orca',
   'PantherMKII': 'panthermkii',

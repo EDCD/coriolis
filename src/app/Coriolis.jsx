@@ -56,7 +56,7 @@ export default class Coriolis extends React.Component {
       noTouch: !('ontouchstart' in window || navigator.msMaxTouchPoints || navigator.maxTouchPoints),
       page: null,
       // Announcements must have an expiry date in format "YYYY-MM-DDTHH:MM:SSZ"
-      announcements: [{expiry: "2026-03-31T00:00:00Z", text: "Goodbye React 15. So long and thanks for all the Ships! Welcome to Coriolis 4.0.x"}],
+      announcements: [{expiry: "2026-04-28T00:00:00Z", text: "Lynx Highliner added!"}],
 
       language: getLanguage(Persist.getLangCode()),
       route: {},
