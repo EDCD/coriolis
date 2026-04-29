@@ -125,10 +125,7 @@ export default class ModuleSet {
       if (key === 'crl' && !eligible) {
         continue;
       }
-      // MKII Passenger Cabins can only be mounted in special 'MkIIPassenger' slots
-      if ((key === 'pcemkii' || key === 'pcimkii') && !eligible) {
-        continue;
-      }
+
       if (key == 'pcq' && !(ship.luxuryCabins && ship.luxuryCabins  === true)) {
         continue;
       }
