@@ -1,6 +1,6 @@
 {
   "name": "coriolis_shipyard",
-  "version": "4.0.7",
+  "version": "4.0.8",
   "repository": {
     "type": "git",
     "url": "https://github.com/EDCD/coriolis"
@@ -27,14 +27,14 @@
   "scripts": {
     "extract-translations": "grep -hroE \"(translate\\('[^']+'\\))|(tip.bind\\(null, '[^']+')\" src/* | grep -oE \"'[^']+'\" | grep -oE \"[^']+\" | sort -u -f",
     "clean": "rimraf build",
-    "start": "node devServer.js",
+    "start": "node generate-ship-mappings.js && node devServer.js",
     "start:prod": "webpack serve --config webpack.config.prod.js",
     "lint": "eslint --ext .js,.jsx src",
     "test": "jest",
     "prod-serve": "nginx -p $(pwd) -c nginx.conf",
     "prod-stop": "kill -QUIT $(cat nginx.pid)",
     "buildfresh": "rimraf node_modules && rm package-lock.json && npm install && npm run build > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)",
-    "build": "webpack --config webpack.config.prod.js",
+    "build": "node generate-ship-mappings.js && webpack --config webpack.config.prod.js",
     "rsync": "rsync -ae \"ssh -i $CORIOLIS_PEM\" --delete build/ $CORIOLIS_USER@$CORIOLIS_HOST:~/wwws",
     "deploy": "npm run lint && npm test && npm run build && npm run rsync"
   },

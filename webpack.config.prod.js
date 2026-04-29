@@ -22,6 +22,7 @@ module.exports = merge(common, {
         'src/.htaccess',
         'src/iframe.html',
         'src/xdLocalStoragePostMessageApi.min.js',
+        'src/ship-mappings.json',
         { from: 'src/schemas', to: 'schemas' },
         {
           from: 'src/images/logo/*',

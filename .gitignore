@@ -10,3 +10,4 @@ env
 .project
 .vscode/
 docs/
+src/ship-mappings.json
