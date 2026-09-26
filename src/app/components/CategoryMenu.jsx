@@ -5,6 +5,8 @@ import cn from 'classnames';
 import { stopCtxPropagation } from '../utils/UtilityFunctions';
 import AvailableModulesMenu from './AvailableModulesMenu';
 import { diffDetails } from '../utils/SlotFunctions';
+import Persist from '../stores/Persist';
+import { Reload } from './SvgIcons';
 
 // Category mappings from AvailableModulesMenu
 const GRPCAT = {
@@ -25,6 +27,7 @@ const GRPCAT = {
   'pcm': 'passenger cabins',
   'pcq': 'passenger cabins',
   'fh': 'hangars',
+  'fhmkii': 'hangars',
   'pv': 'hangars',
   'fs': 'fuel',
   'ft': 'fuel',
@@ -94,7 +97,7 @@ const INTCAT = {
   'cargo racks': ['cr', 'crl'],
   'fsd interdictor': ['fi'],
   'fuel': ['ft', 'fs'],
-  'hangars': ['fh', 'pv'],
+  'hangars': ['fh', 'fhmkii', 'pv'],
   'limpet controllers': ['cc', 'fx', 'hb', 'pc', 'rpl', 'mlc'],
   'passenger cabins': ['pce', 'pci', 'pcm', 'pcq'],
   'refineries': ['rf'],
@@ -140,10 +143,12 @@ export default class CategoryMenu extends TranslatedComponent {
     super(props);
     this._keyDown = this._keyDown.bind(this);
     this._handleSearchChange = this._handleSearchChange.bind(this);
+    this._toggleFavouritesMode = this._toggleFavouritesMode.bind(this);
     this.searchInputRef = React.createRef();
 
     this.state = {
-      searchQuery: ''
+      searchQuery: '',
+      favouritesMode: false
     };
   }
 
@@ -263,6 +268,85 @@ export default class CategoryMenu extends TranslatedComponent {
   }
 
   /**
+   * Toggle between favourites mode and normal module categories
+   */
+  _toggleFavouritesMode() {
+    this.setState(prev => ({ favouritesMode: !prev.favouritesMode }));
+  }
+
+  /**
+   * Get categories that have favourited modules which fit this slot
+   * @return {Array} Array of category names that have favourites
+   */
+  _getFavouriteCategories() {
+    const { maxClass, eligible, modules } = this.props;
+    const favourites = Persist.getFavourites();
+    const categoriesSet = new Set();
+
+    // Build a set of valid module groups from the modules prop
+    // This ensures we only show favourites that belong to this slot type
+    const validGroups = new Set();
+    if (Array.isArray(modules)) {
+      modules.forEach(mod => { if (mod && mod.grp) validGroups.add(mod.grp); });
+    } else if (typeof modules === 'object') {
+      Object.keys(modules).forEach(groupKey => {
+        validGroups.add(groupKey);
+      });
+    }
+
+    favourites.forEach(fav => {
+      if (!fav || !fav.grp) return;
+
+      // Check if favourite's group is valid for this slot type
+      if (validGroups.size > 0 && !validGroups.has(fav.grp)) return;
+
+      // Check if favourite fits the slot size
+      if (maxClass && fav.class && fav.class > maxClass) return;
+
+      // Check eligibility if provided
+      if (eligible && !eligible(fav)) return;
+
+      // Find the main category for this favourite
+      let mainCategory = null;
+
+      // Check hardpoint categories
+      for (const [categoryName, groupList] of Object.entries(HPTCAT)) {
+        if (groupList.includes(fav.grp)) {
+          if (categoryName === 'experimental') {
+            mainCategory = 'hardpoint-experimental';
+          } else if (categoryName === 'guardian') {
+            mainCategory = 'hardpoint-guardian';
+          } else {
+            mainCategory = categoryName;
+          }
+          break;
+        }
+      }
+
+      // Check internal categories
+      if (!mainCategory) {
+        for (const [categoryName, groupList] of Object.entries(INTCAT)) {
+          if (groupList.includes(fav.grp)) {
+            mainCategory = categoryName;
+            break;
+          }
+        }
+      }
+
+      // Fallback to GRPCAT
+      if (!mainCategory && GRPCAT[fav.grp]) {
+        mainCategory = GRPCAT[fav.grp];
+      }
+
+      if (mainCategory) {
+        categoriesSet.add(mainCategory);
+      }
+    });
+
+    return Array.from(categoriesSet);
+  }
+
+  /**
    * Key down handler
    */
   _keyDown(cb, e) {
@@ -278,8 +362,16 @@ export default class CategoryMenu extends TranslatedComponent {
    */
   render() {
     const { onSelectCategory, onSelectModule, modules, eligible, m, ship, warning, className } = this.props;
-    const { searchQuery } = this.state;
-    const availableCategories = this._getAvailableCategories();
+    const { searchQuery, favouritesMode } = this.state;
+    const hasFavourites = Persist.hasFavourites() && this._getFavouriteCategories().length > 0;
+
+    // Determine which categories to show
+    let availableCategories;
+    if (favouritesMode) {
+      availableCategories = this._getFavouriteCategories();
+    } else {
+      availableCategories = this._getAvailableCategories();
+    }
 
     // Define display order for categories
     const categoryOrder = [
@@ -328,7 +420,10 @@ export default class CategoryMenu extends TranslatedComponent {
     // If searching, render AvailableModulesMenu with search pre-populated
     if (hasSearchQuery) {
       return (
-        <div>
+        <div
+          className={cn('select', 'category-menu', className)}
+          onContextMenu={stopCtxPropagation}
+        >
           <div className="module-search-container">
             <input
               ref={this.searchInputRef}
@@ -338,6 +433,7 @@ export default class CategoryMenu extends TranslatedComponent {
               value={searchQuery}
               onChange={this._handleSearchChange}
               onClick={(e) => e.stopPropagation()}
+              autoFocus={this.context.noTouch}
             />
           </div>
           <AvailableModulesMenuWithSearch
@@ -350,6 +446,7 @@ export default class CategoryMenu extends TranslatedComponent {
             diffDetails={ship ? diffDetails.bind(ship, this.context.language) : undefined}
             eligible={eligible}
             searchQuery={searchQuery}
+            hideSearch={true}
           />
         </div>
       );
@@ -369,10 +466,29 @@ export default class CategoryMenu extends TranslatedComponent {
             value={searchQuery}
             onChange={this._handleSearchChange}
             onClick={(e) => e.stopPropagation()}
+            autoFocus={this.context.noTouch}
           />
         </div>
 
-        <div className="select-group cap">Select Module Category</div>
+        {hasFavourites && (
+          <div
+            className={cn('favourites-toggle', { active: favouritesMode })}
+            tabIndex="0"
+            onClick={(e) => {
+              e.stopPropagation();
+              this._toggleFavouritesMode();
+            }}
+            onKeyDown={this._keyDown.bind(this, this._toggleFavouritesMode)}
+          >
+            <span className="favourites-toggle-text">
+              {favouritesMode ? <span><Reload className="favourites-toggle-icon" /> Modules</span> : '★ Favourites'}
+            </span>
+          </div>
+        )}
+
+        <div className="select-group cap">
+          {favouritesMode ? 'Favourite Categories' : 'Select Module Category'}
+        </div>
 
         {sortedCategories.map(category => (
           <div
@@ -381,9 +497,19 @@ export default class CategoryMenu extends TranslatedComponent {
             tabIndex="0"
             onClick={(e) => {
               e.stopPropagation();
-              onSelectCategory(category);
+              if (favouritesMode) {
+                onSelectCategory(`favourites:${category}`);
+              } else {
+                onSelectCategory(category);
+              }
             }}
-            onKeyDown={this._keyDown.bind(this, () => onSelectCategory(category))}
+            onKeyDown={this._keyDown.bind(this, () => {
+              if (favouritesMode) {
+                onSelectCategory(`favourites:${category}`);
+              } else {
+                onSelectCategory(category);
+              }
+            })}
           >
             <div className="module-content">
               <span className="module-text">{this._getCategoryDisplayName(category)}</span>
@@ -412,6 +538,10 @@ class AvailableModulesMenuWithSearch extends AvailableModulesMenu {
 
   componentDidMount() {
     super.componentDidMount();
+    // Auto-focus search input on desktop (not mobile, to avoid keyboard popup)
+    if (this.context.noTouch && this.searchInputRef.current) {
+      this.searchInputRef.current.focus();
+    }
     // Trigger search filtering after mount
     if (this.props.searchQuery) {
       this._filterModulesBySearch();

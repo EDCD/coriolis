@@ -168,6 +168,27 @@
       text-decoration: underline;
     }
   }
+
+  /* Merc Coin + credits row, shown beneath the material columns */
+  .mats-currency {
+    margin-top: 0.6em;
+    padding-top: 0.6em;
+    border-top: 1px solid @primary-bg;
+
+    .icon-inline {
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.15em;
+      margin-right: 0.4em;
+      fill: @primary;
+    }
+
+    /* Keep the Merc Coin icon in its distinctive colour (matching the
+       pre-engineered module menu), not the default credits/primary fill. */
+    .icon-inline.merccoin {
+      fill: @merccoin;
+    }
+  }
 }
 
 /* -------------------------------------------------------------------

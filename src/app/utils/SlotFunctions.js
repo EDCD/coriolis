@@ -37,6 +37,7 @@ export function canMount(ship, slot, group, clazz, module) {
       (!slot.eligible || slot.eligible[group]) &&
       (group != 'pcq' || (ship.luxuryCabins && ship.luxuryCabins  === true)) &&
       (group != 'fh' || (ship.fighterHangars && ship.fighterHangars  === true)) &&
+      (group != 'fhmkii' || (ship.vesselHangarsMkII && ship.vesselHangarsMkII === true)) &&
       (clazz === undefined || slot.maxClass >= clazz)) {
     return true;
   }

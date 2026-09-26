@@ -1,0 +1,39 @@
+{
+  "header": { "appName": "EDSY", "appVersion": 424009902 },
+  "data": {
+    "event": "Loadout",
+    "Ship": "federation_dropship",
+    "ShipName": "Little Helper",
+    "ShipIdent": "99942",
+    "Modules": [
+      { "Slot": "CargoHatch", "Item": "modularcargobaydoor", "On": true, "Priority": 2 },
+      { "Slot": "LargeHardpoint1", "Item": "hpt_plasmaaccelerator_fixed_large_advanced", "On": true, "Priority": 0 },
+      { "Slot": "MediumHardpoint1", "Item": "hpt_plasmaaccelerator_fixed_medium", "On": true, "Priority": 0 },
+      { "Slot": "MediumHardpoint2", "Item": "hpt_plasmaaccelerator_fixed_medium", "On": true, "Priority": 0 },
+      { "Slot": "MediumHardpoint3", "Item": "hpt_slugshot_turret_medium", "On": true, "Priority": 0 },
+      { "Slot": "MediumHardpoint4", "Item": "hpt_slugshot_turret_medium", "On": true, "Priority": 0 },
+      { "Slot": "TinyHardpoint1", "Item": "hpt_shieldbooster_size0_class5", "On": true, "Priority": 0 },
+      { "Slot": "TinyHardpoint2", "Item": "hpt_shieldbooster_size0_class5", "On": true, "Priority": 0 },
+      { "Slot": "TinyHardpoint3", "Item": "hpt_shieldbooster_size0_class5", "On": true, "Priority": 0 },
+      { "Slot": "TinyHardpoint4", "Item": "hpt_shieldbooster_size0_class5", "On": true, "Priority": 0 },
+      { "Slot": "Armour", "Item": "federation_dropship_armour_mirrored", "On": true, "Priority": 1 },
+      { "Slot": "PowerPlant", "Item": "int_powerplant_size6_class5", "On": true, "Priority": 1 },
+      { "Slot": "MainEngines", "Item": "int_engine_size6_class5", "On": true, "Priority": 0 },
+      { "Slot": "FrameShiftDrive", "Item": "int_hyperdrive_overcharge_size5_class2", "On": true, "Priority": 3 },
+      { "Slot": "LifeSupport", "Item": "int_lifesupport_size5_class5", "On": true, "Priority": 0 },
+      { "Slot": "PowerDistributor", "Item": "int_powerdistributor_size6_class5", "On": true, "Priority": 0 },
+      { "Slot": "Radar", "Item": "int_sensors_size4_class5", "On": true, "Priority": 0 },
+      { "Slot": "FuelTank", "Item": "int_fueltank_size4_class3", "On": true, "Priority": 1 },
+      { "Slot": "Slot01_Size6", "Item": "int_shieldgenerator_size6_class3_fast", "On": true, "Priority": 0 },
+      { "Slot": "Slot02_Size5", "Item": "int_hullreinforcement_size5_class2", "On": true, "Priority": 1 },
+      { "Slot": "Slot03_Size5", "Item": "int_hullreinforcement_size5_class2", "On": true, "Priority": 1 },
+      { "Slot": "Slot04_Size4", "Item": "int_guardianshieldreinforcement_size4_class2", "On": true, "Priority": 0 },
+      { "Slot": "Slot05_Size3", "Item": "int_hullreinforcement_size3_class2", "On": true, "Priority": 1 },
+      { "Slot": "Slot06_Size3", "Item": "int_hullreinforcement_size3_class2", "On": true, "Priority": 1 },
+      { "Slot": "Slot09_Size2", "Item": "int_hullreinforcement_size2_class2", "On": true, "Priority": 1 },
+      { "Slot": "Slot10_Size1", "Item": "int_fsdinterdictor_size1_class5", "On": true, "Priority": 4 },
+      { "Slot": "Military01", "Item": "int_hullreinforcement_size4_class2", "On": true, "Priority": 1 },
+      { "Slot": "Military02", "Item": "int_hullreinforcement_size4_class2", "On": true, "Priority": 1 }
+    ]
+  }
+}

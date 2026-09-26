@@ -3,6 +3,7 @@ import { Insurance } from '../shipyard/Constants';
 
 const LS_KEY_BUILDS = 'builds';
 const LS_KEY_COMPARISONS = 'comparisons';
+const LS_KEY_FAVOURITES = 'favouriteModules';
 const LS_KEY_LANG = 'NG_TRANSLATE_LANG_KEY';
 const LS_KEY_COST_TAB = 'costTab';
 const LS_KEY_CMDR_NAME = 'cmdrName';
@@ -97,6 +98,7 @@ export class Persist extends EventEmitter {
     let moduleDiscount = _get(LS_KEY_MOD_DISCOUNT);
     let buildJson = _get(LS_KEY_BUILDS);
     let comparisonJson = _get(LS_KEY_COMPARISONS);
+    let favouritesJson = _get(LS_KEY_FAVOURITES);
     let promptCG = _get(LS_KEY_PROMPT_CG);
 
     this.onStorageChange = this.onStorageChange.bind(this);
@@ -106,6 +108,7 @@ export class Persist extends EventEmitter {
     this.moduleDiscount = !isNaN(moduleDiscount) && moduleDiscount < 1 ? moduleDiscount * 1 : 0;
     this.builds = buildJson && typeof buildJson == 'object' ? buildJson : {};
     this.comparisons = comparisonJson && typeof comparisonJson == 'object' ? comparisonJson : {};
+    this.favourites = favouritesJson && Array.isArray(favouritesJson) ? favouritesJson : [];
     this.costTab = _getString(LS_KEY_COST_TAB);
     this.outfittingTab = _getString(LS_KEY_OUTFITTING_TAB);
     this.state =  _get(LS_KEY_STATE);
@@ -381,7 +384,7 @@ export class Persist extends EventEmitter {
    * @return {Boolean} True if any builds have been saved
    */
   hasBuilds() {
-    return Object.keys(this.builds).length > 0;
+    return this.builds && Object.keys(this.builds).length > 0;
   }
 
   /**
@@ -490,6 +493,148 @@ export class Persist extends EventEmitter {
     _put(LS_KEY_BUILDS, {});
     _put(LS_KEY_COMPARISONS, {});
     this.emit('deletedAll');
+  }
+
+  // -------------------------------------------------------------------
+  // Favourite Modules management
+  // -------------------------------------------------------------------
+
+  /**
+   * Get all favourite modules
+   * @return {Array} Array of favourite module objects
+   */
+  getFavourites() {
+    return this.favourites;
+  }
+
+  /**
+   * Check if any favourites exist
+   * @return {Boolean} True if there are favourites
+   */
+  hasFavourites() {
+    return this.favourites.length > 0;
+  }
+
+  /**
+   * Add a module to favourites with its engineering data
+   * @param {Object} favourite Object containing module data and engineering
+   *   { id, grp, class, rating, name, blueprint: { name, fdname, grade, special }, mods: {} }
+   */
+  addFavourite(favourite) {
+    // Check for duplicates based on a composite key
+    const key = this._getFavouriteKey(favourite);
+    const exists = this.favourites.some(f => this._getFavouriteKey(f) === key);
+    if (!exists) {
+      this.favourites.push(favourite);
+      _put(LS_KEY_FAVOURITES, this.favourites);
+      this.emit('favourites');
+    }
+  }
+
+  /**
+   * Remove a module from favourites
+   * @param {Object} favourite The favourite to remove
+   */
+  removeFavourite(favourite) {
+    const key = this._getFavouriteKey(favourite);
+    this.favourites = this.favourites.filter(f => this._getFavouriteKey(f) !== key);
+    _put(LS_KEY_FAVOURITES, this.favourites);
+    this.emit('favourites');
+  }
+
+  /**
+   * Check if a module (with its specific engineering) is favourited
+   * @param {Object} module The module to check
+   * @return {Boolean} True if the module is a favourite
+   */
+  isFavourite(module) {
+    if (!module || !module.grp) return false;
+    const key = this._getModuleFavouriteKey(module);
+    return this.favourites.some(f => this._getFavouriteKey(f) === key);
+  }
+
+  /**
+   * Toggle a module's favourite status
+   * @param {Object} module The module object (with mods, blueprint, etc.)
+   * @return {Boolean} True if now favourited, false if removed
+   */
+  toggleFavourite(module) {
+    if (this.isFavourite(module)) {
+      // Build the favourite key to remove
+      const key = this._getModuleFavouriteKey(module);
+      this.favourites = this.favourites.filter(f => this._getFavouriteKey(f) !== key);
+      _put(LS_KEY_FAVOURITES, this.favourites);
+      this.emit('favourites');
+      return false;
+    } else {
+      // Build the favourite data to store
+      const favourite = {
+        id: module.id,
+        grp: module.grp,
+        class: module.class,
+        rating: module.rating,
+        name: module.name || null,
+        mount: module.mount || null,
+        blueprint: module.blueprint ? {
+          name: module.blueprint.name || null,
+          fdname: module.blueprint.fdname || null,
+          grade: module.blueprint.grade || null,
+          special: module.blueprint.special ? {
+            id: module.blueprint.special.id,
+            edname: module.blueprint.special.edname,
+            name: module.blueprint.special.name
+          } : null
+        } : null,
+        mods: module.mods ? JSON.parse(JSON.stringify(module.mods)) : null
+      };
+      this.favourites.push(favourite);
+      _put(LS_KEY_FAVOURITES, this.favourites);
+      this.emit('favourites');
+      return true;
+    }
+  }
+
+  /**
+   * Generate a unique key for a favourite object (stored format)
+   * @param {Object} favourite The stored favourite data
+   * @return {String} Unique key
+   */
+  _getFavouriteKey(favourite) {
+    if (!favourite) return '';
+    let key = `${favourite.grp}:${favourite.id}`;
+    if (favourite.blueprint && favourite.blueprint.name) {
+      key += `:${favourite.blueprint.name}:${favourite.blueprint.grade}`;
+      if (favourite.blueprint.special && favourite.blueprint.special.edname) {
+        key += `:${favourite.blueprint.special.edname}`;
+      }
+    }
+    // Include mods hash for uniqueness
+    if (favourite.mods && Object.keys(favourite.mods).length > 0) {
+      const modsStr = Object.keys(favourite.mods).sort().map(k => `${k}=${favourite.mods[k]}`).join(',');
+      key += `:mods(${modsStr})`;
+    }
+    return key;
+  }
+
+  /**
+   * Generate a unique key for a live module object
+   * @param {Object} module The live module
+   * @return {String} Unique key
+   */
+  _getModuleFavouriteKey(module) {
+    if (!module) return '';
+    let key = `${module.grp}:${module.id}`;
+    if (module.blueprint && module.blueprint.name) {
+      key += `:${module.blueprint.name}:${module.blueprint.grade}`;
+      if (module.blueprint.special && module.blueprint.special.edname) {
+        key += `:${module.blueprint.special.edname}`;
+      }
+    }
+    if (module.mods && Object.keys(module.mods).length > 0) {
+      const modsStr = Object.keys(module.mods).sort().map(k => `${k}=${module.mods[k]}`).join(',');
+      key += `:mods(${modsStr})`;
+    }
+    return key;
   }
 
   /**

@@ -81,4 +81,5 @@ export const STATS_FORMATTING = {
   'jumpboost': { 'format': 'round1', 'unit': 'LY' },
   'proberadius': { 'format': 'pct1', 'unit': 'pct' },
   'cargo': { 'format': 'int', 'unit': 'T', 'higherbetter': true },
+  'rate': { 'format': 'round1', 'unit': 'kgs', 'higherbetter': true },
 };

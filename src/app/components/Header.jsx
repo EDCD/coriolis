@@ -6,7 +6,8 @@ import { Insurance } from '../shipyard/Constants';
 import Link from './Link';
 import ActiveLink from './ActiveLink';
 import cn from 'classnames';
-import { Cogs, CoriolisLogo, Hammer, Heart, Help, PersonIcon, Rocket, StatsBars } from './SvgIcons';
+import { Bell, Cogs, CoriolisLogo, Hammer, Heart, Help, PersonIcon, Rocket, StatsBars } from './SvgIcons';
+import ModalAnnouncements from './ModalAnnouncements';
 import { Ships } from 'coriolis-data/dist';
 import Persist from '../stores/Persist';
 import { toDetailedExport } from '../shipyard/Serializer';
@@ -259,6 +260,7 @@ export default class Header extends TranslatedComponent {
    */
   _toggleSyncBuilds() {
     Persist.syncBuilds(!Persist.syncBuilds());
+    this.forceUpdate();
   }
 
   /**
@@ -442,24 +444,23 @@ export default class Header extends TranslatedComponent {
    * @return {React.Component} Menu
    */
   _getAnnouncementsMenu() {
-    let announcements;
+    let announcements = [];
     let translate = this.context.language.translate;
 
     if (this.props.announcements) {
-      announcements = [];
-      for (let announce of this.props.announcements) {
-        // Announcement has expired, skip it
-        if (Date.now() > Date.parse(announce.expiry)) {
-          continue;
-        }
-        // Add announcements which have not expired to the menu
-        announcements.push(<Announcement text={announce.text} />);
-        announcements.push(<hr/>);
+      for (let i = 0; i < Math.min(this.props.announcements.length, 7); i++) {
+        let announce = this.props.announcements[i];
+        announcements.push(
+          <div key={i} className='announcement-item'>
+            {announce.text}
+          </div>
+        );
       }
     }
+
     return (
-      <div className='menu-list' onClick={ (e) => e.stopPropagation() } style={{ whiteSpace: 'nowrap' }}>
-        {announcements}
+      <div className='menu-list announcement-menu' onClick={ (e) => e.stopPropagation() }>
+        {announcements.length > 0 ? announcements : <div className='announcement-item'>{translate('none')}</div>}
       </div>
     );
   }
@@ -623,37 +624,36 @@ export default class Header extends TranslatedComponent {
     return (
       <header>
         {this.props.appCacheUpdate && <div id="app-update" onClick={this.update}>{translate('PHRASE_UPDATE_RDY')}</div>}
-        {this.props.appCacheUpdate ? <a className={'view-changes'} href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'} target="_blank">
+        {this.props.appCacheUpdate ? <a className={'view-changes'} href={'https://github.com/Brighter-Applications/coriolis/releases'} target="_blank">
           {'View Release Changes'}
         </a> : null}
         <Link className='l' href='/' style={{ marginRight: '1em' }} title='Home'><CoriolisLogo className='icon xl' /></Link>
 
         <div className='l menu'>
           <div className={cn('menu-header', { selected: openedMenu == 's' })} onClick={this._openShips}>
-            <Rocket className='warning' /><span className='menu-item-label'>{translate('ships')}</span>
+            <Rocket className='warning md' /><span className='menu-item-label'>{translate('ships')}</span>
           </div>
           {openedMenu == 's' ? this._getShipsMenu() : null}
         </div>
 
         <div className='l menu'>
-          <div className={cn('menu-header', { selected: openedMenu == 'b', disabled: !hasBuilds })} onClick={hasBuilds && this._openBuilds}>
-            <Hammer className={cn('warning', { 'warning-disabled': !hasBuilds })} /><span className='menu-item-label'>{translate('builds')}</span>
+          <div className={cn('menu-header', { selected: openedMenu == 'b', disabled: !hasBuilds })} onClick={hasBuilds ? this._openBuilds : undefined}>
+            <Hammer className={cn('warning md', { 'warning-disabled': !hasBuilds })} /><span className='menu-item-label'>{translate('builds')}</span>
           </div>
           {openedMenu == 'b' ? this._getBuildsMenu() : null}
         </div>
 
         <div className='l menu'>
-          <div className={cn('menu-header', { selected: openedMenu == 'comp', disabled: !hasBuilds })} onClick={hasBuilds && this._openComp}>
-            <StatsBars className={cn('warning', { 'warning-disabled': !hasBuilds })} /><span className='menu-item-label'>{translate('compare')}</span>
+          <div className={cn('menu-header', { selected: openedMenu == 'comp', disabled: !hasBuilds })} onClick={hasBuilds ? this._openComp : undefined}>
+            <StatsBars className={cn('warning md', { 'warning-disabled': !hasBuilds })} /><span className='menu-item-label'>{translate('compare')}</span>
           </div>
           {openedMenu == 'comp' ? this._getComparisonsMenu() : null}
         </div>
 
         <div className='l menu'>
-          <div className={cn('menu-header', { selected: openedMenu == 'announce', disabled: this.props.announcements.length === 0})} onClick={this.props.announcements.length !== 0 && this._openAnnounce}>
-            <span className='menu-item-label'>{translate('announcements')}</span>
+          <div className={cn('menu-header', { selected: openedMenu == 'announce', disabled: this.props.announcements.length === 0, pulse: this.props.hasUnseenAnnouncements && openedMenu !== 'announce'})} onClick={this.props.announcements.length !== 0 ? (e) => { e.stopPropagation(); if (this.props.onAnnouncementsSeen) this.props.onAnnouncementsSeen(); this.context.showModal(<ModalAnnouncements announcements={this.props.announcements} />); } : undefined}>
+            <Bell className='warning md' /><span className='menu-item-label'>{translate('announcements')}</span>
           </div>
-          {openedMenu == 'announce' ? this._getAnnouncementsMenu() : null}
         </div>
 
         {window.location.origin.search('.edcd.io') >= 0 ?
@@ -668,27 +668,27 @@ export default class Header extends TranslatedComponent {
 
         <div className='r menu'>
           <div className={cn('menu-header')} onClick={this._showCmdr}>
-            <PersonIcon className={'xl' + (Persist.hasCmdrLinks() ? ' primary' : ' warning')}/>
+            <PersonIcon className={'lg' + (Persist.hasCmdrLinks() ? ' primary' : ' warning')}/>
           </div>
         </div>
 
         <div className='r menu'>
           <div className={cn('menu-header')} onClick={this._showHelp}>
-            <Help className='xl warning'/>
+            <Help className='lg warning'/>
           </div>
         </div>
 
         <div className='r menu'>
           <a href="https://github.com/sponsors/Brighter-Applications" target="_blank" rel="noopener noreferrer">
             <div className={cn('menu-header')}>
-              <Heart className='xl warning'/><span className='menu-item-label'>{translate('donate')}</span>
+              <Heart className='lg warning'/><span className='menu-item-label'>{translate('donate')}</span>
             </div>
           </a>
         </div>
 
         <div className='r menu'>
           <div className={cn('menu-header', { selected: openedMenu == 'settings' })} onClick={this._openSettings}>
-            <Cogs className='xl warning'/><span className='menu-item-label'>{translate('settings')}</span>
+            <Cogs className='lg warning'/><span className='menu-item-label'>{translate('settings')}</span>
           </div>
           {openedMenu == 'settings' ? this._getSettingsMenu() : null}
         </div>

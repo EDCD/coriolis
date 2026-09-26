@@ -79,6 +79,48 @@ export default class ModificationsMenu extends TranslatedComponent {
     const { language, tooltip, termtip } = context;
     const translate = language.translate;
     const blueprints = [];
+
+    // For grade-changeable pre-engineered modules, only show their specific blueprint
+    if (m.preEngineered && m.preEngineered.gradeChangeable && m.preEngineered.blueprints) {
+      for (const bpName of m.preEngineered.blueprints) {
+        const blueprint = getBlueprint(bpName, m);
+        if (!blueprint || !blueprint.grades) continue;
+        let blueprintGrades = [];
+        for (let grade in blueprint.grades) {
+          grade = Number(grade);
+          const classes = cn('compact-module', {
+            active: m.blueprint && blueprint.id === m.blueprint.id && grade === m.blueprint.grade
+          });
+          const close = this._blueprintSelected.bind(this, bpName, grade);
+          const key = bpName + ':' + grade;
+          const tooltipContent = blueprintTooltip(translate, blueprint.grades[grade], null, m.grp);
+          if (classes.indexOf('active') >= 0) this.selectedModId = key;
+          blueprintGrades.unshift(
+            <div
+              role='button'
+              key={key}
+              tabIndex='0'
+              data-id={key}
+              className={classes}
+              onMouseOver={termtip.bind(null, tooltipContent)}
+              onMouseOut={tooltip.bind(null, null)}
+              onClick={close}
+              onKeyDown={this._keyDown}
+              ref={(modItem) => this.modItems.set(key, modItem)}
+            ><div className='module-content'><span className='module-text'>{grade}</span></div></div>
+          );
+        }
+        if (blueprintGrades.length) {
+          const thisLen = blueprintGrades.length;
+          if (this.firstModId == null) this.firstModId = blueprintGrades[0].key;
+          this.lastModId = blueprintGrades[thisLen - 1].key;
+          blueprints.push(<div key={blueprint.name} className='select-group cap'>{translate(blueprint.name)}</div>);
+          blueprints.push(<div key={bpName} className='grades-row' data-grade-count={thisLen}>{blueprintGrades}</div>);
+        }
+      }
+      return blueprints;
+    }
+
     for (const blueprintName in Modifications.modules[m.grp].blueprints) {
       const blueprint = getBlueprint(blueprintName, m);
       let blueprintGrades = [];
@@ -280,8 +322,15 @@ export default class ModificationsMenu extends TranslatedComponent {
     this.context.tooltip(null);
     const { m, ship } = this.props;
 
-    if (m.preEngineered && !m.preEngineered.reengineerable) {
-      return; // Prevent Re-engineering of pre-engineered modules
+    if (m.preEngineered && !m.preEngineered.reengineerable && !m.preEngineered.gradeChangeable) {
+      return; // Prevent Re-engineering of pre-engineered modules (unless grade is changeable)
+    }
+
+    // For grade-changeable pre-engineered modules, only allow their specific blueprint
+    if (m.preEngineered && m.preEngineered.gradeChangeable && !m.preEngineered.reengineerable) {
+      const allowedBlueprints = m.preEngineered.blueprints || [];
+      const isAllowed = allowedBlueprints.some(bp => bp.toLowerCase() === fdname.toLowerCase() || fdname.toLowerCase().includes(bp.toLowerCase()));
+      if (!isAllowed) return;
     }
 
     const blueprint = getBlueprint(fdname, m);
@@ -289,7 +338,20 @@ export default class ModificationsMenu extends TranslatedComponent {
     ship.setModuleBlueprint(m, blueprint);
     setPercent(ship, m, 100);
 
-    this.setState({ blueprintMenuOpened: false, specialMenuOpened: true });
+    // For grade-changeable pre-engineered modules, don't open specials menu - just close blueprints
+    if (m.preEngineered && m.preEngineered.gradeChangeable && !m.preEngineered.canApplyExperimental) {
+      // Re-apply the existing experimental effect after grade change
+      if (m.preEngineered.experimentalEffects && m.preEngineered.experimentalEffects.length > 0) {
+        const specialName = m.preEngineered.experimentalEffects[0];
+        const special = Modifications.specials[specialName];
+        if (special) {
+          m.blueprint.special = special;
+        }
+      }
+      this.setState({ blueprintMenuOpened: false, specialMenuOpened: false });
+    } else {
+      this.setState({ blueprintMenuOpened: false, specialMenuOpened: true });
+    }
     this.props.onChange();
   }
 
@@ -476,7 +538,7 @@ export default class ModificationsMenu extends TranslatedComponent {
 
     // Check if this is a pre-engineered module
     const isPreEngineered = m.preEngineered && m.preEngineered.blueprints && m.preEngineered.blueprints.length > 0;
-    const canReengineer = isPreEngineered ? m.preEngineered.reengineerable : true;
+    const canReengineer = isPreEngineered ? (m.preEngineered.reengineerable || m.preEngineered.gradeChangeable) : true;
     const canApplyExperimental = isPreEngineered ? m.preEngineered.canApplyExperimental : true;
 
     // Check if module has engineering explicitly disabled
@@ -529,7 +591,7 @@ export default class ModificationsMenu extends TranslatedComponent {
         const bp = getBlueprint(bpName, m);
         return translate(bp.name);
       }).join(' + ');
-      blueprintLabel = blueprintNames + ' ' + translate('grade') + ' ' + m.preEngineered.grade;
+      blueprintLabel = blueprintNames + ' ' + translate('grade') + ' ' + (m.blueprint && m.blueprint.grade ? m.blueprint.grade : m.preEngineered.grade);
       haveBlueprint = true;
       // For pre-engineered modules, use the custom tooltip that shows all blueprints combined
       blueprintTt = preEngineeredTooltip(translate, m, m.grp);
@@ -552,12 +614,14 @@ export default class ModificationsMenu extends TranslatedComponent {
     const specials = this._renderSpecials(this.props, this.context);
 
     // Special logic for pre-engineered modules - they skip blueprint selection and go straight to experimentals
-    const showBlueprintsMenu = blueprintMenuOpened && !m.preEngineered;
-    const showSpecial = haveBlueprint && specials.length && (!blueprintMenuOpened || m.preEngineered);
+    // Unless gradeChangeable is true, in which case they can change grade but not switch blueprints
+    const isGradeChangeable = m.preEngineered && m.preEngineered.gradeChangeable;
+    const showBlueprintsMenu = blueprintMenuOpened && (!m.preEngineered || isGradeChangeable);
+    const showSpecial = haveBlueprint && specials.length && (!blueprintMenuOpened || (m.preEngineered && !isGradeChangeable));
     const showSpecialsMenu = specialMenuOpened && specials.length;
-    const showRolls = haveBlueprint && !blueprintMenuOpened && (!specialMenuOpened || !specials.length) && !m.preEngineered;
+    const showRolls = haveBlueprint && !blueprintMenuOpened && (!specialMenuOpened || !specials.length) && (!m.preEngineered || isGradeChangeable);
     const showReset = !blueprintMenuOpened && (!specialMenuOpened || !specials.length) && haveBlueprint;
-    const showMods = !blueprintMenuOpened && (!specialMenuOpened || !specials.length) && haveBlueprint && !m.preEngineered;
+    const showMods = !blueprintMenuOpened && (!specialMenuOpened || !specials.length) && haveBlueprint && (!m.preEngineered || isGradeChangeable);
 
     if (haveBlueprint) {
       this.firstBPLabel = blueprintLabel;

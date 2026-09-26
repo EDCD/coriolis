@@ -619,20 +619,23 @@ export function armourMetrics(ship) {
   let moduleArmour = 0;
   let moduleProtection = 1;
   const bulkheads = ship.bulkheads.m;
-  let hullExplDmgs = [];
-  let hullKinDmgs = [];
-  let hullThermDmgs = [];
-  let hullCausDmgs = [];
+  // Per-module resistances (as resistance values, not damage multipliers) for
+  // each hull reinforcement package. These are combined via the in-game
+  // sequential diminishing-returns algorithm (see stackArmourResistances).
+  let hullExplRes = [];
+  let hullKinRes = [];
+  let hullThermRes = [];
+  let hullCausRes = [];
   // Armour from HRPs and module armour from MRPs
   for (let slot of ship.internal) {
     if (slot.m && slot.enabled && (slot.m.grp === 'hr' || slot.m.grp === 'ghrp' || slot.m.grp == 'mahr')) {
       armourReinforcement += slot.m.getHullReinforcement();
       // Hull boost for HRPs is applied against the ship's base armour
       armourReinforcement += ship.baseArmour * slot.m.getModValue('hullboost') / 10000;
-      hullExplDmgs.push(1 - slot.m.getExplosiveResistance());
-      hullKinDmgs.push(1 - slot.m.getKineticResistance());
-      hullThermDmgs.push(1 - slot.m.getThermalResistance());
-      hullCausDmgs.push(1 - slot.m.getCausticResistance());
+      hullExplRes.push(slot.m.getExplosiveResistance());
+      hullKinRes.push(slot.m.getKineticResistance());
+      hullThermRes.push(slot.m.getThermalResistance());
+      hullCausRes.push(slot.m.getCausticResistance());
     }
     if (slot.m && slot.enabled && (slot.m.grp == 'mrp' || slot.m.grp == 'gmrp')) {
       moduleArmour += slot.m.getIntegrity();
@@ -657,40 +660,51 @@ export function armourMetrics(ship) {
     total: 1
   };
 
-  let armourExplDmg = 1 - ship.bulkheads.m.getExplosiveResistance();
-  let armourReinforcedExplDmg = diminishingReturnsArmour(armourExplDmg, ...hullExplDmgs);
+  // Combine bulkhead + HRP resistances using the in-game sequential
+  // diminishing-returns algorithm, then express the result as a damage
+  // multiplier (`total` = 1 - resistance) to preserve the existing shape.
+  let armourExplRes = ship.bulkheads.m.getExplosiveResistance();
+  let armourReinforcedExplRes = stackArmourResistances(armourExplRes, hullExplRes);
+  let armourExplDmg = 1 - armourExplRes;
+  let armourReinforcedExplDmg = 1 - armourReinforcedExplRes;
   armour.explosive = {
     bulkheads: armourExplDmg,
-    reinforcement: armourReinforcedExplDmg / armourExplDmg,
+    reinforcement: armourExplDmg === 0 ? 1 : armourReinforcedExplDmg / armourExplDmg,
     total: armourReinforcedExplDmg,
-    res: 1 - armourReinforcedExplDmg
+    res: armourReinforcedExplRes
   };
 
-  let armourKinDmg = 1 - ship.bulkheads.m.getKineticResistance();
-  let armourReinforcedKinDmg = diminishingReturnsArmour(armourKinDmg, ...hullKinDmgs);
+  let armourKinRes = ship.bulkheads.m.getKineticResistance();
+  let armourReinforcedKinRes = stackArmourResistances(armourKinRes, hullKinRes);
+  let armourKinDmg = 1 - armourKinRes;
+  let armourReinforcedKinDmg = 1 - armourReinforcedKinRes;
   armour.kinetic = {
     bulkheads: armourKinDmg,
-    reinforcement: armourReinforcedKinDmg / armourKinDmg,
+    reinforcement: armourKinDmg === 0 ? 1 : armourReinforcedKinDmg / armourKinDmg,
     total: armourReinforcedKinDmg,
-    res: 1 - armourReinforcedKinDmg
+    res: armourReinforcedKinRes
   };
 
-  let armourThermDmg = 1 - ship.bulkheads.m.getThermalResistance();
-  let armourReinforcedThermDmg = diminishingReturnsArmour(armourThermDmg, ...hullThermDmgs);
+  let armourThermRes = ship.bulkheads.m.getThermalResistance();
+  let armourReinforcedThermRes = stackArmourResistances(armourThermRes, hullThermRes);
+  let armourThermDmg = 1 - armourThermRes;
+  let armourReinforcedThermDmg = 1 - armourReinforcedThermRes;
   armour.thermal = {
     bulkheads: armourThermDmg,
-    reinforcement: armourReinforcedThermDmg / armourThermDmg,
+    reinforcement: armourThermDmg === 0 ? 1 : armourReinforcedThermDmg / armourThermDmg,
     total: armourReinforcedThermDmg,
-    res: 1 - armourReinforcedThermDmg
+    res: armourReinforcedThermRes
   };
 
-  let armourCausDmg = 1 - ship.bulkheads.m.getCausticResistance();
-  let armourReinforcedCausDmg = diminishingReturnsArmour(armourCausDmg, ...hullCausDmgs);
+  let armourCausRes = ship.bulkheads.m.getCausticResistance();
+  let armourReinforcedCausRes = stackArmourResistances(armourCausRes, hullCausRes);
+  let armourCausDmg = 1 - armourCausRes;
+  let armourReinforcedCausDmg = 1 - armourReinforcedCausRes;
   armour.caustic = {
     bulkheads: armourCausDmg,
-    reinforcement: armourReinforcedCausDmg / armourCausDmg,
+    reinforcement: armourCausDmg === 0 ? 1 : armourReinforcedCausDmg / armourCausDmg,
     total: armourReinforcedCausDmg,
-    res: 1 - armourReinforcedCausDmg,
+    res: armourReinforcedCausRes,
   };
   return armour;
 }
@@ -1119,6 +1133,64 @@ export function diminishingReturnsArmour(...mults) {
   } else {
     return combined;
   }
+}
+
+/**
+ * Stack a single resistance-boosting module onto a running armour resistance
+ * using the in-game diminishing-returns formula. Works in resistance-space
+ * (not damage-multiplier space); resistances are decimals where 0.30 == 30%.
+ *
+ * Reference: Frontier's documented kinetic-resistance formula
+ *   https://forums.frontier.co.uk/threads/kinetic-resistance-calculation.266235/post-4230114
+ * cross-checked against the ED Odyssey Materials Helper implementation.
+ *
+ * Diminishing returns only apply once combined resistance exceeds 30%; above
+ * that threshold the excess is mapped into the range [lowerBound, 65%].
+ *
+ * @param {number} baseResistance   Current running resistance (decimal)
+ * @param {number} moduleResistance Additional module resistance (decimal)
+ * @returns {number} Combined resistance (decimal)
+ */
+export function stackDamageResistance(baseResistance, moduleResistance) {
+  const MIN_LOWER_BOUND = 0.30;
+  const UPPER_BOUND = 0.65; // half credit past 30% => 30 + (100-30)/2 = 65%
+  const lowerBound = Math.max(MIN_LOWER_BOUND, baseResistance);
+  // Multiplicative stacking of the two resistances
+  const stackedResistance = 1 - ((1 - baseResistance) * (1 - moduleResistance));
+  // Apply diminishing returns so that 100% stacking maps to UPPER_BOUND
+  const cappedResistance = lowerBound + (stackedResistance - lowerBound) / (1 - lowerBound) * (UPPER_BOUND - lowerBound);
+  // Use the capped value once past the minimum threshold, otherwise the raw stack
+  return (cappedResistance >= MIN_LOWER_BOUND) ? cappedResistance : stackedResistance;
+}
+
+/**
+ * Combine a bulkhead/base armour resistance with any number of hull
+ * reinforcement package resistances, reproducing the game's armour resistance
+ * calculation.
+ *
+ * The game folds modules in one at a time (sorted by contribution), applies the
+ * per-module "double bonus above 30%" adjustment, runs each step through the
+ * diminishing-returns formula, and finally hard-caps at 75%.
+ *
+ * @param {number} baseResistance   Bulkhead/base armour resistance (decimal)
+ * @param {number[]} moduleResistances Hull reinforcement resistances (decimals)
+ * @returns {number} Effective combined resistance (decimal, capped at 0.75)
+ */
+export function stackArmourResistances(baseResistance, moduleResistances) {
+  let resistance = baseResistance;
+  // Fold modules in ascending order of resistance so diminishing returns are
+  // applied consistently regardless of slot order (matches the game).
+  const sorted = [...moduleResistances].sort((a, b) => a - b);
+  for (const moduleResistance of sorted) {
+    // Any single module contributing more than 30% gets a double bonus on the
+    // portion above 30% before it is stacked.
+    const adaptedModuleResistance = moduleResistance > 0.3
+      ? moduleResistance * 2 - 0.3
+      : moduleResistance;
+    resistance = stackDamageResistance(resistance, adaptedModuleResistance);
+  }
+  // Hard cap at 75%
+  return Math.min(0.75, resistance);
 }
 
 /**

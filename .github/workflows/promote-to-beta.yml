@@ -1,0 +1,136 @@
+# ---------------------------------------------------------------------------
+# Promote to Beta
+#
+# Manually triggered after a successful alpha deployment.
+# - Verifies that alpha has been deployed (pipeline/alpha-deployed tag exists)
+# - Merges alpha → beta to keep the branch up to date
+# - Downloads the existing build artifact from GCP (no rebuild needed)
+# - Deploys to beta.coriolis.io
+# - Updates pipeline state tags
+# ---------------------------------------------------------------------------
+name: "Beta: Promote from Alpha"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed for merging branches and managing tags
+
+env:
+  TARGET_ZIP: build.zip
+  BUCKET_FOLDER: build
+
+jobs:
+  # ------------------------------------------------------------------ #
+  # Gate: verify alpha has been deployed                               #
+  # ------------------------------------------------------------------ #
+  check-pipeline-state:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    outputs:
+      feature_branch: ${{ steps.check.outputs.feature_branch }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Verify alpha-deployed tag exists
+        id: check
+        shell: bash
+        run: |
+          if ! git rev-parse pipeline/alpha-deployed >/dev/null 2>&1; then
+            echo "::error::No alpha deployment found. Merge a PR into alpha first."
+            exit 1
+          fi
+
+          # Extract the feature branch name from the tag message
+          FEATURE=$(git tag -l --format='%(contents:subject)' pipeline/alpha-deployed | grep -oP 'feature-branch: \K.*' || echo "unknown")
+          echo "feature_branch=$FEATURE" >> "$GITHUB_OUTPUT"
+          echo "::notice::Alpha deployment found. Feature branch: $FEATURE. Proceeding with promotion to beta."
+
+  # ------------------------------------------------------------------ #
+  # Merge alpha → beta                                                 #
+  # ------------------------------------------------------------------ #
+  merge-alpha-to-beta:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: check-pipeline-state
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Update beta to match alpha
+        shell: bash
+        run: |
+          git fetch origin alpha beta
+          echo "Alpha is at: $(git rev-parse origin/alpha)"
+          echo "Beta is at:  $(git rev-parse origin/beta)"
+          git push origin origin/alpha:refs/heads/beta --force
+          echo "Beta now matches alpha."
+
+  # ------------------------------------------------------------------ #
+  # Deploy to beta.coriolis.io (no rebuild — use existing artifact)    #
+  # ------------------------------------------------------------------ #
+  deploy:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: merge-alpha-to-beta
+    steps:
+      - name: Authorize GCP
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.CORIOLIS_GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: '>=363.0.0'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Download and unzip the build
+        shell: bash
+        run: |
+          rm -Rf ./*
+          BUCKET_PATH=${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}
+          gsutil cp gs://${BUCKET_PATH}/build_latest.zip build_latest.zip
+          unzip ./build_latest.zip
+
+      - name: Deploy to beta.coriolis.io
+        shell: bash
+        run: |
+          echo "Deploying to beta.coriolis.io"
+          rsync -av --omit-dir-times --no-perms --delete \
+            --exclude='.git/' --exclude='.github/' \
+            ./coriolis/build/* /var/www/beta.coriolis.io/
+
+  # ------------------------------------------------------------------ #
+  # Update pipeline state: beta deployed, ready for live promotion     #
+  # ------------------------------------------------------------------ #
+  mark-beta-deployed:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: [deploy, check-pipeline-state]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          ref: beta
+          fetch-depth: 1
+          fetch-tags: true
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Update pipeline tags
+        shell: bash
+        env:
+          FEATURE_BRANCH: ${{ needs.check-pipeline-state.outputs.feature_branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Remove alpha-deployed, create beta-deployed
+          git push origin --delete refs/tags/pipeline/alpha-deployed 2>/dev/null || true
+          git tag -a pipeline/beta-deployed -m "feature-branch: ${FEATURE_BRANCH}" -f
+          git push origin pipeline/beta-deployed --force
+
+          echo "::notice::Beta deployed. Feature branch: ${FEATURE_BRANCH}. Ready for 'Promote to Live'."

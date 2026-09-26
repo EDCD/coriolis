@@ -1,0 +1,255 @@
+[
+  {
+    "id": 61,
+    "version": "4.1.8",
+    "text": "Fix MkII Vessel Hanger ID's",
+    "changes": [
+      "Fix MkII Vessel Hanger ID's"
+    ]
+  },
+  {
+    "id": 60,
+    "version": "4.1.7",
+    "text": "More Operations modules and blueprints",
+    "changes": [
+      "More Operations modules and blueprints"
+    ]
+  },
+  {
+    "id": 59,
+    "version": "4.1.6",
+    "text": "Materials list now shows Merc Coin and total credits separately, with linked builds showing the amount still needed",
+    "changes": [
+      "Materials list now shows Merc Coin and total credits separately, with linked builds showing the amount still needed"
+    ]
+  },
+  {
+    "id": 58,
+    "version": "4.1.5",
+    "text": "Operations Update live",
+    "changes": [
+      "Operations Update live"
+    ]
+  },
+  {
+    "id": 57,
+    "version": "4.1.4",
+    "text": "Fixed Federal Dropship import",
+    "changes": [
+      "Fixed Federal Dropship import",
+      "Added test for Federal Dropship internal slot indexing"
+    ]
+  },
+  {
+    "id": 56,
+    "version": "4.1.3",
+    "text": "Fixed hull armour resistance calculation",
+    "changes": [
+      "Fixed hull armour resistance calculation"
+    ]
+  },
+  {
+    "id": 55,
+    "version": "4.1.2",
+    "text": "Fixing deployment breaking on new modules being imported.",
+    "changes": [
+      "Fixing deployment breaking on new modules being imported."
+    ]
+  },
+  {
+    "id": 54,
+    "version": "4.1.1",
+    "text": "Fixes to operations module/blueprint stats",
+    "changes": [
+      "Fixes to operations module/blueprint stats"
+    ]
+  },
+  {
+    "id": 53,
+    "version": "4.1.0",
+    "text": "Operations update, new modules, new blueprints, etc.",
+    "changes": [
+      "Operations update, new modules, new blueprints, etc."
+    ]
+  },
+  {
+    "id": 52,
+    "version": "4.0.30",
+    "text": "Fixing tooltip issues, including crashes when selecting experimentals",
+    "changes": [
+      "Fixing tooltip issues, including crashes when selecting experimentals"
+    ]
+  },
+  {
+    "id": 51,
+    "version": "4.0.29",
+    "text": "Added Favouriting for Engineered modules",
+    "changes": [
+      "Added Favouriting for Engineered modules"
+    ]
+  },
+  {
+    "id": 50,
+    "version": "4.0.28",
+    "text": "Added new Google Tag to use Google Analytics",
+    "changes": [
+      "Added new Google Tag to use Google Analytics"
+    ]
+  },
+  {
+    "id": 49,
+    "version": "4.0.27",
+    "text": "Fixed duplicate search box when selecting an empty slot and typing",
+    "changes": [
+      "Fixed duplicate search box when selecting an empty slot and typing",
+      "Fixed announcements to mark all as read when you visit the ChangeLog page"
+    ]
+  },
+  {
+    "id": 48,
+    "version": "4.0.26",
+    "text": "Build Options Menu introduced on mobile devices to replace icons",
+    "changes": [
+      "Build Options Menu introduced on mobile devices to replace icons"
+    ]
+  },
+  {
+    "id": 47,
+    "version": "4.0.25",
+    "text": "Revamped Announcements and created Changelog page",
+    "changes": [
+      "Revamped Announcements and created Changelog page"
+    ]
+  },
+  {
+    "id": 46,
+    "version": "4.0.24",
+    "text": "Builds Button on Firefox fix when no builds saved",
+    "changes": [
+      "Builds Button on Firefox fix when no builds saved"
+    ]
+  },
+  {
+    "id": 45,
+    "version": "4.0.23",
+    "text": "Ensuring the Advanced Planetary Approach Suite is added to imported ships for consistency",
+    "changes": [
+      "Ensuring the Advanced Planetary Approach Suite is added to imported ships for consistency"
+    ]
+  },
+  {
+    "id": 44,
+    "version": "4.0.22",
+    "text": "Auto Select Module Search on Available Modules Menu opening",
+    "changes": [
+      "Auto Select Module Search on Available Modules Menu opening"
+    ]
+  },
+  {
+    "id": 43,
+    "version": "4.0.21",
+    "text": "Fixing layout issue on module selection menu",
+    "changes": [
+      "Fixing layout issue on module selection menu"
+    ]
+  },
+  {
+    "id": 42,
+    "version": "4.0.20",
+    "text": "Made power and costs section collapsible",
+    "changes": [
+      "Made power and costs section collapsible"
+    ]
+  },
+  {
+    "id": 41,
+    "version": "4.0.19",
+    "text": "Fixed Sync Builds option in Settings menu. It now updates the icon to a tick, or cross, when clicked.",
+    "changes": [
+      "Fixed Sync Builds option in Settings menu. It now updates the icon to a tick, or cross, when clicked."
+    ]
+  },
+  {
+    "id": 40,
+    "version": "4.0.18",
+    "text": "Introducing an error boundary to help error reporting",
+    "changes": [
+      "Introducing an error boundary to help error reporting"
+    ]
+  },
+  {
+    "id": 39,
+    "version": "4.0.17",
+    "text": "CMDR-Coriolis started accepting MaterialTrade events from the journal",
+    "changes": [
+      "CMDR-Coriolis started accepting MaterialTrade events from the journal"
+    ]
+  },
+  {
+    "id": 38,
+    "version": "4.0.16",
+    "text": "CMDR-Coriolis started accepting MaterialCollected events from the journal",
+    "changes": [
+      "CMDR-Coriolis started accepting MaterialCollected events from the journal"
+    ]
+  },
+  {
+    "id": 37,
+    "version": "4.0.15",
+    "text": "Adding to documentation for CMDR-Coriolis new Journal API",
+    "changes": [
+      "Adding to documentation for CMDR-Coriolis new Journal API",
+      "Georgian Translation update"
+    ]
+  },
+  {
+    "id": 36,
+    "version": "4.0.14",
+    "text": "Fixed JSON/SLEF Exports to include proper engineering and FSD Ranges",
+    "changes": [
+      "Fixed JSON/SLEF Exports to include proper engineering and FSD Ranges"
+    ]
+  },
+  {
+    "id": 35,
+    "version": "4.0.13",
+    "text": "Fixed fuelmul on V1 SCO Drive",
+    "changes": [
+      "Fixed fuelmul on V1 SCO Drive",
+      "Fixing double engineered module calculations"
+    ]
+  },
+  {
+    "id": 34,
+    "version": "4.0.12",
+    "text": "Resolved issue with Builds Menu throwing an error when the user has no builds.",
+    "changes": [
+      "Resolved issue with Builds Menu throwing an error when the user has no builds."
+    ]
+  },
+  {
+    "id": 33,
+    "version": "4.0.11",
+    "text": "Fixed highliner tonnage, it was 250 and should have been 260",
+    "changes": [
+      "Fixed highliner tonnage, it was 250 and should have been 260"
+    ]
+  },
+  {
+    "id": 32,
+    "version": "4.0.10",
+    "text": "Fixed slot indexing for Lynx Highliner",
+    "changes": [
+      "Fixed slot indexing for Lynx Highliner"
+    ]
+  },
+  {
+    "id": 31,
+    "version": "4.0.9",
+    "text": "Switched to hashed filenames, to reduce caching issues on new releases",
+    "changes": [
+      "Switched to hashed filenames, to reduce caching issues on new releases",
+      "Improved release workflow, to be less user intensive and smoother and create releases"
+    ]
+  }
+]

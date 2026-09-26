@@ -63,28 +63,37 @@ export default class Tooltip extends TranslatedComponent {
    * @param  {DomElement} elem Tooltip contents container
    */
   _adjustDimensions() {
-    if (this.elem) {
+    if (this.elem && !this._adjusting) {
+      this._adjusting = true;
       let o = this.state.orientation;
       let rect = this.elem.getBoundingClientRect();
 
-      // Round widthand height to nearest even number to avoid translate3d text blur
+      // Round width and height to nearest even number to avoid translate3d text blur
       // caused by fractional pixels
       let width = Math.ceil(rect.width / 2) * 2;
+      let height = Math.round(rect.height / 2) * 2;
 
-      this.setState({
-        width,
-        height: Math.round(rect.height / 2) * 2
-      });
+      // Only update if dimensions actually changed to prevent infinite render loop.
+      // Without this guard, componentDidUpdate -> setState -> componentDidUpdate
+      // can cycle indefinitely on browsers with sub-pixel rounding differences.
+      if (width === this.state.width && height === this.state.height) {
+        this._adjusting = false;
+        return;
+      }
+
+      let newState = { width, height };
 
       if (o == 'n' || o == 's') {
         let docWidth = document.documentElement.clientWidth;
 
         if (rect.left < 0) {
-          this.setState({ left: Math.round(width / 4) * 2 });
+          newState.left = Math.round(width / 4) * 2;
         } else if ((rect.left + width) > docWidth) {
-          this.setState({ left: docWidth - Math.round(width / 4) * 2 });
+          newState.left = docWidth - Math.round(width / 4) * 2;
         }
       }
+
+      this.setState(newState);
     }
   }
 
@@ -100,6 +109,7 @@ export default class Tooltip extends TranslatedComponent {
    * @param  {Object} nextProps   Incoming/Next properties
    */
   UNSAFE_componentWillReceiveProps(nextProps) {
+    this._adjusting = false; // Allow re-measurement for new tooltip content
     this.setState(this._initialDimensions(nextProps));
   }
 

@@ -1,15 +1,96 @@
-#2.5.1  
-  * Passenger count on main page  
-  * AX Modules  
-  * Engineering fixes  
-  * Use coriolis-data 2.5.1  
+#4.1.12
+  * Add hullboost to HRPs so ship HP is reported correct when Lightweight is applied
+#4.1.11
+  * Fixing Pre-Eng Shard Cannon Stats
+#4.1.10
+  * Fixing Mining Volley Repeater Stats
+#4.1.9
+  * Fix Cargo Grade change not displaying ship capacity increase
+#4.1.8
+  * Fix MkII Vessel Hanger ID's
+#4.1.7
+  * More Operations modules and blueprints
+#4.1.6
+  * Materials list now shows Merc Coin and total credits separately, with linked builds showing the amount still needed
+#4.1.5
+  * Operations Update live
+#4.1.4
+  * Fixed Federal Dropship import
+  * Added test for Federal Dropship internal slot indexing
+#4.1.3
+  * Fixed hull armour resistance calculation
+#4.1.2
+  * Fixing deployment breaking on new modules being imported.
+#4.1.1
+  * Fixes to operations module/blueprint stats
+#4.1.0
+  * Operations update, new modules, new blueprints, etc.
+#4.0.30
+  * Fixing tooltip issues, including crashes when selecting experimentals
+#4.0.29
+  * Added Favouriting for Engineered modules
+#4.0.28
+  * Added new Google Tag to use Google Analytics
+#4.0.27
+  * Fixed duplicate search box when selecting an empty slot and typing
+  * Fixed announcements to mark all as read when you visit the ChangeLog page
+#4.0.26
+  * Build Options Menu introduced on mobile devices to replace icons
+#4.0.25
+  * Revamped Announcements and created Changelog page
+#4.0.24
+  * Builds Button on Firefox fix when no builds saved
+#4.0.23
+  * Ensuring the Advanced Planetary Approach Suite is added to imported ships for consistency
+#4.0.22
+  * Auto Select Module Search on Available Modules Menu opening
+#4.0.21
+  * Fixing layout issue on module selection menu
+#4.0.20
+  * Made power and costs section collapsible
+#4.0.19
+  * Fixed Sync Builds option in Settings menu. It now updates the icon to a tick, or cross, when clicked.
+#4.0.18
+  * Introducing an error boundary to help error reporting
+#4.0.17
+  * CMDR-Coriolis started accepting MaterialTrade events from the journal
+#4.0.16
+  * CMDR-Coriolis started accepting MaterialCollected events from the journal
+#4.0.15
+  * Adding to documentation for CMDR-Coriolis new Journal API
+  * Georgian Translation update
+#4.0.14
+  * Fixed JSON/SLEF Exports to include proper engineering and FSD Ranges
+
+#4.0.13
+  * Fixed fuelmul on V1 SCO Drive
+  * Fixing double engineered module calculations
+
+#4.0.12
+  * Resolved issue with Builds Menu throwing an error when the user has no builds.
+
+#4.0.11
+  * Fixed highliner tonnage, it was 250 and should have been 260
+
+#4.0.10
+  * Fixed slot indexing for Lynx Highliner
+
+#4.0.9
+  * Switched to hashed filenames, to reduce caching issues on new releases
+  * Improved release workflow, to be less user intensive and smoother and create releases
+
+#2.5.1
+  * Passenger count on main page
+  * AX Modules
+  * Engineering fixes
+  * Use coriolis-data 2.5.1
 
 #2.5.0
-  * willyb321 and myself have conquered engineering. Mainly him though...  
+  * willyb321 and myself have conquered engineering. Mainly him though...
   * Use coriolis-data 2.5.0
 
-#2.4.2  
-  Lots of kind people have helped out for this release! Check out the PR history!  
+#2.4.2
+  Lots of kind people have helped out for this release! Check out the PR history!
   * Uses coriolis-data update:
     * Fixes issues with repair limpets
     * Adds requirement data
@@ -17,7 +98,7 @@
   * Adds comma formatting to tooltip numbers
 
 #2.4.1
-  * Small patches and changes  
+  * Small patches and changes
 
 #2.4.0
   * Changed compression library to Pako

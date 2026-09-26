@@ -39,7 +39,8 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'build'),
-    chunkFilename: '[name].bundle.js',
+    filename: '[name].[contenthash:8].js',
+    chunkFilename: '[name].[contenthash:8].bundle.js',
     // assetModuleFilename: '[contenthash][ext]',
     publicPath: '/',
     clean: true // we already do rimraf on the build dir, but this should obviate that
@@ -57,7 +58,7 @@ module.exports = {
       date: buildDate,
     }),
     new MiniCssExtractPlugin({
-        filename: 'app.css',
+        filename: '[name].[contenthash:8].css',
     }),
     // Solve missing Buffer polyfill that breaks module engineering
     new webpack.ProvidePlugin({

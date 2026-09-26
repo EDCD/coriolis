@@ -131,7 +131,7 @@ export function preEngineeredTooltip(translate, m, grp) {
         {translate('Pre-engineered with')}: {m.preEngineered.blueprints.map(bp => {
           const blueprint = getBlueprint(bp, m);
           return translate(blueprint.name);
-        }).join(' + ')} {translate('grade')} {m.preEngineered.grade}
+        }).join(' + ')} {translate('grade')} {m.blueprint && m.blueprint.grade ? m.blueprint.grade : m.preEngineered.grade}
       </div>
       <table width='100%'>
         <thead>
@@ -455,7 +455,16 @@ export function setQualityCB(blueprint, quality, cb) {
   const features = blueprint.grades[blueprint.grade].features;
   for (const featureName in features) {
     let value;
-    if (Modifications.modifications[featureName].higherbetter) {
+    const modification = Modifications.modifications[featureName];
+
+    // Object-type modifications (e.g. damagedist) are passed through directly
+    // as they represent an overwrite value, not a min/max range to interpolate.
+    if (modification.type === 'object') {
+      cb(featureName, features[featureName]);
+      continue;
+    }
+
+    if (modification.higherbetter) {
       // Higher is better, but is this making it better or worse?
       if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
         value = features[featureName][1] + ((features[featureName][0] - features[featureName][1]) * quality);
@@ -471,9 +480,9 @@ export function setQualityCB(blueprint, quality, cb) {
       }
     }
 
-    if (Modifications.modifications[featureName].type == 'percentage') {
+    if (modification.type == 'percentage') {
       value = value * 10000;
-    } else if (Modifications.modifications[featureName].type == 'numeric') {
+    } else if (modification.type == 'numeric') {
       value = value * 100;
     }
 

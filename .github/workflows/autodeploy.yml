@@ -1,107 +1,209 @@
-# This is a basic deployment workflow triggered by pushes to the beta and live branches.
+# ---------------------------------------------------------------------------
+# Alpha Build & Deploy
+#
+# Triggered automatically when a PR is merged into the 'alpha' branch.
+# Spins up the EC2 builder, builds the app, uploads the artifact to GCP,
+# deploys to alpha.coriolis.io, and marks the pipeline as ready for
+# promotion to beta.
+#
+# State tracking:
+#   - Creates git tag 'pipeline/alpha-deployed' on success.
+#   - Stores the source (feature) branch name in a pipeline state file
+#     in the GCP bucket so that promote-to-live can later merge it into
+#     develop and delete it.
+# ---------------------------------------------------------------------------
+name: "Alpha: Build & Deploy"
 
-name: Auto-Deploy 'beta/live' Branch to beta.coliolis.io or coriolis.io
-
-# Controls when the action will run. Workflow runs when the alpha branch receives a push event
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - alpha
-      - beta
-      - live
-# Always use the branch that received the push event.
-# This works for both direct pushes and PR merges.
+
+permissions:
+  contents: write
+  pull-requests: read
+
 env:
-  BRANCH_NAME: ${{ github.ref_name }}
+  BRANCH_NAME: alpha
   TARGET_ZIP: build.zip
   BUCKET_FOLDER: build
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
-  wake-builder:
-    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+  # ------------------------------------------------------------------ #
+  # Detect the feature branch that was merged into alpha               #
+  # ------------------------------------------------------------------ #
+  detect-feature-branch:
+    # Only run if the PR was actually merged, not just closed
+    if: github.event.pull_request.merged == true
+    runs-on: [self-hosted, fleetdom, OnPrem, Linux, X64, goxhillit]
+    outputs:
+      feature_branch: ${{ steps.find.outputs.branch }}
     steps:
-    - name: Wake the Builder
-      shell: bash
-      run: |
-        /usr/local/bin/stop-start-builder.sh start
+      - name: Checkout alpha
+        uses: actions/checkout@v6
+        with:
+          ref: alpha
+          fetch-depth: 1
+
+      - name: Find merged feature branch
+        id: find
+        shell: bash
+        run: |
+          FEATURE="${{ github.event.pull_request.head.ref }}"
+          echo "PR head branch: $FEATURE"
+
+          # Skip known non-feature branches
+          if [ "$FEATURE" == "beta" ] || [ "$FEATURE" == "live" ] || [ "$FEATURE" == "develop" ] || [ "$FEATURE" == "alpha" ]; then
+            echo "::warning::Merged branch '$FEATURE' is not a feature branch. Setting to unknown."
+            FEATURE="unknown"
+          fi
+
+          echo "branch=$FEATURE" >> "$GITHUB_OUTPUT"
+          echo "::notice::Detected feature branch: $FEATURE"
+
+  # ------------------------------------------------------------------ #
+  # Wake the EC2 build server                                          #
+  # ------------------------------------------------------------------ #
+  # wake-builder:
+  #   runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+  #   steps:
+  #     - name: Wake the Builder
+  #       shell: bash
+  #       run: /usr/local/bin/stop-start-builder.sh start
+
+  # ------------------------------------------------------------------ #
+  # Build on EC2 and upload artifact to GCP                            #
+  # ------------------------------------------------------------------ #
   build:
-    needs: wake-builder
-    runs-on: [self-hosted, aws, brapps, build]
+    # needs: wake-builder
+    # runs-on: [self-hosted, aws, brapps, build]
+    runs-on: [self-hosted, fleetdom, OnPrem, Linux, X64, goxhillit]
     steps:
       - name: Download the code
         shell: bash
         run: |
-          rm -Rf ./coriolis
-          rm -Rf ./coriolis-data
+          rm -Rf ./coriolis ./coriolis-data
           git clone https://github.com/Brighter-Applications/coriolis.git --single-branch --branch ${BRANCH_NAME}
           git clone https://github.com/Brighter-Applications/coriolis-data.git --single-branch --branch ${BRANCH_NAME}
+
       - name: Build the code
         shell: bash
         run: |
           cd ./coriolis-data
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
-          rm -Rf node_modules package-lock.json
+          # coriolis-data has no committed package-lock.json; a plain install is fine
+          # as it only runs data generation and has no build-toolchain sensitivity.
+          rm -Rf node_modules
           npm install --legacy-peer-deps 2>&1
           npm start
           cd ../coriolis
-          rm -Rf node_modules package-lock.json
-          npm install --legacy-peer-deps 2>&1
+          # IMPORTANT: do NOT delete package-lock.json. Deleting it lets the caret
+          # version ranges in package.json float to newer webpack/plugin releases at
+          # build time (e.g. webpack 5.110 vs the locked 5.102), which broke CSS
+          # extraction (MiniCssExtractPlugin produced orphan modules and emitted no
+          # stylesheet), resulting in an unstyled site. `npm ci` installs the exact
+          # versions from the committed lockfile so CI builds match local builds.
+          rm -Rf node_modules
+          npm ci --legacy-peer-deps 2>&1
           npm run build 2>&1
-      - name: Zip the code
-        shell: bash
-        run: |
 
-          zip -r ./${TARGET_ZIP} ./coriolis/build/*
+      - name: Zip the build
+        shell: bash
+        run: zip -r ./${TARGET_ZIP} ./coriolis/build/*
+
       - name: Authorize GCP
         uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.CORIOLIS_GCP_SA_KEY }}
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v3
         with:
           version: '>=363.0.0'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-      - name: Upload to Google Cloud Storage
-        run: |-
-          TARGET_ZIP=${{ env.TARGET_ZIP }}
+
+      - name: Upload build artifact to GCP
+        run: |
           BUCKET_PATH=${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}
-          EXTENSION="${TARGET_ZIP##*.}"
-          FILENAME="${TARGET_ZIP%.*}"
-          LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
-          gsutil cp ./$TARGET_ZIP gs://${BUCKET_PATH}/${LATEST_FILENAME}
-  sleep-builder:
-    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
-    needs: build
-    steps:
-    - name: Sleep the Builder
-      shell: bash
-      run: |
-        /usr/local/bin/stop-start-builder.sh stop
+          gsutil cp ./${TARGET_ZIP} gs://${BUCKET_PATH}/build_latest.zip
+
+  # ------------------------------------------------------------------ #
+  # Stop the EC2 build server                                          #
+  # ------------------------------------------------------------------ #
+  # sleep-builder:
+  #   runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+  #   needs: build
+  #   if: ${{ always() }}
+  #   steps:
+  #     - name: Sleep the Builder
+  #       shell: bash
+  #       run: /usr/local/bin/stop-start-builder.sh stop
+
+  # ------------------------------------------------------------------ #
+  # Deploy to alpha.coriolis.io                                        #
+  # ------------------------------------------------------------------ #
   deploy:
     runs-on: [self-hosted, Linux, X64, aws, brapps, web]
-    needs: build
+    needs: [build, detect-feature-branch]
     steps:
       - name: Authorize GCP
         uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.CORIOLIS_GCP_SA_KEY }}
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v3
         with:
           version: '>=363.0.0'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
+
       - name: Download and unzip the build
         shell: bash
         run: |
           rm -Rf ./*
-          EXTENSION="${TARGET_ZIP##*.}"
-          FILENAME="${TARGET_ZIP%.*}"
-          LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
-          gsutil cp gs://${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}/${LATEST_FILENAME} ${LATEST_FILENAME}
-          unzip ./${LATEST_FILENAME}
-      - name: Move the build to the web server
+          BUCKET_PATH=${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}
+          gsutil cp gs://${BUCKET_PATH}/build_latest.zip build_latest.zip
+          unzip ./build_latest.zip
+
+      - name: Deploy to alpha.coriolis.io
         shell: bash
         run: |
-          if [ ${{ env.BRANCH_NAME }} == "beta" ]; then rsync -av --omit-dir-times --no-perms --delete --exclude='.git/' --exclude='.github/' ./coriolis/build/* /var/www/beta.coriolis.io/; elif [ ${{ env.BRANCH_NAME }} == "alpha" ]; then rsync -av --omit-dir-times --no-perms --delete --exclude='.git/' --exclude='.github/' ./coriolis/build/* /var/www/alpha.coriolis.io/; else rsync -av --omit-dir-times --no-perms --delete --exclude='.git/' --exclude='.github/' ./coriolis/build/* /var/www/coriolis.io/; fi
+          echo "Deploying to alpha.coriolis.io"
+          rsync -av --omit-dir-times --no-perms --delete \
+            --exclude='.git/' --exclude='.github/' \
+            ./coriolis/build/* /var/www/alpha.coriolis.io/
 
+  # ------------------------------------------------------------------ #
+  # Mark pipeline state: alpha deployed, ready for beta promotion      #
+  # ------------------------------------------------------------------ #
+  mark-alpha-deployed:
+    runs-on: [self-hosted, fleetdom, OnPrem, Linux, X64, goxhillit]
+    needs: [deploy, detect-feature-branch]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          ref: alpha
+          fetch-depth: 1
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Tag pipeline state
+        shell: bash
+        env:
+          FEATURE_BRANCH: ${{ needs.detect-feature-branch.outputs.feature_branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Remove stale pipeline tags
+          git push origin --delete refs/tags/pipeline/alpha-deployed 2>/dev/null || true
+          git push origin --delete refs/tags/pipeline/beta-deployed 2>/dev/null || true
+          git push origin --delete refs/tags/pipeline/live-deployed 2>/dev/null || true
+
+          # Create new alpha-deployed tag with feature branch info
+          git tag -a pipeline/alpha-deployed -m "feature-branch: ${FEATURE_BRANCH}" -f
+          git push origin pipeline/alpha-deployed --force
+
+          echo "::notice::Pipeline state set — alpha deployed (feature branch: ${FEATURE_BRANCH}). Ready for 'Promote to Beta'."

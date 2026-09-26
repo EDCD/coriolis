@@ -18,7 +18,7 @@ Coriolis was created using assets and imagery from Elite: Dangerous, with the pe
 
 CMDR-Coriolis is currently a closed source app while it goes through its initial development stages. My aim is to open-source it eventually alongside Coriolis in EDCD. Whilst it could be considered 'part' of Coriolis, it is in fact a Django application, where Coriolis is written in NodeJS, using the React framework.
 
-[Read the development guide for third party developers on how to use the CMDR-Coriolis API to send CMDR Ship, Module and Material data to CMDR-Coriolis](https://github.com/Brighter-Applications/coriolis/CMDR.md)
+[Read the development guide for third party developers on how to use the CMDR-Coriolis API to send CMDR Ship, Module and Material data to CMDR-Coriolis](https://github.com/Brighter-Applications/coriolis/blob/develop/CMDR.md)
 
 ## Development
 

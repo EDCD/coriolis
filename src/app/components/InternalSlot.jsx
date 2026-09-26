@@ -2,7 +2,7 @@ import React from 'react';
 import cn from 'classnames';
 import Slot from './Slot';
 import Persist from '../stores/Persist';
-import { ListModifications, Modified, CommunityGoalSmall, TechBrokerSmall, PowerPlaySmall } from './SvgIcons';
+import { ListModifications, Modified, CommunityGoalSmall, TechBrokerSmall, PowerPlaySmall, MercCoinSmall, StarHollow, StarFilled } from './SvgIcons';
 import { Modifications } from 'coriolis-data/dist';
 import { stopCtxPropagation } from '../utils/UtilityFunctions';
 import { getBlueprint, blueprintTooltip } from '../utils/BlueprintFunctions';
@@ -26,11 +26,20 @@ export default class InternalSlot extends Slot {
       return <PowerPlaySmall className='powerplay' />;
     }
 
+    // Check for Merc Coin modules
+    if (mod.mercModule) {
+      return <MercCoinSmall className='merccoin' />;
+    }
+
     // Then check for pre-engineered modules (CG or Tech Broker)
     if (!mod.preEngineered) return null;
 
     if (mod.preEngineered.availability === 'CG') {
       return <CommunityGoalSmall className='community' />;
+    }
+
+    if (mod.preEngineered.availability === 'MercCoin') {
+      return <MercCoinSmall className='merccoin' />;
     }
 
     if (typeof mod.preEngineered.availability === 'undefined') {
@@ -68,12 +77,12 @@ export default class InternalSlot extends Slot {
         if (m.preEngineered && m.preEngineered.blueprints) {
           const blueprintNames = _.split(m.preEngineered.blueprints, ',');
           const blueprints = blueprintNames.map(name => getBlueprint(name.trim(), m));
-          const blueprintHeader = blueprints.map(bp => <div className='blueprintList' key={bp.name}>{`Blueprint: ${translate(bp.name)} ${translate('Grade:')} ${m.preEngineered.grade}`}</div>);
+          const blueprintHeader = blueprints.map(bp => <div className='blueprintList' key={bp.name}>{`Blueprint: ${translate(bp.name)} ${translate('Grade:')} ${m.blueprint.grade || m.preEngineered.grade}`}</div>);
 
           if (m.blueprint.special && m.blueprint.special.id >= 0) {
             blueprintHeader.push(<div className='blueprintList' key={m.blueprint.special.name}>{`Experimental: ${translate(m.blueprint.special.name)}`}</div>);
           }
-          const blueprintGrades = blueprints.map(bp => bp.grades[m.preEngineered.grade]);
+          const blueprintGrades = blueprints.map(bp => bp.grades[m.blueprint.grade || m.preEngineered.grade]);
           modTT = (
             <div>
               {blueprintHeader}
@@ -96,20 +105,26 @@ export default class InternalSlot extends Slot {
       }
 
       let cgttip = '';
-      // Get availability icon (CG, Tech Broker, or PowerPlay)
+      // Get availability icon (CG, Tech Broker, PowerPlay, or Merc Coin)
       const availabilityIcon = this._getAvailabilityIcon(m);
       if (m && (m.powerplay === 'True' || m.powerplay === true)) {
         cgttip = 'PowerPlay Module';
       }
+      else if (m && m.mercModule) {
+        cgttip = 'Merc Coin Module';
+      }
       else if (m && m.preEngineered && m.preEngineered.availability === 'CG') {
         cgttip = 'Community Goal Module';
+      }
+      else if (m && m.preEngineered && m.preEngineered.availability === 'MercCoin') {
+        cgttip = 'Merc Coin Module';
       }
       else if (m && m.preEngineered && m.preEngineered.availability === undefined) {
         cgttip = 'Tech Broker Module';
       }
 
       let mass = m.getMass() || m.get('cargo') || m.fuel || 0;
-      if (m.cargo) mass = Math.floor(mass);  // Cargo capacity is always an integer
+      if (m.cargo) mass = Math.round(mass);  // Cargo capacity is always an integer
       const className = cn('details', enabled ? '' : 'disabled');
 
       return <div className={className} draggable='true' onDragStart={drag} onDragEnd={drop}>
@@ -158,6 +173,7 @@ export default class InternalSlot extends Slot {
           { m.getInfo() ? <div className='l'>{translate(m.getInfo())}</div> : null }
 	  { m && hasModifications ? <div className='r' tabIndex="0" ref={ modButton => this.modButton = modButton }><button tabIndex="-1" onClick={(e) => this._toggleModifications(e)} onContextMenu={stopCtxPropagation} onMouseOver={termtip.bind(null, 'modifications')} onMouseOut={tooltip.bind(null, null)}><ListModifications /></button></div> : null }
         </div>
+        { m && hasModifications && m.mods && Object.keys(m.mods).length > 0 ? <div className='favourite-star' onClick={(e) => { e.stopPropagation(); Persist.toggleFavourite(m); this.forceUpdate(); }} onMouseOver={termtip.bind(null, Persist.isFavourite(m) ? 'Remove from favourites' : 'Add to favourites')} onMouseOut={tooltip.bind(null, null)}>{Persist.isFavourite(m) ? <StarFilled className='star-icon star-filled' /> : <StarHollow className='star-icon star-hollow' />}</div> : null }
       </div>;
     } else {
       return <div className={'empty'}>{translate('empty')}</div>;

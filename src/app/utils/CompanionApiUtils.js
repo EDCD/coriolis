@@ -379,15 +379,39 @@ export function shipFromJson(json) {
   // Add internal compartments
   let internalSlotNum = 1;
   let militarySlotNum = 1;
+  let cargoSlotNum = 1;
+  let passengerSlotNum = 1;
+  let limpetSlotNum = 1;
+  let fighterSlotNum = 1;
   for (let i in shipTemplate.slots.internal) {
-    const isMilitary = isNaN(shipTemplate.slots.internal[i]) ? shipTemplate.slots.internal[i].name == 'Military' : false;
+    const slotDef = shipTemplate.slots.internal[i];
+    const isNamedSlot = isNaN(slotDef);
+    const slotName = isNamedSlot ? slotDef.name : null;
 
-    // The internal slot might be a standard or a military slot.  Military slots have a different naming system
+    // Named slots have their own naming conventions separate from the standard SlotNN_SizeN pattern
     let internalSlot = null;
-    if (isMilitary) {
+    if (slotName === 'Military') {
       const internalName = 'Military0' + militarySlotNum;
       internalSlot = json.modules[internalName];
       militarySlotNum++;
+    } else if (slotName === 'Cargo') {
+      const internalName = 'Cargo0' + cargoSlotNum;
+      internalSlot = json.modules[internalName];
+      cargoSlotNum++;
+    } else if (slotName === 'MkIIPassenger') {
+      const internalName = 'Passenger0' + passengerSlotNum;
+      internalSlot = json.modules[internalName];
+      passengerSlotNum++;
+    } else if (slotName === 'Limpets') {
+      const internalName = 'LimpetController0' + limpetSlotNum;
+      internalSlot = json.modules[internalName];
+      limpetSlotNum++;
+    } else if (slotName === 'Fighter') {
+      const internalName = 'FighterBay0' + fighterSlotNum;
+      internalSlot = json.modules[internalName];
+      fighterSlotNum++;
+    } else if (slotName === 'PlanetaryApproachSuite') {
+      internalSlot = json.modules['PlanetaryApproachSuite'];
     } else {
       // Slot numbers are not contiguous so handle skips.
       while (internalSlot === null && internalSlotNum < 99) {
@@ -405,6 +429,13 @@ export function shipFromJson(json) {
 
     if (!internalSlot) {
       // This can happen with old imports that don't contain new slots
+      // Default PAS slot to Advanced Planetary Approach Suite (Odyssey)
+      if (slotName === 'PlanetaryApproachSuite') {
+        let apas = _moduleFromEdId(128975719);
+        if (apas) {
+          ship.use(ship.internal[i], apas, true);
+        }
+      }
     } else if (!internalSlot.module) {
       // No module
     } else {

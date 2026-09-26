@@ -8,6 +8,8 @@ import { getLanguage } from './i18n/Language';
 import Persist from './stores/Persist';
 
 import Announcement from './components/Announcement';
+import AnnouncementBanner from './components/AnnouncementBanner';
+import announcementsData from './data/announcements.json';
 import Header from './components/Header';
 import Tooltip from './components/Tooltip';
 import ModalExport from './components/ModalExport';
@@ -17,6 +19,7 @@ import ModalPermalink from './components/ModalPermalink';
 import * as CompanionApiUtils from './utils/CompanionApiUtils';
 import * as JournalUtils from './utils/JournalUtils';
 import AboutPage from './pages/AboutPage';
+import ChangelogPage from './pages/ChangelogPage';
 import NotFoundPage from './pages/NotFoundPage';
 import OutfittingPage from './pages/OutfittingPage';
 import ComparisonPage from './pages/ComparisonPage';
@@ -52,16 +55,39 @@ export default class Coriolis extends React.Component {
     this._importBuild = this._importBuild.bind(this);
 
     this.emitter = new EventEmitter();
+    // Track the most recent pointer type (mouse, touch, pen) so we can
+    // suppress tooltips for touch interactions without permanently blocking
+    // them on hybrid devices that report touch capability.
+    this._lastPointerType = 'mouse';
     this.state = {
       noTouch: !('ontouchstart' in window || navigator.msMaxTouchPoints || navigator.maxTouchPoints),
       page: null,
-      // Announcements must have an expiry date in format "YYYY-MM-DDTHH:MM:SSZ"
-      announcements: [{expiry: "2026-04-28T00:00:00Z", text: "Lynx Highliner added!"}],
+      // Announcements loaded from generated data (see generate-announcements.js)
+      announcements: announcementsData,
+      showAnnouncementBanner: false,
+      pulseExpired: false,
 
       language: getLanguage(Persist.getLangCode()),
       route: {},
       sizeRatio: Persist.getSizeRatio()
     };
+
+    // Show banner only for the newest announcement if it has not been seen yet
+    const validAnnouncements = this.state.announcements.slice(0, 7);
+    if (validAnnouncements.length > 0) {
+      let seenIds = [];
+      try {
+        seenIds = JSON.parse(localStorage.getItem('seenAnnouncementIds') || '[]');
+      } catch (e) { seenIds = []; }
+      const newest = validAnnouncements[0];
+      if (!seenIds.includes(newest.id)) {
+        this.state.showAnnouncementBanner = true;
+      }
+    }
+
+    // Stop bell pulse after 10s regardless of state
+    setTimeout(() => this.setState({ pulseExpired: true }), 10000);
+
     Router('', (r) => this._setPage(ShipyardPage, r));
     Router('/import?', (r) => this._importBuild(r));
     Router('/import/:data', (r) => this._importBuild(r));
@@ -72,6 +98,7 @@ export default class Coriolis extends React.Component {
     Router('/comparison?', (r) => this._setPage(ComparisonPage, r));
     Router('/comparison/:code', (r) => this._setPage(ComparisonPage, r));
     Router('/about', (r) => this._setPage(AboutPage, r));
+    Router('/changelog', (r) => this._setPage(ChangelogPage, r));
     Router('*', (r) => this._setPage(null, r));
   }
 
@@ -274,6 +301,20 @@ export default class Coriolis extends React.Component {
   }
 
   /**
+   * Returns true if any announcement in the visible slice has not been seen.
+   * Used to control the bell pulse independently of the banner state.
+   */
+  _hasUnseenAnnouncements() {
+    const visible = this.state.announcements.slice(0, 7);
+    if (visible.length === 0) return false;
+    let seenIds = [];
+    try {
+      seenIds = JSON.parse(localStorage.getItem('seenAnnouncementIds') || '[]');
+    } catch (e) { seenIds = []; }
+    return visible.some(a => !seenIds.includes(a.id));
+  }
+
+  /**
    * Sets the open menu state
    * @param  {string|object} currentMenu The reference to the current menu
    */
@@ -301,7 +342,14 @@ export default class Coriolis extends React.Component {
   _tooltip(content, rect, opts) {
     if (!content && this.state.tooltip) {
       this.setState({ tooltip: null });
-    } else if (content && Persist.showTooltips() && this.state.noTouch) {
+    } else if (content && Persist.showTooltips()) {
+      // Allow tooltips unless the last interaction was a touch event.
+      // This avoids the old noTouch gate which permanently blocked tooltips
+      // on hybrid devices (laptops with touchscreens) even when using a mouse.
+      // Instead we track the most recent pointer type and suppress only for touch.
+      if (this._lastPointerType === 'touch') {
+        return;
+      }
       this.setState({ tooltip: <Tooltip rect={rect} options={opts}>{content}</Tooltip> });
     }
   }
@@ -400,11 +448,22 @@ export default class Coriolis extends React.Component {
     window.addEventListener('resize', () => this.emitter.emit('windowResize'));
     document.getElementById('coriolis').addEventListener('scroll', () => this._tooltip());
     document.addEventListener('keydown', this._keyDown);
+    // Track pointer type so we can distinguish mouse from touch at tooltip-show time.
+    // pointerdown fires before the synthetic mouseOver, giving us an accurate read.
+    window.addEventListener('pointerdown', (e) => { this._lastPointerType = e.pointerType; });
+    window.addEventListener('pointerenter', (e) => { this._lastPointerType = e.pointerType; }, true);
     Persist.addListener('language', this._onLanguageChange);
     Persist.addListener('sizeRatio', this._onSizeRatioChange);
 
     // Listen for postMessage from cmdr.coriolis.io link popup
     window.addEventListener('message', this._onCmdrLinkMessage.bind(this));
+
+    // Listen for announcements-seen events (e.g. when the user opens the
+    // changelog page). Clears the bell pulse and hides the banner.
+    window.addEventListener('announcementsSeen', () => {
+      this.setState({ showAnnouncementBanner: false });
+      this.forceUpdate();
+    });
 
     // Check for redirect-based CMDR link data in the URL hash
     // (fallback when window.opener is null in the popup)
@@ -419,6 +478,26 @@ export default class Coriolis extends React.Component {
         syncAllBuilds(link);
       }
     }
+  }
+
+  /**
+   * Build the URL for the version link in the footer.
+   * On alpha/beta sites, links to the relevant branch.
+   * On the live site (or anything else), links to the release tag.
+   * @return {string} GitHub URL
+   */
+  _getVersionUrl() {
+    const repo = 'https://github.com/Brighter-Applications/coriolis';
+    const host = window.location.hostname.toLowerCase();
+
+    if (host.startsWith('alpha.')) {
+      return `${repo}/tree/alpha`;
+    }
+    if (host.startsWith('beta.')) {
+      return `${repo}/tree/beta`;
+    }
+    // Live site — link to the specific release
+    return `${repo}/releases/tag/v${window.CORIOLIS_VERSION}`;
   }
 
   /**
@@ -448,25 +527,26 @@ export default class Coriolis extends React.Component {
       <AppContext.Provider value={contextValue}>
         <div style={{ minHeight: '100%' }} onClick={() => { this._closeMenu(); this._tooltip(); }}
              className={this.state.noTouch ? 'no-touch' : null}>
-          <Header announcements={this.state.announcements} appCacheUpdate={this.state.appCacheUpdate}
+          <Header announcements={this.state.announcements} hasUnseenAnnouncements={!this.state.pulseExpired && this._hasUnseenAnnouncements()} appCacheUpdate={this.state.appCacheUpdate}
+                  onAnnouncementsSeen={() => {
+                    // Bell click no longer marks everything as seen -
+                    // individual entries are tracked per-id (banner, changelog).
+                    this.setState({ showAnnouncementBanner: false });
+                  }}
                   currentMenu={currentMenu}/>
-          <div className="announcement-container">{this.state.announcements.map((a, index) => <Announcement
-            key={index}
-            text={a.text}/>)}</div>
+          <div className="announcement-container"></div>
+          {this.state.showAnnouncementBanner && <AnnouncementBanner
+            announcement={this.state.announcements[0]}
+            onDismiss={() => this.setState({ showAnnouncementBanner: false })}
+          />}
           {this.state.error ? this.state.error : this.state.page ? React.createElement(this.state.page, { currentMenu }) :
             <NotFoundPage/>}
           {this.state.modal}
           {this.state.tooltip}
           <footer>
             <div className="right cap">
-              <a href="https://github.com/EDCD/coriolis" target="_blank" rel="noopener noreferrer"
+              <a href={this._getVersionUrl()} target="_blank" rel="noopener noreferrer"
                  title="Coriolis Github Project">{window.CORIOLIS_VERSION} - {window.CORIOLIS_DATE}</a>
-              <br/>
-              <a
-                href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'}
-                target="_blank" rel="noopener noreferrer" title={'Coriolis Commits since' + window.CORIOLIS_DATE}>Commits
-                since last release
-                ({window.CORIOLIS_DATE})</a>
             </div>
           </footer>
         </div>

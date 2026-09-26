@@ -132,6 +132,9 @@ export default class ModuleSet {
       if (key == 'fh' && !(ship.fighterHangars && ship.fighterHangars  === true)) {
         continue;
       }
+      if (key == 'fhmkii' && !(ship.vesselHangarsMkII && ship.vesselHangarsMkII === true)) {
+        continue;
+      }
       let data = filter(this.internal[key], c, 0, this.mass);
       if (data.length) {  // If group is not empty
         o[key] = data;

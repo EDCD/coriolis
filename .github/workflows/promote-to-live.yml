@@ -1,0 +1,279 @@
+# ---------------------------------------------------------------------------
+# Promote to Live
+#
+# Manually triggered after a successful beta deployment.
+# - Verifies that beta has been deployed (pipeline/beta-deployed tag exists)
+# - Merges beta → live to keep the branch up to date
+# - Downloads the existing build artifact from GCP (no rebuild needed)
+# - Deploys to coriolis.io
+# - Merges the original feature branch into 'develop'
+# - Deletes the feature branch
+# - Cleans up pipeline state tags
+# ---------------------------------------------------------------------------
+name: "Live: Promote from Beta"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed for merging branches, deleting branches, and tags
+
+env:
+  TARGET_ZIP: build.zip
+  BUCKET_FOLDER: build
+
+jobs:
+  # ------------------------------------------------------------------ #
+  # Gate: verify beta has been deployed                                #
+  # ------------------------------------------------------------------ #
+  check-pipeline-state:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    outputs:
+      feature_branch: ${{ steps.check.outputs.feature_branch }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Verify beta-deployed tag exists
+        id: check
+        shell: bash
+        run: |
+          if ! git rev-parse pipeline/beta-deployed >/dev/null 2>&1; then
+            echo "::error::No beta deployment found. Promote to beta first."
+            exit 1
+          fi
+
+          FEATURE=$(git tag -l --format='%(contents:subject)' pipeline/beta-deployed | grep -oP 'feature-branch: \K.*' || echo "unknown")
+          echo "feature_branch=$FEATURE" >> "$GITHUB_OUTPUT"
+          echo "::notice::Beta deployment found. Feature branch: $FEATURE. Proceeding with promotion to live."
+
+  # ------------------------------------------------------------------ #
+  # Gate: verify the version number has been bumped                    #
+  # ------------------------------------------------------------------ #
+  check-version:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: check-pipeline-state
+    steps:
+      - name: Checkout beta branch
+        uses: actions/checkout@v6
+        with:
+          ref: beta
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Verify version has been updated
+        shell: bash
+        run: |
+          # Read the version from beta's package.json
+          BETA_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' package.json)
+          echo "Version in beta package.json: ${BETA_VERSION}"
+
+          # Find the latest v* release tag
+          LATEST_TAG=$(git tag -l 'v*' --sort=-v:refname | head -n 1 || echo "")
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "::notice::No existing release tags found. First release — version check passed."
+          else
+            LATEST_VERSION="${LATEST_TAG#v}"
+            echo "Latest release tag: ${LATEST_TAG} (version: ${LATEST_VERSION})"
+
+            if [ "$BETA_VERSION" == "$LATEST_VERSION" ]; then
+              echo ""
+              echo "::error::Version ${BETA_VERSION} in package.json has NOT been updated since the last release (${LATEST_TAG})."
+              echo "::error::Please bump the version in package.json AND add a matching entry in ChangeLog.md on your feature branch, PR it into alpha, and promote to beta again before promoting to live."
+              echo ""
+              exit 1
+            fi
+
+            echo "::notice::Version check passed — ${BETA_VERSION} is newer than last release ${LATEST_TAG}."
+          fi
+
+          # Check that ChangeLog.md contains an entry for this version
+          # The ChangeLog uses '#X.Y.Z' as version headers
+          if ! grep -qE "^#${BETA_VERSION}(\\s|$)" ChangeLog.md; then
+            echo ""
+            echo "::error::ChangeLog.md does not contain an entry for version ${BETA_VERSION}."
+            echo "::error::Please add a '#${BETA_VERSION}' section to ChangeLog.md on your feature branch, PR it into alpha, and promote to beta again before promoting to live."
+            echo ""
+            exit 1
+          fi
+
+          echo "::notice::ChangeLog.md contains an entry for version ${BETA_VERSION}. All pre-release checks passed."
+
+  # ------------------------------------------------------------------ #
+  # Merge beta → live                                                  #
+  # ------------------------------------------------------------------ #
+  merge-beta-to-live:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: check-version
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Update live to match beta
+        shell: bash
+        run: |
+          git fetch origin beta live
+          echo "Beta is at: $(git rev-parse origin/beta)"
+          echo "Live is at: $(git rev-parse origin/live)"
+          git push origin origin/beta:refs/heads/live --force
+          echo "Live now matches beta."
+
+  # ------------------------------------------------------------------ #
+  # Deploy to coriolis.io (no rebuild — use existing artifact)         #
+  # ------------------------------------------------------------------ #
+  deploy:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: merge-beta-to-live
+    steps:
+      - name: Authorize GCP
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.CORIOLIS_GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: '>=363.0.0'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Download and unzip the build
+        shell: bash
+        run: |
+          rm -Rf ./*
+          BUCKET_PATH=${{ secrets.CORIOLIS_GCP_TARGET_BUCKET }}/${{ env.BUCKET_FOLDER }}
+          gsutil cp gs://${BUCKET_PATH}/build_latest.zip build_latest.zip
+          unzip ./build_latest.zip
+
+      - name: Deploy to coriolis.io
+        shell: bash
+        run: |
+          echo "Deploying to coriolis.io (LIVE)"
+          rsync -av --omit-dir-times --no-perms --delete \
+            --exclude='.git/' --exclude='.github/' \
+            ./coriolis/build/* /var/www/coriolis.io/
+
+  # ------------------------------------------------------------------ #
+  # Merge feature branch → develop and clean up                       #
+  # ------------------------------------------------------------------ #
+  finalise-release:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: [deploy, check-pipeline-state]
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v6
+        with:
+          ref: develop
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Merge feature branch into develop and clean up
+        shell: bash
+        env:
+          FEATURE_BRANCH: ${{ needs.check-pipeline-state.outputs.feature_branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # --- Merge feature branch into develop ---
+          if [ "$FEATURE_BRANCH" != "unknown" ] && [ -n "$FEATURE_BRANCH" ]; then
+            # Check the feature branch still exists
+            if git ls-remote --exit-code --heads origin "$FEATURE_BRANCH" >/dev/null 2>&1; then
+              echo "Merging feature branch '$FEATURE_BRANCH' into develop"
+              git fetch origin "$FEATURE_BRANCH"
+              git merge "origin/$FEATURE_BRANCH" -m "Merge feature branch '${FEATURE_BRANCH}' into develop (release complete)"
+              git push origin develop
+
+              # Delete the feature branch
+              echo "Deleting feature branch '$FEATURE_BRANCH'"
+              git push origin --delete "$FEATURE_BRANCH"
+              echo "::notice::Feature branch '$FEATURE_BRANCH' merged into develop and deleted."
+            else
+              echo "::warning::Feature branch '$FEATURE_BRANCH' no longer exists on remote. Skipping merge into develop."
+            fi
+          else
+            echo "::warning::Could not determine feature branch name. Skipping merge into develop."
+          fi
+
+          # --- Clean up pipeline tags ---
+          git push origin --delete refs/tags/pipeline/beta-deployed 2>/dev/null || true
+          git push origin --delete refs/tags/pipeline/alpha-deployed 2>/dev/null || true
+          git push origin --delete refs/tags/pipeline/live-deployed 2>/dev/null || true
+
+  # ------------------------------------------------------------------ #
+  # Create a GitHub Release                                            #
+  # ------------------------------------------------------------------ #
+  create-release:
+    runs-on: [self-hosted, Linux, X64, aws, brapps, web]
+    needs: [finalise-release, check-pipeline-state]
+    steps:
+      - name: Checkout live
+        uses: actions/checkout@v6
+        with:
+          ref: live
+          fetch-depth: 0
+          token: ${{ secrets.DEPLOY_TOKEN }}
+
+      - name: Read version from package.json
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' package.json)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "::notice::Creating release for v${VERSION}"
+
+      - name: Create release tag and GitHub Release
+        shell: bash
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          FEATURE_BRANCH: ${{ needs.check-pipeline-state.outputs.feature_branch }}
+          REPO: ${{ github.repository }}
+        run: |
+          TAG="v${VERSION}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create an annotated tag on the live branch
+          git tag -a "$TAG" -m "Release ${TAG}" -f
+          git push origin "$TAG" --force
+
+          NOTES="## Coriolis ${TAG}
+
+          Deployed to [coriolis.io](https://coriolis.io) on $(date -u '+%Y-%m-%d %H:%M UTC').
+
+          **Feature branch:** \`${FEATURE_BRANCH}\`"
+
+          # Check if release already exists
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${DEPLOY_TOKEN}" \
+            "https://api.github.com/repos/${REPO}/releases/tags/${TAG}")
+
+          if [ "$HTTP_CODE" == "200" ]; then
+            echo "Release $TAG already exists — updating"
+            RELEASE_ID=$(curl -s \
+              -H "Authorization: token ${DEPLOY_TOKEN}" \
+              "https://api.github.com/repos/${REPO}/releases/tags/${TAG}" | grep -oP '"id"\s*:\s*\K\d+' | head -1)
+            curl -s -X PATCH \
+              -H "Authorization: token ${DEPLOY_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "https://api.github.com/repos/${REPO}/releases/${RELEASE_ID}" \
+              -d "$(printf '{"tag_name":"%s","name":"Coriolis %s","body":"%s","target_commitish":"live"}' "$TAG" "$TAG" "$(echo "$NOTES" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')")"
+          else
+            echo "Creating new release $TAG"
+            curl -s -X POST \
+              -H "Authorization: token ${DEPLOY_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "https://api.github.com/repos/${REPO}/releases" \
+              -d "$(printf '{"tag_name":"%s","name":"Coriolis %s","body":"%s","target_commitish":"live"}' "$TAG" "$TAG" "$(echo "$NOTES" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')")"
+          fi
+
+          echo "::notice::Release ${TAG} created — https://github.com/${REPO}/releases/tag/${TAG}"

@@ -153,8 +153,12 @@ export default class Module {
    */
   set(name, value, valueIsWithSpecial) {
     const modification = Modifications.modifications[name];
-    if (!modification || isNaN(value)) {
+    if (!modification) {
       // TODO: throw?
+      return;
+    }
+    // Object-type modifications (e.g. damagedist) pass objects, not numbers
+    if (modification.type !== 'object' && isNaN(value)) {
       return;
     }
 

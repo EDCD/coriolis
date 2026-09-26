@@ -3,9 +3,17 @@ import PropTypes from 'prop-types';
 import TranslatedComponent from './TranslatedComponent';
 import request from 'superagent';
 import Persist from '../stores/Persist';
-import { fetchBuilds, fetchMaterials, fetchShips } from '../utils/CmdrApi';
+import { fetchBuilds, fetchMaterials, fetchShips, fetchProfile } from '../utils/CmdrApi';
+import { MercCoinSmall, ShoppingIcon } from './SvgIcons';
 const zlib = require('zlib');
 const base64url = require('base64url');
+
+/**
+ * Ingredient name used for the operations currency in blueprint component
+ * lists. Merc Coin is a currency, not a material, so it is tracked separately
+ * from the Raw / Manufactured / Encoded material columns.
+ */
+const MERC_COIN = 'Merc Coin';
 
 /**
  * Material display name → category lookup.
@@ -82,6 +90,11 @@ export default class ModalShoppingList extends TranslatedComponent {
       expandedRaw: false,
       expandedMfg: false,
       expandedEnc: false,
+      // Merc Coin (operations currency) and credits.
+      // *Needed* is the full build requirement for an unlinked build, or the
+      // shortfall (required - owned, floored at 0) for a linked build.
+      mercCoinNeeded: 0,
+      creditsNeeded: 0,
     };
   }
 
@@ -113,7 +126,8 @@ export default class ModalShoppingList extends TranslatedComponent {
       fetchBuilds(link),
       fetchMaterials(link),
       fetchShips(link),
-    ]).then(([buildsResp, matsResp, shipsResp]) => {
+      fetchProfile(link),
+    ]).then(([buildsResp, matsResp, shipsResp, profileResp]) => {
       const builds = buildsResp.builds || [];
       const shipId = this.props.ship.id;
       const buildName = this.props.buildName;
@@ -141,13 +155,18 @@ export default class ModalShoppingList extends TranslatedComponent {
         }
       }
 
+      // Owned currency from the CMDR profile (may be absent on older backends).
+      const profile = profileResp || {};
+      const ownedMercCoin = profile.mercCoins || 0;
+      const ownedCredits = profile.credits || 0;
+
       // Find the linked ship's loadout
       const ships = shipsResp.ships || [];
       const linkedShipId = linkedBuild.linkedShip?.id || linkedBuild.linkedShip;
       const linkedShip = ships.find(s => s.id === linkedShipId);
 
       // Compute remaining mats, comparing with the ship's current loadout
-      this._computeRemaining(inventory, linkedShip);
+      this._computeRemaining(inventory, linkedShip, ownedMercCoin, ownedCredits);
     }).catch(err => {
       console.warn('CMDR link check failed:', err);
     });
@@ -205,9 +224,13 @@ export default class ModalShoppingList extends TranslatedComponent {
    * @param {Object} inventory    { lowerName: count } Material inventory
    * @param {Object} linkedShip   Ship data from CMDR API (optional)
    */
-  _computeRemaining(inventory, linkedShip) {
+  _computeRemaining(inventory, linkedShip, ownedMercCoin = 0, ownedCredits = 0) {
     // Calculate materials needed only for modules that differ from the current ship
     const matsNeeded = this._calculateMaterialsForDifferences(linkedShip);
+
+    // Merc Coin is a currency, not a material — handle it separately.
+    const mercCoinRequired = matsNeeded[MERC_COIN] || 0;
+    delete matsNeeded[MERC_COIN];
 
     let raw = [], mfc = [], enc = [];
     for (const name in matsNeeded) {
@@ -225,7 +248,19 @@ export default class ModalShoppingList extends TranslatedComponent {
         else mfc.push(entry);
       }
     }
-    this.setState({ remainingRaw: raw, remainingMfg: mfc, remainingEnc: enc });
+
+    // Merc Coin / credits shortfall: what they still need to obtain on top of
+    // what they already hold, floored at 0 (shown even when 0).
+    const mercCoinNeeded = Math.max(0, mercCoinRequired - ownedMercCoin);
+    const creditsNeeded = Math.max(0, Math.round(this.props.ship.totalCost || 0) - ownedCredits);
+
+    this.setState({
+      remainingRaw: raw,
+      remainingMfg: mfc,
+      remainingEnc: enc,
+      mercCoinNeeded,
+      creditsNeeded,
+    });
   }
 
   /**
@@ -710,6 +745,11 @@ export default class ModalShoppingList extends TranslatedComponent {
         }
       }
     }
+    // Merc Coin is a currency, not a material — pull it out of the material
+    // map so it is not shown in the Manufactured column.
+    const mercCoinNeeded = mats[MERC_COIN] || 0;
+    delete mats[MERC_COIN];
+
     let matsString = '';
     let raw = [], mfc = [], enc = [];
     for (const i in mats) {
@@ -727,7 +767,18 @@ export default class ModalShoppingList extends TranslatedComponent {
       else if (cat === 'encoded') enc.push(entry);
       else mfc.push(entry);
     }
-    this.setState({ matsList: matsString, matsRaw: raw, matsMfg: mfc, matsEnc: enc, mats });
+    // For an unlinked build we show the full requirement: all the Merc Coin the
+    // build needs, and the full credit cost of the ship. When the build is
+    // linked, _computeRemaining() overrides these with the shortfall.
+    this.setState({
+      matsList: matsString,
+      matsRaw: raw,
+      matsMfg: mfc,
+      matsEnc: enc,
+      mats,
+      mercCoinNeeded,
+      creditsNeeded: Math.round(this.props.ship.totalCost || 0),
+    });
   }
 
   /**
@@ -794,6 +845,33 @@ export default class ModalShoppingList extends TranslatedComponent {
   }
 
   /**
+   * Render the Merc Coin + credits row shown beneath the material columns.
+   * Always renders both items (with their icons) even when the amount is 0.
+   * @return {React.Component} The currency row
+   */
+  _renderCurrencyRow() {
+    const { formats, units } = this.context.language;
+    const int = formats && formats.int ? formats.int : (v => v);
+    const cr = units && units.CR ? units.CR : 'CR';
+    return <div className='mats-currency'>
+      <table className='mats-table'><tbody>
+        <tr>
+          <td className='mat-name'>
+            <MercCoinSmall className='icon-inline merccoin' /> Merc Coin
+          </td>
+          <td className='mat-count'>{int(this.state.mercCoinNeeded)}</td>
+        </tr>
+        <tr>
+          <td className='mat-name'>
+            <ShoppingIcon className='icon-inline' /> Credits
+          </td>
+          <td className='mat-count'>{int(this.state.creditsNeeded)}{cr}</td>
+        </tr>
+      </tbody></table>
+    </div>;
+  }
+
+  /**
    * Render the modal
    * @return {React.Component} Modal Content
    */
@@ -821,6 +899,7 @@ export default class ModalShoppingList extends TranslatedComponent {
               <p>You have all the materials needed to complete this build!</p>
             )
           )}
+          {this._renderCurrencyRow()}
         </div>
       ) : (
         <div>
@@ -830,6 +909,7 @@ export default class ModalShoppingList extends TranslatedComponent {
             {this.renderColumn('Manufactured', this.state.matsMfg, 'expandedMfg', false)}
             {this.renderColumn('Encoded', this.state.matsEnc, 'expandedEnc', false)}
           </div>
+          {this._renderCurrencyRow()}
           <hr />
           <h3>CMDR Coriolis</h3>
           {this.state.cmdrLinked ? (
