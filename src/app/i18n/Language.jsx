@@ -68,6 +68,7 @@ export function getLanguage(langCode) {
     units: {
       ang: '°',                         // Angle
       CR: <u>{translate('CR')}</u>,     // Credits
+      MC: <u>{translate('MC')}</u>,     // Merc Coin
       kg: <u>{translate('kg')}</u>,     // Kilograms
       kgs: <u>{translate('kg/s')}</u>,  // Kilograms per second
       km: <u>{translate('km')}</u>,     // Kilometers

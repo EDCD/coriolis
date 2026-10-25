@@ -1,50 +1,50 @@
 {
   "type_6_transporter": {
-    "Cargo": "A0p0tdFal8d8s8f4-----04040303430101-.Iw18UA==.Aw18UA==.",
-    "Miner": "A0p5tdFal8d8s8f42l2l---040403451q0101-.Iw18UA==.Aw18UA==.",
-    "Hopper": "A0p0tdFal8d0s8f41717---030302024300--.Iw18UA==.Aw18UA==."
+    "Cargo": "B0p0tdFal8d8s8f4------04040303430101--.Iw18SQ==.Aw18SQ==.",
+    "Miner": "B0p5tdFal8d8s8f42l2l----040403451q0101--.Iw18SQ==.Aw18SQ==.",
+    "Hopper": "B0p0tdFal8d0s8f41717----030302024300---.Iw18SQ==.Aw18SQ==."
   },
   "type_7_transport": {
-    "Cargo": "A0p0tiFfliddsdf5--------0505040403480101--.Iw18eQ==.Aw18eQ==.",
-    "Miner": "A0pdtiFflid8sdf5--2l2l----0505041v03450000--.Iw18eQ==.Aw18eQ==."
+    "Cargo": "B0p0tiFfliddsdf5----------0505040403480101---.Iw18ZxA=.Aw18ZxA=.",
+    "Miner": "B0pdtiFflid8sdf5--2l2l------0505041v03450000---.Iw18ZxA=.Aw18ZxA=."
   },
   "federal_dropship": {
-    "Cargo": "A0pdtiFflnddsif4-1717------05040448--020201-.Iw18RQ==.Aw18RQ==."
+    "Cargo": "B0pdtiFflnddsif4-1717-------0504044802--0201--.Iw18ZxA=.Aw18ZxA=."
   },
   "asp": {
-    "Miner": "A2pftfFflidfskf50s0s24242l2l---04054a1q02022o27-.Iw18eQ==.Aw18eQ==."
+    "Miner": "B2pftfFflidfskf50s0s24242l2l---04054a1q02022o27--.Iw18RQ==.Aw18RQ==."
   },
   "imperial_clipper": {
-    "Cargo": "A0p5tiFflndisnf4--0s0s----0605450302020101-.Iw18WQ==.Aw18WQ==.",
-    "Dream": "A2pktkFflndpskf40v0v0s0s0404040n4k5n5d2b29292o--.AwRj4yWU1Yg=.CwBhCYy6YRigzPIA.",
-    "Current": "A0patkFflndfskf4-----------------.AwRj4yWU1Yg=.CwBhCYy6YRigzPIA."
+    "Cargo": "B0p5tiFflndisnf4--0s0s-----0605450302020101--.Iw18RQ==.Aw18RQ==.",
+    "Dream": "B2pktkFflndpskf40v0v0s0s0404040n-4k5n5d2b29292o---.AwRj4y2VvI==.CwBhCYy6ZBGKBmBIg===.",
+    "Current": "B0patkFflndfskf4-------------------.AwRj4y2VvI==.CwBhCYy6ZBGKBmBIg===."
   },
   "type_9_heavy": {
-    "Current": "A0patsFklndnsif6---------0706054a0303020224--.AwRj4yo5iA==.EwBhEYy6d6g=."
+    "Current": "B0patsFklndnsif6---------0706054a0303020224---.AwRj4yo5aA==.EwBhEYy6dmg=."
   },
   "python": {
-    "Cargo": "A0patnFflidsssf5---------050505040448020201-.Iw18eAMQ.Aw18RQ==.",
-    "Miner": "A0pktkFflidpspf50v0v0v2m2m0404--050505Ce4a1v02022o-.Iw18eAMQ.IwBhBYy6dkCYRA==.",
-    "Dream": "A2pptkFfliduspf50v0v0v27270404040m5n5n4f2d2d032t0201-.Iw1+gDByUA==.EwBhEYy6e0VEA===.",
-    "Missile": "A0pttoFjljdystf52f2g2d2ePh----04044j03---00--.Iw18eAMQ.Aw18RQ==."
+    "Cargo": "B0patnFflidsssf5---------050505040448020201--.Iw18eAMVA===.Aw18ZQ==.",
+    "Miner": "B0pktkFflidpspf50v0v0v2m2m0404--050505Ce4a1v02022o--.Iw18eAMVA===.IwBhBYy6dkCYxA==.",
+    "Dream": "B2pptkFfliduspf50v0v0v27270404040m5n5n4f2d2d032t0201--.Iw1+gDByZQ==.EwBhEYy6e0XkA===.",
+    "Missile": "B0pttoFjljdystf52f2g2d2ePh----04044j03---00---.Iw18eAMVA===.Aw18ZQ==."
   },
   "anaconda": {
-    "Dream": "A4putpFklndzsuf52c0o0o0o1m1m0q0q0404040l0b0100004k5n5n112d2d04-0303326b-.AwRj4yo5dzhA.MwBhCYy6duvARhEA.",
-    "Cargo": "A0patnFklndnsxf5----------------06050505040404-45030301-.Iw18ZUAxA===.Aw18ZXEA.",
-    "Current": "A0patnFklndksxf5----------------06050505040404-03034524-.Iw18ZUAxA===.Aw18ZXEA.",
-    "Explorer": "A0patnFklndksxf5--------0202------f7050505040s37--2i4524-.AwRj4yVKJ9jCA===.AwhMIyumQRgkA===.",
-    "Test": "A4putkFklkdzsuf52c0o0o0o1m1m0q0q0404-0l0b0100034k5n052d04---0303326b-.Iw18ZUAxA===.Aw18ZXEA."
+    "Dream": "B4putpFklndzsuf52c0o0o0o1m1m0q0q0404040l0b0100004k5n5n112d2d04-0303326b--.AwRj4yo5dzZA.MwBhCYy6duvARjEA.",
+    "Cargo": "B0patnFklndnsxf5----------------06050505040404-45030301--.Iw18ZUAzUA==.Aw18ZUkA.",
+    "Current": "B0patnFklndksxf5----------------06050505040404-03034524--.Iw18ZUAzUA==.Aw18ZUkA.",
+    "Explorer": "B0patnFklndksxf5--------0202------f7050505040s37--2i4524--.AwRj4yVKJ9iKA===.AwhMIyumQRkkA===.",
+    "Test": "B4putkFklkdzsuf52c0o0o0o1m1m0q0q0404-0l0b0100034k5n052d04---0303326b--.Iw18ZUAzUA==.Aw18ZUkA."
   },
   "diamondback_explorer": {
-    "Explorer": "A0p0tdFfldddsdf5---0202--320p432i----.AwRj4zTZaA==.AwiMIyqo."
+    "Explorer": "B0p0tdFfldddsdf5---0202--320p432i-----.AwRj4zTZeI==.AwiMIyuo."
   },
   "vulture": {
-    "Bounty Hunter": "A3patcFalddksff31e1e0404-0l4a-5d27662j--.AwRj4z2Gg===.MwBhBYy6oJmAjLMQ."
+    "Bounty Hunter": "B3patcFalddksff31e1e0404-0l4a-5d27662j---.AwRj4z2HiA==.MwBhBYy6oJmAjLKQ."
   },
   "fer_de_lance": {
-    "Attack": "A2pfthFalidpsff31r0s0s0s0s000404-04-4a-5d27--.Iw18aAMQ.CwBhrSu8EZxEA===."
+    "Attack": "B2pfthFalidpsff31r0s0s0s0s000404-04-4a-5d27---.Iw18aAMVA===.CwBhrSu8EZzEA===."
   },
   "eagle": {
-    "Figther": "A4p0t5F5l3d5s5f20p0p24-4053-2j---.Iw18gDJQ.Aw19kA==."
+    "Figther": "B4p0t5F5l3d5s5f20p0p24-4053-2j----.Iw18gDNQ.Aw1/kA==."
   }
 }

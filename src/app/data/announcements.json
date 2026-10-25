@@ -1,5 +1,55 @@
 [
   {
+    "id": 67,
+    "version": "4.1.14",
+    "text": "Fixes to Operations updates",
+    "changes": [
+      "Fixes to Operations updates",
+      "Anaconda MkII Added",
+      "Anaconda MkII Changes to other ships"
+    ]
+  },
+  {
+    "id": 66,
+    "version": "4.1.13",
+    "text": "Show Merc Coin Costs including engineering costs",
+    "changes": [
+      "Show Merc Coin Costs including engineering costs"
+    ]
+  },
+  {
+    "id": 65,
+    "version": "4.1.12",
+    "text": "Add hullboost to HRPs so ship HP is reported correct when Lightweight is applied",
+    "changes": [
+      "Add hullboost to HRPs so ship HP is reported correct when Lightweight is applied"
+    ]
+  },
+  {
+    "id": 64,
+    "version": "4.1.11",
+    "text": "Fixing Pre-Eng Shard Cannon Stats",
+    "changes": [
+      "Fixing Pre-Eng Shard Cannon Stats"
+    ]
+  },
+  {
+    "id": 63,
+    "version": "4.1.10",
+    "text": "Fixing Mining Volley Repeater Stats",
+    "changes": [
+      "Fixing Mining Volley Repeater Stats"
+    ]
+  },
+  {
+    "id": 62,
+    "version": "4.1.9",
+    "text": "Fix Cargo Grade change not displaying ship capacity increase",
+    "changes": [
+      "Fix Cargo Grade change not displaying ship capacity increase"
+    ]
+  },
+  {
     "id": 61,
     "version": "4.1.8",
     "text": "Fix MkII Vessel Hanger ID's",

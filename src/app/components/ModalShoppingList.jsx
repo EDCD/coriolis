@@ -228,8 +228,10 @@ export default class ModalShoppingList extends TranslatedComponent {
     // Calculate materials needed only for modules that differ from the current ship
     const matsNeeded = this._calculateMaterialsForDifferences(linkedShip);
 
-    // Merc Coin is a currency, not a material — handle it separately.
-    const mercCoinRequired = matsNeeded[MERC_COIN] || 0;
+    // Merc Coin is a currency, not a material — pull it out of the material
+    // map so it never shows in the material columns. The required Merc Coin
+    // figure comes from the build total (purchase + engineering) below rather
+    // than this roll-multiplied diff, so it matches the cost tabs.
     delete matsNeeded[MERC_COIN];
 
     let raw = [], mfc = [], enc = [];
@@ -250,8 +252,11 @@ export default class ModalShoppingList extends TranslatedComponent {
     }
 
     // Merc Coin / credits shortfall: what they still need to obtain on top of
-    // what they already hold, floored at 0 (shown even when 0).
-    const mercCoinNeeded = Math.max(0, mercCoinRequired - ownedMercCoin);
+    // what they already hold, floored at 0 (shown even when 0). The required
+    // Merc Coin is the full build total (purchase price + engineering, each
+    // grade once), matching the Costs / Retrofit Costs tabs.
+    const mercCoinTotalRequired = this._buildMercCoin();
+    const mercCoinNeeded = Math.max(0, mercCoinTotalRequired - ownedMercCoin);
     const creditsNeeded = Math.max(0, Math.round(this.props.ship.totalCost || 0) - ownedCredits);
 
     this.setState({
@@ -699,6 +704,27 @@ export default class ModalShoppingList extends TranslatedComponent {
   }
 
   /**
+   * Total Merc Coin the build requires: for every module, its Merc Coin
+   * purchase price plus any Merc Coin spent engineering it to its current
+   * grade. This is the same figure shown as the Merc Coin total in the Costs
+   * and Retrofit Costs tabs (see Module.getTotalMercCoin / Ship.totalMercCoin),
+   * so the overlay and the cost tabs stay in agreement.
+   * @return {Number} Total Merc Coin needed for the build
+   */
+  _buildMercCoin() {
+    const ship = this.props.ship;
+    const rolls = this.state.matsPerGrade;
+    let total = 0;
+    for (const module of ship.costList) {
+      if (module.type === 'SHIP') continue;
+      if (module.incCost && module.m && module.m.getTotalMercCoin) {
+        total += module.m.getTotalMercCoin(rolls);
+      }
+    }
+    return total;
+  }
+
+  /**
    * Convert mats object to string
    */
   renderMats() {
@@ -746,8 +772,10 @@ export default class ModalShoppingList extends TranslatedComponent {
       }
     }
     // Merc Coin is a currency, not a material — pull it out of the material
-    // map so it is not shown in the Manufactured column.
-    const mercCoinNeeded = mats[MERC_COIN] || 0;
+    // map so it is not shown in the Manufactured column. The displayed total
+    // comes from the build (purchase + engineering, each grade once) so it
+    // matches the Costs / Retrofit Costs tabs; the roll-multiplied value in the
+    // mats map is only used to keep it out of the material columns.
     delete mats[MERC_COIN];
 
     let matsString = '';
@@ -776,7 +804,9 @@ export default class ModalShoppingList extends TranslatedComponent {
       matsMfg: mfc,
       matsEnc: enc,
       mats,
-      mercCoinNeeded,
+      // Purchase price + engineering Merc Coin for the whole build, matching
+      // the Merc Coin total shown in the Costs / Retrofit Costs tabs.
+      mercCoinNeeded: this._buildMercCoin(),
       creditsNeeded: Math.round(this.props.ship.totalCost || 0),
     });
   }

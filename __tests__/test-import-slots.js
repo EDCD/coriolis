@@ -16,13 +16,13 @@ import { shipFromLoadoutJSON } from '../src/app/utils/JournalUtils';
 describe('Import internal slot indexing', function() {
 
   describe('Federal Dropship (military slots skip journal indexes)', function() {
-    const slef = require.requireActual('./fixtures/slef-federal-dropship.json');
+    const slef = jest.requireActual('./fixtures/slef-federal-dropship.json');
     const ship = shipFromLoadoutJSON(slef.data);
 
-    // Coriolis internal slot layout for the Federal Dropship:
-    // [6, 5, 5, 4, Military, Military, 3, 3, 2, 1, PlanetaryApproachSuite]
-    const SIZE_2_INDEX = 8;
-    const SIZE_1_INDEX = 9;
+    // Coriolis internal slot layout for the Federal Dropship (post Slot00_Size6 addition):
+    // [6, 6, 5, 5, 4, Military, Military, 3, 3, 2, 1, PlanetaryApproachSuite]
+    const SIZE_2_INDEX = 9;
+    const SIZE_1_INDEX = 10;
 
     it('maps to the Federal Dropship model', function() {
       expect(ship.id).toBe('federal_dropship');

@@ -14,6 +14,33 @@ function filter(arr, maxClass, minClass, mass) {
 }
 
 /**
+ * Determine whether a module is fittable on a given ship, honouring a module's
+ * optional `ship` restriction. Frontier restricts some modules to a specific
+ * ship or set of ships (e.g. the Mk II SCO FSD and Mk II Gravity Optimised
+ * Thrusters are Caspian Explorer only; the Mk II Agile Boost Thrusters are
+ * Kestrel Mk II only). A module with no `ship` field fits any ship. The `ship`
+ * field may be a single ship id string or an array of ship ids.
+ * @param  {Object}  m       A module template
+ * @param  {String}  shipId  The coriolis ship id being outfitted
+ * @return {Boolean}         True if the module is allowed on this ship
+ */
+function shipAllowsModule(m, shipId) {
+  if (!m || m.ship === undefined || m.ship === null) return true;
+  const allowed = Array.isArray(m.ship) ? m.ship : [m.ship];
+  return allowed.indexOf(shipId) !== -1;
+}
+
+/**
+ * Filter an array of modules by a ship's `ship` restriction field.
+ * @param  {Array}   arr     Modules
+ * @param  {String}  shipId  The coriolis ship id being outfitted
+ * @return {Array}           Modules fittable on this ship
+ */
+function ship_filter(arr, shipId) {
+  return arr.filter(m => shipAllowsModule(m, shipId));
+}
+
+/**
  * Filter SCO Modules to only return legal size.
  * @param  {Array}  arr        Array of available FSD modules.
  * @param  {number} maxSize    Maximum allowable size for SCO modules.
@@ -40,8 +67,12 @@ export default class ModuleSet {
    * Instantiate the module set
    * @param  {Object} modules        All Modules
    * @param  {Object} shipData       Ship Specifications Data (see coriolis-data/Ships)
+   * @param  {String} shipId         The coriolis ship id (used to honour per-module
+   *                                 `ship` restrictions, e.g. the Caspian-only Mk II
+   *                                 SCO FSD). Optional for backwards compatibility.
    */
-  constructor(modules, shipData) {
+  constructor(modules, shipData, shipId) {
+    this.shipId = shipId;
     let maxInternal = Math.max(...shipData.slots.internal.map(slot =>
       isNaN(slot) ? slot.class : slot
     ));
@@ -68,6 +99,7 @@ export default class ModuleSet {
     this.standard[0] = filter(stnd.pp, maxStandardArr[0], 0, mass);  // Power Plant
     this.standard[2] = filter(stnd.fsd, maxStandardArr[2], 0, mass);  // FSD
     this.standard[2] = sco_filter(this.standard[2], maxStandardArr[2]) // FSD - Filter SCO Modules
+    this.standard[2] = ship_filter(this.standard[2], shipId);  // FSD - drop ship-restricted (e.g. Caspian-only Mk II SCO)
     this.standard[4] = filter(stnd.pd, maxStandardArr[4], 0, mass);  // Power Distributor
 
     // Fuel Tank - filter out unrecognised modules
@@ -86,6 +118,12 @@ export default class ModuleSet {
     // Thrusters, filter modules by class only (to show full list of ratings for that class)
     let minThrusterClass = stnd.t.reduce((clazz, th) => (th.maxmass >= mass && th.class < clazz) ? th.class : clazz, maxStandardArr[1]);
     this.standard[1] = filter(stnd.t, maxStandardArr[1], minThrusterClass, 0);  // Thrusters
+    this.standard[1] = ship_filter(this.standard[1], shipId);  // Thrusters - drop ship-restricted (e.g. Caspian/Kestrel-only Mk II)
+    // Drop the 'Unrecognised Thrusters' placeholder (rating 'Z', maxmass 0) - it
+    // exists only so journal/CAPI imports that reference an unknown module don't
+    // error; it must never appear as a selectable module. (Mirrors the fuel tank
+    // and FSD filters above.)
+    this.standard[1] = this.standard[1].filter(m => m && m.rating !== 'Z');
     // Slots where module class must be equal to slot class
     this.standard[3] = filter(stnd.ls, maxStandardArr[3], maxStandardArr[3], 0);     // Life Support
     this.standard[5] = filter(stnd.s, maxStandardArr[5], maxStandardArr[5], mass);  // Sensors
@@ -135,6 +173,9 @@ export default class ModuleSet {
       if (key == 'fhmkii' && !(ship.vesselHangarsMkII && ship.vesselHangarsMkII === true)) {
         continue;
       }
+      if (key == 'lpvmkii' && !(ship.vehicleHangarsMkII && ship.vehicleHangarsMkII === true)) {
+        continue;
+      }
       let data = filter(this.internal[key], c, 0, this.mass);
       if (data.length) {  // If group is not empty
         o[key] = data;
@@ -149,10 +190,18 @@ export default class ModuleSet {
    * @param  {Object} eligible) The map of eligible hardpoint groups
    * @return {object}           A map of all eligible modules by group
    */
-  getHps(ship, c, eligible) {
+  getHps(ship, c, eligible, slot) {
     let o = {};
     for (let key in this.hardpoints) {
       if (eligible && !eligible[key]) { // If the slot has eligibility restrictions
+        continue;
+      }
+      // The Mining Volley Repeater is restricted to specific slots on ships
+      // that gate it that way. The Anaconda Mk II allows it only on its two
+      // lower Large hardpoints, which carry an `mvr` opt-in flag; drop it from
+      // every other slot on that ship. Other ships (e.g. the Type-11, which
+      // offers it on its mining slots) are unaffected.
+      if (key === 'mvr' && ship && ship.id === 'anaconda2' && !(slot && slot.mvr)) {
         continue;
       }
       let data = filter(this.hardpoints[key], c, c ? 1 : 0, this.mass);

@@ -37,6 +37,8 @@ const GRPCAT = {
   'fh': 'hangars',
   'fhmkii': 'hangars',
   'pv': 'hangars',
+  'lpv': 'hangars',
+  'lpvmkii': 'hangars',
   'fs': 'fuel',
   'ft': 'fuel',
   'hr': 'structural reinforcement',
@@ -105,7 +107,7 @@ const INTCAT = {
   'cargo racks': ['cr', 'crl'],
   'fsd interdictor': ['fi'],
   'fuel': ['ft', 'fs'],
-  'hangars': ['fh', 'fhmkii', 'pv'],
+  'hangars': ['fh', 'fhmkii', 'pv', 'lpv', 'lpvmkii'],
   'limpet controllers': ['cc', 'fx', 'hb', 'pc', 'rpl', 'mlc'],
   'passenger cabins': ['pce', 'pcemkii', 'pci', 'pcimkii', 'pcm', 'pcq'],
   'refineries': ['rf'],
@@ -252,7 +254,11 @@ export default class AvailableModulesMenu extends TranslatedComponent {
 
     // Name / class+rating header — orange bg, dark brown text, matching engineering menu headings
     const classRating = mod.class && mod.rating ? `${mod.class}${mod.rating} ` : '';
-    rows.push(<div key='name' className='cap' style={{ margin: '-0.5em -0.5em 0.4em -0.5em', padding: '0.2em 0.5em', background: '#FF8C0D', color: 'rgba(56,30,0,0.85)', textAlign: 'left', fontWeight: 'bold', textTransform: 'uppercase' }}>{classRating}{translate(mod.name || mod.grp)}</div>);
+    // Prefer the specific module name (name, then ukName) over the generic group
+    // label so variants that share a group — e.g. the Large vs MkII Large vs
+    // FREE Planetary Vehicle Hangars — are distinguishable in the tooltip.
+    const headerName = mod.name ? translate(mod.name) : (rawMod.ukName || translate(mod.grp));
+    rows.push(<div key='name' className='cap' style={{ margin: '-0.5em -0.5em 0.4em -0.5em', padding: '0.2em 0.5em', background: '#FF8C0D', color: 'rgba(56,30,0,0.85)', textAlign: 'left', fontWeight: 'bold', textTransform: 'uppercase' }}>{classRating}{headerName}</div>);
 
     // Power
     if (mod.grp === 'pp') {
@@ -333,9 +339,15 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     if (mod.getScanTime()) rows.push(<div key='scantime'>{translate('scantime')}: {formats.f1(mod.getScanTime())}{units.s}</div>);
     if (mod.getScanAngle()) rows.push(<div key='scanangle'>{translate('scan angle')}: {formats.f2(mod.getScanAngle())}°</div>);
 
-    // Cost
+    // Cost — show the credit cost, or an explicit "Free" when the module has
+    // no cost (e.g. the free Large Planetary Vehicle Hangar variants) so users
+    // can tell free and paid variants apart.
     const cost = rawMod.cost;
-    if (cost) rows.push(<div key='cost'>{translate('cost')}: {formats.int(Math.round(cost * (1 - Persist.getModuleDiscount())))}{units.CR}</div>);
+    if (cost) {
+      rows.push(<div key='cost'>{translate('cost')}: {formats.int(Math.round(cost * (1 - Persist.getModuleDiscount())))}{units.CR}</div>);
+    } else if (cost === 0) {
+      rows.push(<div key='cost'>{translate('cost')}: {translate('free')}</div>);
+    }
 
     if (rows.length === 0) return null;
 
@@ -509,8 +521,15 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     const name = (mod.name || '').toLowerCase();
     const grp = mod.grp || '';
 
-    // Filter out any module with "unrecognised" in name or ID
-    if (name.includes('unrecognised') || id.includes('unrecognised')) return false;
+    // Filter out any module with "unrecognised" in name, ukName or ID. The
+    // placeholder 'Unrecognised Thrusters' carries its marker in ukName (not
+    // name), so check both.
+    const ukName = (mod.ukName || '').toLowerCase();
+    if (name.includes('unrecognised') || ukName.includes('unrecognised') || id.includes('unrecognised')) return false;
+
+    // Rating 'Z' is reserved for unrecognised/placeholder modules that exist only
+    // to keep imports from erroring; never offer them in the menu.
+    if (mod.rating === 'Z') return false;
 
     // Filter out specific error/placeholder modules by ID — only if they have no name or ukName
     // (e.g. '1z' is also used by the Rocket Propelled FSD Disruptor, a valid PowerPlay module)
@@ -529,9 +548,14 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     // Filter out modules with invalid/missing critical properties for their type
     if (!mod.class && !mod.rating && !mod.name && mod.id.length < 3) return false;
 
-    // Filter out ship-specific thrusters that don't match the current ship
-    if (mod.ship && this.props.ship && mod.ship !== this.props.ship.id) {
-      return false;
+    // Filter out ship-specific modules that don't match the current ship.
+    // `mod.ship` may be a single ship id or an array of ids (e.g. the Mining
+    // Volley Repeater, available to both the Type-11 and the Anaconda Mk II).
+    if (mod.ship && this.props.ship) {
+      const allowedShips = Array.isArray(mod.ship) ? mod.ship : [mod.ship];
+      if (!allowedShips.includes(this.props.ship.id)) {
+        return false;
+      }
     }
 
     return true;
@@ -732,6 +756,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         <div className="module-content"> {availabilityIcon}
           {mountIcon && <span className="module-mount">{mountIcon}</span>}
           <span className="module-text">{warningIcon} {displayName} </span>
+          {mod.cost === 0 && <span className="module-free-badge" title={translate('free')}>{translate('free')}</span>}
         </div>
       </div>
     );
@@ -1023,63 +1048,65 @@ export default class AvailableModulesMenu extends TranslatedComponent {
         groups.forEach(group => {
           const { groupKey, modules: groupModules } = group;
 
-          // Determine if we should show a group header (sub-header)
-          // Always show sub-headers so users can identify module types,
-          // especially when a category filter is active and only one group
-          // is visible (e.g. Pulse Wave Analyzer under Mining in utility slots).
-          const shouldShowGroupHeader = true;
+          // A single module group can contain several distinctly-named variants
+          // (e.g. the thruster group 't' holds ordinary Thrusters plus Enhanced
+          // Performance and ship-specific Mk II variants). Each variant needs its
+          // OWN sub-heading; otherwise the group heading is derived from whichever
+          // module happens to sort first, which mislabels the whole group. Split
+          // the group into ordered variant sub-groups and render each with the
+          // correct heading. Modules with no distinct variant fall under the
+          // group's own display name (e.g. "Thrusters").
+          const baseGroupName = this._getGroupDisplayName(groupKey, groupModules);
+          const subGroups = this._partitionGroupVariants(groupModules, groupKey, baseGroupName);
 
-          if (shouldShowGroupHeader) {
-            // Get group display name using the new method
-            const groupDisplayName = this._getGroupDisplayName(groupKey, groupModules);
+          subGroups.forEach(({ heading, modules: subModules }, subIdx) => {
+            // Separate compact and named modules within this variant sub-group
+            const compactModules = [];
+            const namedModules = [];
 
-            // Add group header (sub-category)
-            list.push(<div key={`group-${groupKey}`} className="module-separator cap">{groupDisplayName}</div>);
-          }
-
-          // Separate compact and named modules within this group
-          const compactModules = [];
-          const namedModules = [];
-
-          groupModules.forEach(mod => {
-            if (this._isCompactModule(mod)) {
-              compactModules.push(mod);
-            } else {
-              // Check if the module is a planetary approach suite and if the slot is pas restricted
-              if (mod.grp === 'pas') {
-                // Check if 'eligible' is set and if eligible has 'pas'
-                if (eligible({ grp: 'pas' })) {
-                  namedModules.push(mod); // Only add PAS if the slot is pas restricted and this module is a PAS
-                  console.log('Adding PAS module to pas restricted slot:', mod);
-                } else {
-                  console.log('Skipping PAS module for non pas restricted slot:', mod, ' slot eligible:', eligible);
-                  // continue to the next item in the loop and skip adding the pas module to the availableModulesMenu for a non pas restricted slot
-                  return;
-                }
+            subModules.forEach(mod => {
+              if (this._isCompactModule(mod)) {
+                compactModules.push(mod);
               } else {
-                // For all other modules (NOT including bulkheads), add them normally
-                namedModules.push(mod);
+                // Check if the module is a planetary approach suite and if the slot is pas restricted
+                if (mod.grp === 'pas') {
+                  if (eligible({ grp: 'pas' })) {
+                    namedModules.push(mod); // Only add PAS if the slot is pas restricted
+                  } else {
+                    return; // skip PAS for non-pas slots
+                  }
+                } else {
+                  namedModules.push(mod);
+                }
               }
+            });
+
+            // If there's only one compact module, treat it as a named module instead
+            if (compactModules.length === 1) {
+              namedModules.push(compactModules[0]);
+              compactModules.length = 0;
+            }
+
+            // Nothing to render for this variant (e.g. a PAS-only sub-group on a
+            // non-PAS slot) -> skip its heading too.
+            if (compactModules.length === 0 && namedModules.length === 0) {
+              return;
+            }
+
+            // Sub-group heading
+            list.push(
+              <div key={`group-${groupKey}-${subIdx}`} className="module-separator cap">{heading}</div>
+            );
+
+            if (compactModules.length > 0) {
+              this._addCompactModulesAsGrid(compactModules, list, onSelect, eligible, warning, termtip, tooltip, translate, groupKey);
+            }
+            if (namedModules.length > 0) {
+              namedModules.forEach(mod => {
+                this._addModuleToList(mod, list, onSelect, eligible, warning, termtip, tooltip, translate);
+              });
             }
           });
-
-          // If there's only one compact module, treat it as a named module instead
-          if (compactModules.length === 1) {
-            namedModules.push(compactModules[0]);
-            compactModules.length = 0; // Clear the compact array
-          }
-
-          // Add compact modules as grid (only if there are multiple)
-          if (compactModules.length > 0) {
-            this._addCompactModulesAsGrid(compactModules, list, onSelect, eligible, warning, termtip, tooltip, translate, groupKey);
-          }
-
-          // Add named modules
-          if (namedModules.length > 0) {
-            namedModules.forEach(mod => {
-              this._addModuleToList(mod, list, onSelect, eligible, warning, termtip, tooltip, translate);
-            });
-          }
         });
       }
     });
@@ -1312,7 +1339,72 @@ export default class AvailableModulesMenu extends TranslatedComponent {
 
     return categoryDisplayNames[categoryName] || categoryName.toUpperCase();
   }
-/**
+
+  /**
+   * Partition a module group into ordered variant sub-groups, each with its own
+   * heading. "Base" modules (ordinary modules whose display name is just the
+   * group, e.g. plain Thrusters) are kept together under `baseGroupName`; each
+   * distinctly-named variant family (e.g. "Enhanced Performance", "MkII Gravity
+   * Optimised Thrusters") gets its own sub-group/heading. Variant modules keep
+   * the module order they already have (the caller sorts class-desc/rating-asc);
+   * the base sub-group always renders first so ordinary modules lead the list.
+   *
+   * @param  {Array}  modules       Modules in the group (already sorted)
+   * @param  {String} groupKey      The module group key (e.g. 't')
+   * @param  {String} baseGroupName The group's own display name (e.g. 'Thrusters')
+   * @return {Array}  Ordered array of { heading, modules }
+   */
+  _partitionGroupVariants(modules, groupKey, baseGroupName) {
+    const base = [];
+    const variants = new Map(); // variantName -> modules[]
+
+    for (const mod of modules) {
+      const variant = this._getModuleVariantName(mod, groupKey, baseGroupName);
+      if (!variant) {
+        base.push(mod);
+      } else {
+        if (!variants.has(variant)) variants.set(variant, []);
+        variants.get(variant).push(mod);
+      }
+    }
+
+    const result = [];
+    if (base.length > 0) {
+      result.push({ heading: baseGroupName, modules: base });
+    }
+    for (const [heading, mods] of variants) {
+      result.push({ heading, modules: mods });
+    }
+    return result;
+  }
+
+  /**
+   * Determine the variant sub-group heading for a module, or null if the module
+   * belongs to the group's "base" set (rendered under the group's own name).
+   *
+   * A variant is a specially-named family within a group that should be shown
+   * under its own heading - currently the named thruster families (Enhanced
+   * Performance and the ship-specific "Mk II ..." thrusters). Ordinary thrusters
+   * (whose data name is empty or just "<class><rating>") are base modules.
+   *
+   * @param  {Object} mod            The module
+   * @param  {String} groupKey       The group key (e.g. 't')
+   * @param  {String} baseGroupName  The group's own display name
+   * @return {String|null}           Variant heading, or null for base modules
+   */
+  _getModuleVariantName(mod, groupKey, baseGroupName) {
+    if (!mod || !mod.name) return null; // unnamed -> ordinary module
+    const name = mod.name.trim();
+    // A name that is just "<class><rating>" (e.g. "5A") is an ordinary module.
+    if (mod.class && mod.rating && name === `${mod.class}${mod.rating}`) return null;
+    // A name identical to the group's own display name is not a distinct variant.
+    if (name === baseGroupName) return null;
+    // Otherwise the module's own (friendly) name is its variant heading, e.g.
+    // "Enhanced Performance" or "MkII Gravity Optimised Thrusters".
+    return name;
+  }
+
+  /**
    * Get friendly display name for module group keys
    */
   _getGroupDisplayName(groupKey, modules) {
@@ -1391,6 +1483,8 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       'fh': 'Vessel Hangar',
       'fhmkii': 'Mk II Vessel Hangar',
       'pv': 'Planetary Vehicle Hangar',
+      'lpv': 'Large Planetary Vehicle Hangar',
+      'lpvmkii': 'Mk II Large Planetary Vehicle Hangar',
       'fs': 'Fuel Scoop',
       'ft': 'Fuel Tank',
       'hr': 'Hull Reinforcement Package',
@@ -1403,6 +1497,7 @@ export default class AvailableModulesMenu extends TranslatedComponent {
 
       // Standard modules
       'pp': 'Power Plant',
+      't': 'Thrusters',
       'th': 'Thrusters',
       'fsd': 'Frame Shift Drive',
       'ls': 'Life Support',

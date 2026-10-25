@@ -8,7 +8,7 @@ import { getDefaultEdIDs } from '../shipyard/ModuleUtils';
 import { Insurance } from '../shipyard/Constants';
 import { slotName, slotComparator } from '../utils/SlotFunctions';
 import TranslatedComponent from './TranslatedComponent';
-import { ShoppingIcon } from '../components/SvgIcons';
+import { ShoppingIcon, MercCoinSmall } from '../components/SvgIcons';
 
 /**
  * Cost Section
@@ -41,8 +41,9 @@ export default class CostSection extends TranslatedComponent {
     let shipDiscount = Persist.getShipDiscount();
     let moduleDiscount = Persist.getModuleDiscount();
 
-    this.props.ship.applyDiscounts(shipDiscount, moduleDiscount);
-    retrofitShip.applyDiscounts(shipDiscount, moduleDiscount);
+    let rolls = Persist.getRolls();
+    this.props.ship.applyDiscounts(shipDiscount, moduleDiscount, rolls);
+    retrofitShip.applyDiscounts(shipDiscount, moduleDiscount, rolls);
 
     this.state = {
       retrofitShip,
@@ -108,10 +109,24 @@ export default class CostSection extends TranslatedComponent {
   _onDiscountChanged() {
     let shipDiscount = Persist.getShipDiscount();
     let moduleDiscount = Persist.getModuleDiscount();
-    this.props.ship.applyDiscounts(shipDiscount, moduleDiscount);
-    this.state.retrofitShip.applyDiscounts(shipDiscount, moduleDiscount);
+    let rolls = Persist.getRolls();
+    this.props.ship.applyDiscounts(shipDiscount, moduleDiscount, rolls);
+    this.state.retrofitShip.applyDiscounts(shipDiscount, moduleDiscount, rolls);
     this._updateRetrofit(this.props.ship, this.state.retrofitShip);
     this.setState({ shipDiscount, moduleDiscount });
+  }
+
+  /**
+   * Recompute Merc Coin costs when the rolls-per-grade change
+   */
+  _onRollsChanged() {
+    let shipDiscount = Persist.getShipDiscount();
+    let moduleDiscount = Persist.getModuleDiscount();
+    let rolls = Persist.getRolls();
+    this.props.ship.applyDiscounts(shipDiscount, moduleDiscount, rolls);
+    this.state.retrofitShip.applyDiscounts(shipDiscount, moduleDiscount, rolls);
+    this._updateRetrofit(this.props.ship, this.state.retrofitShip);
+    this.forceUpdate();
   }
 
   /**
@@ -179,9 +194,12 @@ export default class CostSection extends TranslatedComponent {
    */
   _toggleRetrofitCost(item) {
     let retrofitTotal = this.state.retrofitTotal;
+    let retrofitMercCoinTotal = this.state.retrofitMercCoinTotal || 0;
     item.retroItem.incCost = !item.retroItem.incCost;
-    retrofitTotal += item.netCost * (item.retroItem.incCost ? 1 : -1);
-    this.setState({ retrofitTotal });
+    const sign = item.retroItem.incCost ? 1 : -1;
+    retrofitTotal += item.netCost * sign;
+    retrofitMercCoinTotal += (item.netMercCoin || 0) * sign;
+    this.setState({ retrofitTotal, retrofitMercCoinTotal });
   }
 
   /**
@@ -287,16 +305,37 @@ export default class CostSection extends TranslatedComponent {
     let { ship } = this.props;
     let { shipDiscount, moduleDiscount, insurance } = this.state;
     let { translate, formats, units } = this.context.language;
+    let { termtip, tooltip } = this.context;
+    let rolls = Persist.getRolls();
     let rows = [];
 
     for (let i = 0, l = ship.costList.length; i < l; i++) {
       let item = ship.costList[i];
-      if (item.m && item.m.cost) {
+      if (item.m && (item.m.cost || item.m.mercCoin)) {
         let toggle = this._toggleCost.bind(this, item);
+        // Merc Coin modules are priced in Merc Coin instead of (or in addition
+        // to) credits, so render whichever currency applies to the module.
+        // The Merc Coin figure includes both purchase price and any Merc Coin
+        // spent engineering the module.
+        let mercCoin = item.m.getTotalMercCoin ? item.m.getTotalMercCoin(rolls) : 0;
+        let costCell;
+        let costCellProps = { className: 'ri ptr', onClick: toggle };
+        if (mercCoin) {
+          // Break the consolidated figure into purchase + engineering so a
+          // hover can explain what the Merc Coin value is made up of.
+          const moduleMc = item.m.getMercCoin ? item.m.getMercCoin() : 0;
+          const engMc = item.m.getEngineeringMercCoin ? item.m.getEngineeringMercCoin(rolls) : 0;
+          const tip = `${translate('module cost')} (${formats.int(moduleMc)}${translate('MC')}) + ${translate('engineering cost')} (${formats.int(engMc)}${translate('MC')})`;
+          costCellProps.onMouseOver = termtip.bind(null, tip);
+          costCellProps.onMouseOut = tooltip.bind(null, null);
+          costCell = <span>{formats.int(mercCoin)}{units.MC}</span>;
+        } else {
+          costCell = <span>{formats.int(item.discountedCost)}{units.CR}</span>;
+        }
         rows.push(<tr key={i} className={cn('highlight', { disabled: !item.incCost })}>
           <td className='ptr' style={{ width: '1em' }} onClick={toggle}>{item.m.class + item.m.rating}</td>
           <td className='le ptr shorten cap' onClick={toggle}>{slotName(translate, item)}</td>
-          <td className='ri ptr' onClick={toggle}>{formats.int(item.discountedCost)}{units.CR}</td>
+          <td {...costCellProps}>{costCell}</td>
         </tr>);
       }
     }
@@ -319,6 +358,10 @@ export default class CostSection extends TranslatedComponent {
             <td colSpan='2' className='lbl' >{translate('total')}</td>
             <td className='val'>{formats.int(ship.totalCost)}{units.CR}</td>
           </tr>
+          {ship.totalMercCoin ? <tr className='ri'>
+            <td colSpan='2' className='lbl'><MercCoinSmall className='icon-inline merccoin' /> {translate('merc coin')}</td>
+            <td className='val'>{formats.int(ship.totalMercCoin)}{units.MC}</td>
+          </tr> : null}
           <tr className='ri'>
             <td colSpan='2' className='lbl'>{translate('insurance')}</td>
             <td className='val'>{formats.int(ship.totalCost * insurance)}{units.CR}</td>
@@ -348,7 +391,7 @@ export default class CostSection extends TranslatedComponent {
    * @return {React.Component} Tab contents
    */
   _retrofitTab() {
-    let { retrofitTotal, retrofitCosts, moduleDiscount, retrofitName } = this.state;
+    let { retrofitTotal, retrofitMercCoinTotal, retrofitCosts, moduleDiscount, retrofitName } = this.state;
     const { termtip, tooltip } = this.context;
     let { translate, formats, units } = this.context.language;
     let int = formats.int;
@@ -361,12 +404,40 @@ export default class CostSection extends TranslatedComponent {
     if (retrofitCosts.length) {
       for (let i = 0, l = retrofitCosts.length; i < l; i++) {
         let item = retrofitCosts[i];
+        // Show the Merc Coin delta when the module is priced in Merc Coin;
+        // otherwise show the usual credit net cost.
+        let netCellProps = {};
+        let netCell;
+        if (item.netMercCoin) {
+          netCell = <span>{int(item.netMercCoin)}{units.MC}</span>;
+          // Explain the net figure: cost of buying the new module (purchase +
+          // engineering) less any Merc Coin recovered from the sold module.
+          const mc = translate('MC');
+          const buyTotal = (item.buyMercCoin || 0) + (item.buyEngMercCoin || 0);
+          const sellTotal = (item.sellMercCoin || 0) + (item.sellEngMercCoin || 0);
+          let tipParts = [];
+          if (buyTotal) {
+            tipParts.push(`${translate('buy')}: ${translate('module cost')} (${int(item.buyMercCoin || 0)}${mc}) + ${translate('engineering cost')} (${int(item.buyEngMercCoin || 0)}${mc})`);
+          }
+          if (sellTotal) {
+            tipParts.push(`${translate('sell')}: ${int(sellTotal)}${mc}`);
+          }
+          if (tipParts.length) {
+            // _termtip renders content on a single line, so join with a
+            // separator rather than a newline.
+            netCellProps.onMouseOver = termtip.bind(null, tipParts.join('  −  '));
+            netCellProps.onMouseOut = tooltip.bind(null, null);
+          }
+        } else {
+          netCell = <span>{int(item.netCost)}{units.CR}</span>;
+        }
+        let netClass = item.netMercCoin ? item.netMercCoin > 0 : item.netCost > 0;
         rows.push(<tr key={i} className={cn('highlight', { disabled: !item.retroItem.incCost })} onClick={this._toggleRetrofitCost.bind(this, item)}>
           <td className='ptr' style={{ width: '1em' }}>{item.sellClassRating}</td>
           <td className='le ptr shorten cap'>{translate(item.sellName)}</td>
           <td className='ptr' style={{ width: '1em' }}>{item.buyClassRating}</td>
           <td className='le ptr shorten cap'>{translate(item.buyName)}</td>
-          <td colSpan='2' className={cn('ri ptr', item.retroItem.incCost ? item.netCost > 0 ? 'warning' : 'secondary-disabled' : 'disabled')}>{int(item.netCost)}{units.CR}</td>
+          <td colSpan='2' className={cn('ri ptr', item.retroItem.incCost ? netClass ? 'warning' : 'secondary-disabled' : 'disabled')} {...netCellProps}>{netCell}</td>
         </tr>);
       }
     } else {
@@ -395,6 +466,13 @@ export default class CostSection extends TranslatedComponent {
                 {int(retrofitTotal)}{units.CR}
               </td>
             </tr>
+            {retrofitMercCoinTotal ? <tr className='ri'>
+              <td className='lbl'></td>
+              <td colSpan='3' className='lbl cap'><MercCoinSmall className='icon-inline merccoin' /> {translate('merc coin')}</td>
+              <td colSpan='2' className={cn('val', retrofitMercCoinTotal > 0 ? 'warning' : 'secondary-disabled')} style={{ borderBottom:'none' }}>
+                {int(retrofitMercCoinTotal)}{units.MC}
+              </td>
+            </tr> : null}
             <tr className='ri'>
               <td colSpan='4' className='lbl cap' >{translate('retrofit from')}</td>
               <td className='val cen' style={{ borderRight: 'none', width: '1em' }}><u className='primary-disabled'>&#9662;</u></td>
@@ -418,7 +496,8 @@ export default class CostSection extends TranslatedComponent {
    */
   _updateRetrofit(ship, retrofitShip) {
     let retrofitCosts = [];
-    let retrofitTotal = 0, i, l, item;
+    let retrofitTotal = 0, retrofitMercCoinTotal = 0, i, l, item;
+    let rolls = Persist.getRolls();
 
     if (ship.bulkheads.m.index != retrofitShip.bulkheads.m.index) {
       item = {
@@ -429,11 +508,17 @@ export default class CostSection extends TranslatedComponent {
         sellClassRating: retrofitShip.bulkheads.m.class + retrofitShip.bulkheads.m.rating,
         sellName: retrofitShip.bulkheads.m.name,
         netCost: ship.bulkheads.discountedCost - retrofitShip.bulkheads.discountedCost,
+        netMercCoin: (ship.bulkheads.m.getTotalMercCoin ? ship.bulkheads.m.getTotalMercCoin(rolls) : 0) - (retrofitShip.bulkheads.m.getTotalMercCoin ? retrofitShip.bulkheads.m.getTotalMercCoin(rolls) : 0),
+        buyMercCoin: ship.bulkheads.m.getMercCoin ? ship.bulkheads.m.getMercCoin() : 0,
+        buyEngMercCoin: ship.bulkheads.m.getEngineeringMercCoin ? ship.bulkheads.m.getEngineeringMercCoin(rolls) : 0,
+        sellMercCoin: retrofitShip.bulkheads.m.getMercCoin ? retrofitShip.bulkheads.m.getMercCoin() : 0,
+        sellEngMercCoin: retrofitShip.bulkheads.m.getEngineeringMercCoin ? retrofitShip.bulkheads.m.getEngineeringMercCoin(rolls) : 0,
         retroItem: retrofitShip.bulkheads
       };
       retrofitCosts.push(item);
       if (retrofitShip.bulkheads.incCost) {
         retrofitTotal += item.netCost;
+        retrofitMercCoinTotal += item.netMercCoin;
       }
     }
 
@@ -446,28 +531,35 @@ export default class CostSection extends TranslatedComponent {
         const modId = slotGroup[i].m ? slotGroup[i].m.id : null;
         const retroModId = retroSlotGroup[i].m ? retroSlotGroup[i].m.id : null;
         if (modId !== retroModId) {
-          item = { netCost: 0, retroItem: retroSlotGroup[i] };
+          item = { netCost: 0, netMercCoin: 0, buyMercCoin: 0, buyEngMercCoin: 0, sellMercCoin: 0, sellEngMercCoin: 0, retroItem: retroSlotGroup[i] };
           if (slotGroup[i].m) {
             item.buyId = slotGroup[i].m.edID,
             item.buyPp = slotGroup[i].m.pp,
             item.buyName = slotGroup[i].m.name || slotGroup[i].m.grp;
             item.buyClassRating = slotGroup[i].m.class + slotGroup[i].m.rating;
             item.netCost = slotGroup[i].discountedCost;
+            item.netMercCoin = slotGroup[i].m.getTotalMercCoin ? slotGroup[i].m.getTotalMercCoin(rolls) : 0;
+            item.buyMercCoin = slotGroup[i].m.getMercCoin ? slotGroup[i].m.getMercCoin() : 0;
+            item.buyEngMercCoin = slotGroup[i].m.getEngineeringMercCoin ? slotGroup[i].m.getEngineeringMercCoin(rolls) : 0;
           }
           if (retroSlotGroup[i].m) {
             item.sellName = retroSlotGroup[i].m.name || retroSlotGroup[i].m.grp;
             item.sellClassRating = retroSlotGroup[i].m.class + retroSlotGroup[i].m.rating;
             item.netCost -= retroSlotGroup[i].discountedCost;
+            item.netMercCoin -= retroSlotGroup[i].m.getTotalMercCoin ? retroSlotGroup[i].m.getTotalMercCoin(rolls) : 0;
+            item.sellMercCoin = retroSlotGroup[i].m.getMercCoin ? retroSlotGroup[i].m.getMercCoin() : 0;
+            item.sellEngMercCoin = retroSlotGroup[i].m.getEngineeringMercCoin ? retroSlotGroup[i].m.getEngineeringMercCoin(rolls) : 0;
           }
           retrofitCosts.push(item);
           if (retroSlotGroup[i].incCost) {
             retrofitTotal += item.netCost;
+            retrofitMercCoinTotal += item.netMercCoin;
           }
         }
       }
     }
 
-    this.setState({ retrofitCosts, retrofitTotal });
+    this.setState({ retrofitCosts, retrofitTotal, retrofitMercCoinTotal });
     this._sortRetrofit(retrofitCosts, this.state.retroPredicate, this.state.retroDesc);
   }
 
@@ -539,6 +631,8 @@ export default class CostSection extends TranslatedComponent {
               q = slotGroup[i].m.getAmmo();
               break;
             case 'pv':
+            case 'lpv':
+            case 'lpvmkii':
               srvs += slotGroup[i].m.getBays();
               break;
             case 'fx': case 'hb': case 'cc': case 'pc':
@@ -620,6 +714,9 @@ export default class CostSection extends TranslatedComponent {
       Persist.addListener('discounts', this._onDiscountChanged.bind(this)),
       Persist.addListener('insurance', this._onInsuranceChanged.bind(this)),
       Persist.addListener('builds', this._onBuildsChanged.bind(this)),
+      // Merc Coin engineering cost depends on the rolls-per-grade set in the
+      // shopping list, so recompute when the user changes them.
+      Persist.addListener('matsPerGrade', this._onRollsChanged.bind(this)),
     ];
     this._updateAmmoCosts(this.props.ship);
     this._updateRetrofit(this.props.ship, this.state.retrofitShip);
@@ -646,7 +743,7 @@ export default class CostSection extends TranslatedComponent {
     }
 
     if (nextProps.ship != this.props.ship || nextProps.code != this.props.code) {
-      nextProps.ship.applyDiscounts(Persist.getShipDiscount(), Persist.getModuleDiscount());
+      nextProps.ship.applyDiscounts(Persist.getShipDiscount(), Persist.getModuleDiscount(), Persist.getRolls());
       this._updateAmmoCosts(nextProps.ship);
       this._updateRetrofit(nextProps.ship, retrofitShip);
       this._sortCost(nextProps.ship);

@@ -1,6 +1,6 @@
 {
   "name": "coriolis_shipyard",
-  "version": "4.1.12",
+  "version": "4.1.14",
   "repository": {
     "type": "git",
     "url": "https://github.com/EDCD/coriolis"
@@ -27,48 +27,34 @@
   "scripts": {
     "extract-translations": "grep -hroE \"(translate\\('[^']+'\\))|(tip.bind\\(null, '[^']+')\" src/* | grep -oE \"'[^']+'\" | grep -oE \"[^']+\" | sort -u -f",
     "clean": "rimraf build",
-    "start": "node generate-ship-mappings.js && node generate-announcements.js && node devServer.js",
+    "start": "node generate-ship-mappings.js && node generate-ship-slots.js && node generate-announcements.js && node devServer.js",
     "start:prod": "webpack serve --config webpack.config.prod.js",
     "lint": "eslint --ext .js,.jsx src",
     "test": "jest",
     "prod-serve": "nginx -p $(pwd) -c nginx.conf",
     "prod-stop": "kill -QUIT $(cat nginx.pid)",
     "buildfresh": "rimraf node_modules && rm package-lock.json && npm install && npm run build > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)",
-    "build": "node generate-ship-mappings.js && node generate-announcements.js && webpack --config webpack.config.prod.js",
+    "build": "node generate-ship-mappings.js && node generate-ship-slots.js && node generate-announcements.js && webpack --config webpack.config.prod.js",
     "rsync": "rsync -ae \"ssh -i $CORIOLIS_PEM\" --delete build/ $CORIOLIS_USER@$CORIOLIS_HOST:~/wwws",
     "deploy": "npm run lint && npm test && npm run build && npm run rsync"
   },
   "jest": {
     "transform": {
-      ".*": "<rootDir>/node_modules/babel-jest"
+      "^.+\\.(js|jsx)$": "babel-jest"
     },
     "testRegex": "(/__tests__/test-.*|\\.(test|spec))\\.js$",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/__tests__/analysis/",
+      "/__tests__/fixtures/"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",
       "jsx"
     ],
-    "automock": true,
-    "bail": false,
-    "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/lodash",
-      "<rootDir>/node_modules/react",
-      "<rootDir>/node_modules/react-dom",
-      "<rootDir>/node_modules/react-transition-group",
-      "<rootDir>/node_modules/react-testutils-additions",
-      "<rootDir>/node_modules/fbjs",
-      "<rootDir>/node_modules/fbemitter",
-      "<rootDir>/node_modules/classnames",
-      "<rootDir>/node_modules/d3",
-      "<rootDir>/node_modules/lz-string",
-      "<rootDir>/node_modules/jsen",
-      "coriolis-data",
-      "<rootDir>/src/app/shipyard",
-      "<rootDir>/src/app/i18n",
-      "<rootDir>/src/app/utils",
-      "<rootDir>/src/schemas",
-      "<rootDir>/__tests__"
-    ]
+    "testEnvironment": "jsdom",
+    "bail": false
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
@@ -93,6 +79,10 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "babel-jest": "^30.5.2",
     "babel-loader": "^8.0.0",
     "copy-webpack-plugin": "^10.2.4",
     "create-react-class": "^15.6.3",
@@ -111,6 +101,8 @@
     "expose-loader": "^3.1.0",
     "express": "^4.18.2",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "jsen": "^0.6.6",
     "json-loader": "^0.5.4",
     "less": "^3.8.1",

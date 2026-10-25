@@ -17,7 +17,8 @@ module.exports = merge(common, {
       'src/.htaccess',
       'src/iframe.html',
       'src/xdLocalStoragePostMessageApi.min.js',
-      'src/ship-mappings.json'
+      'src/ship-mappings.json',
+      'src/ship-slots.json'
     ]}),
     new WebpackNotifierPlugin({ alwaysNotify: true }),
     new webpack.NoEmitOnErrorsPlugin()

@@ -1,0 +1,697 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://coriolis.io/schemas/ship-loadout/5.json#",
+  "title": "Ship Loadout",
+  "type": "object",
+  "description": "The details for a specific ship build/loadout. v5 extends v4 to allow engineered bulkheads (bulkheads may be an object carrying modifications/blueprint, not just a name string).",
+  "required": [
+    "name",
+    "ship",
+    "components"
+  ],
+  "properties": {
+    "name": {
+      "description": "The name of the build/loadout",
+      "type": "string",
+      "minLength": 1
+    },
+    "ship": {
+      "description": "The full display name of the ship",
+      "type": "string",
+      "minimum": 3
+    },
+    "manufacturer": {
+      "description": "The ship manufacturer",
+      "type": "string"
+    },
+    "references": {
+      "description": "3rd Party references and/or links to this build/loadout",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "url"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "name": {
+            "description": "The name of the 3rd party, .e.g 'Coriolis.io' or 'E:D Shipyard'",
+            "type": "string"
+          },
+          "url": {
+            "description": "The link/url to the 3rd party referencing this build/loadout",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "components": {
+      "description": "The components used by this build",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "standard",
+        "internal",
+        "hardpoints",
+        "utility"
+      ],
+      "properties": {
+        "standard": {
+          "description": "The set of standard components across all ships",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bulkheads",
+            "powerPlant",
+            "thrusters",
+            "frameShiftDrive",
+            "lifeSupport",
+            "powerDistributor",
+            "sensors",
+            "fuelTank",
+            "cargoHatch"
+          ],
+          "properties": {
+            "bulkheads": {
+              "$ref": "#/definitions/bulkheads"
+            },
+            "cargoHatch": {
+              "required": [
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            },
+            "powerPlant": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                }
+              }
+            },
+            "thrusters": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "name": {
+                  "description": "The name identifing the thrusters (if applicable), e.g. 'Enhanced Performance'",
+                  "type": "string"
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                }
+              }
+            },
+            "frameShiftDrive": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                },
+                "name": {
+                  "description": "The name identifing the FSD (if applicable), e.g. 'Frame Shift Drive (SCO)'",
+                  "type": "string"
+                }
+              }
+            },
+            "lifeSupport": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                }
+              }
+            },
+            "powerDistributor": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                }
+              }
+            },
+            "sensors": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                }
+              }
+            },
+            "fuelTank": {
+              "required": [
+                "class",
+                "rating",
+                "enabled",
+                "priority"
+              ],
+              "properties": {
+                "class": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8
+                },
+                "rating": {
+                  "$ref": "#/definitions/standardRatings"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "blueprint": {
+                  "type": "object"
+                },
+                "modifications": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "internal": {
+          "type": "array",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "class",
+              "rating",
+              "enabled",
+              "priority",
+              "group"
+            ],
+            "properties": {
+              "class": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8
+              },
+              "rating": {
+                "$ref": "#/definitions/allRatings"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "priority": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "group": {
+                "description": "The group of the component, e.g. 'Shield Generator', or 'Cargo Rack'",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name identifying the component (if applicable), e.g. 'Advance Discovery Scanner', or 'Detailed Surface Scanner'",
+                "type": "string"
+              },
+              "blueprint": {
+                "type": "object"
+              },
+              "modifications": {
+                "type": "object"
+              }
+            }
+          },
+          "minItems": 3
+        },
+        "hardpoints": {
+          "type": "array",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "class",
+              "rating",
+              "enabled",
+              "priority",
+              "group",
+              "mount"
+            ],
+            "properties": {
+              "class": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4
+              },
+              "rating": {
+                "$ref": "#/definitions/allRatings"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "priority": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "mount": {
+                "type": "string",
+                "enum": [
+                  "Fixed",
+                  "Gimballed",
+                  "Turret"
+                ]
+              },
+              "group": {
+                "description": "The group of the component, e.g. 'Beam Laser', or 'Missile Rack'",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name identifing the component (if applicable), e.g. 'Retributor', or 'Mining Lance'",
+                "type": "string"
+              },
+              "blueprint": {
+                "type": "object"
+              },
+              "modifications": {
+                "type": "object"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "utility": {
+          "type": "array",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "class",
+              "rating",
+              "enabled",
+              "priority",
+              "group"
+            ],
+            "properties": {
+              "class": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "rating": {
+                "$ref": "#/definitions/allRatings"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "priority": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "group": {
+                "description": "The group of the component, e.g. 'Shield Booster', or 'Kill Warrant Scanner'",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name identifing the component (if applicable), e.g. 'Point Defence', or 'Electronic Countermeasure'",
+                "type": "string"
+              },
+              "blueprint": {
+                "type": "object"
+              },
+              "modifications": {
+                "type": "object"
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "stats": {
+      "description": "Optional statistics from the build",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "agility": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "armour": {
+          "description": "Sum of base armour + any hull reinforcements",
+          "type": "number",
+          "minimum": 1
+        },
+        "armourAdded": {
+          "description": "Armour added through Hull reinforcement",
+          "type": "number",
+          "minimum": 0
+        },
+        "baseShieldStrength": {
+          "type": "number",
+          "minimum": 1
+        },
+        "baseArmour": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "boost": {
+          "description": "Maximum boost speed of the ships (4 pips, straight-line)",
+          "type": "number",
+          "minimum": 0
+        },
+        "cargoCapacity": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "class": {
+          "description": "Ship Class/Size [Small, Medium, Large]",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "totalDps": {
+          "description": "Total damage dealt per second of all weapons",
+          "type": "number",
+          "minimum": 0
+        },
+        "totalEps": {
+          "description": "Total energy consumed per second of all weapons",
+          "type": "number",
+          "minimum": 0
+        },
+        "totalHps": {
+          "description": "Total heat generated per second of all weapons",
+          "type": "number",
+          "minimum": 0
+        },
+        "hullCost": {
+          "description": "Cost of the ship's hull",
+          "type": "integer",
+          "minimum": 1
+        },
+        "hullMass": {
+          "description": "Mass of the Ship hull only",
+          "type": "number",
+          "minimum": 1
+        },
+        "hullExplRes": {
+          "description": "Multiplier for explosive damage to hull",
+          "type": "number"
+        },
+        "hullKinRes": {
+          "description": "Multiplier for kinetic damage to hull",
+          "type": "number"
+        },
+        "hullThermRes": {
+          "description": "Multiplier for thermal damage to hull",
+          "type": "number"
+        },
+        "fuelCapacity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fullTankRange": {
+          "description": "Single Jump range with a full tank (unladenMass + fuel)",
+          "type": "number",
+          "minimum": 0
+        },
+        "ladenMass": {
+          "description": "Mass of the Ship + fuel + cargo (hull + all components + fuel tank + cargo capacity)",
+          "type": "number",
+          "minimum": 1
+        },
+        "ladenRange": {
+          "description": "Single Jump range with full cargo load, see ladenMass",
+          "type": "number",
+          "minimum": 0
+        },
+        "masslock": {
+          "description": "Mass Lock Factor of the Ship",
+          "type": "integer",
+          "minimum": 1
+        },
+        "shield": {
+          "description": "Shield strength in Mega Joules (Mj)",
+          "type": "number",
+          "minimum": 0
+        },
+        "shieldExplRes": {
+          "description": "Multiplier for explosive damage to shields",
+          "type": "number"
+        },
+        "shieldKinRes": {
+          "description": "Multiplier for kinetic damage to shields",
+          "type": "number"
+        },
+        "shieldThermRes": {
+          "description": "Multiplier for thermal damage to shields",
+          "type": "number"
+        },
+        "speed": {
+          "description": "Maximum speed of the ships (4 pips, straight-line)",
+          "type": "number",
+          "minimum": 1
+        },
+        "totalCost": {
+          "description": "Total cost of the loadout, including discounts",
+          "type": "number"
+        },
+        "unladenRange": {
+          "description": "Single Jump range when unladen, see unladenMass",
+          "type": "number",
+          "minimum": 0
+        },
+        "unladenMass": {
+          "description": "Mass of the Ship (hull + all components)",
+          "type": "number",
+          "minimum": 1
+        }
+      }
+    }
+  },
+  "definitions": {
+    "standardRatings": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H"
+      ]
+    },
+    "allRatings": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I"
+      ]
+    },
+    "bulkheadNames": {
+      "enum": [
+        "Lightweight Alloy",
+        "Reinforced Alloy",
+        "Military Grade Composite",
+        "Mirrored Surface Composite",
+        "Reactive Surface Composite",
+        "Mk II Ablative Lightweight",
+        "Mk II Ablative Reinforced",
+        "Mk II Ablative Military Grade",
+        "Mk II Ablative Mirrored",
+        "Mk II Ablative Reactive"
+      ]
+    },
+    "bulkheads": {
+      "description": "Bulkheads: either the name string (legacy v4 form) or an object carrying the name plus optional engineering (modifications/blueprint). The object form is required to represent engineered bulkheads.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/bulkheadNames"
+        },
+        {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/bulkheadNames"
+            },
+            "blueprint": {
+              "type": "object"
+            },
+            "modifications": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -467,6 +467,57 @@ export default class Module {
   }
 
   /**
+   * Get the Merc Coin cost of this module. Merc Coin is a fixed purchase
+   * price (not an engineerable stat), so it is read directly rather than
+   * through the modifiable get() path.
+   * @return {Number} the Merc Coin cost of this module (0 if none)
+   */
+  getMercCoin() {
+    return this.mercCoin || 0;
+  }
+
+  /**
+   * Get the Merc Coin spent engineering this module. Merc Coin (unlike
+   * credits) is consumed when applying engineering grades: each grade's
+   * blueprint lists a 'Merc Coin' component that is the cost of a single
+   * roll at that grade. The total therefore depends on how many rolls are
+   * spent at each grade. Grade 1 of a pre-engineered module is baked into the
+   * module's purchase price (its components are empty), so only the grades up
+   * to and including the module's current blueprint grade contribute.
+   * @param {Object} [rolls] Map of grade number -> number of rolls, matching
+   *                         the shopping list's matsPerGrade (Persist.getRolls()).
+   *                         Defaults to a single roll per grade when omitted.
+   * @return {Number} the Merc Coin spent engineering this module (0 if none)
+   */
+  getEngineeringMercCoin(rolls) {
+    if (!this.blueprint || !this.blueprint.grade || !this.blueprint.grades) {
+      return 0;
+    }
+    let total = 0;
+    for (const g in this.blueprint.grades) {
+      if (!this.blueprint.grades.hasOwnProperty(g)) continue;
+      if (Number(g) > this.blueprint.grade) continue;
+      const components = this.blueprint.grades[g].components;
+      if (components && components['Merc Coin']) {
+        const rollsForGrade = rolls && rolls[g] != null ? rolls[g] : 1;
+        total += components['Merc Coin'] * rollsForGrade;
+      }
+    }
+    return total;
+  }
+
+  /**
+   * Get the total Merc Coin cost of this module: its purchase price plus any
+   * Merc Coin spent engineering it up to its current grade.
+   * @param {Object} [rolls] Map of grade number -> number of rolls (see
+   *                         getEngineeringMercCoin).
+   * @return {Number} the total Merc Coin cost of this module
+   */
+  getTotalMercCoin(rolls) {
+    return this.getMercCoin() + this.getEngineeringMercCoin(rolls);
+  }
+
+  /**
    * Get the thermal efficiency of this module
    * @param {Boolean} [modified=true] Whether to take modifications into account
    * @return {Number} the thermal efficiency of this module

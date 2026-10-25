@@ -69,7 +69,12 @@ export default class OutfittingSubpages extends TranslatedComponent {
     Persist.setOutfittingTab('power');
 
     const powerMarker = `${ship.toString()}`;
-    const costMarker = `${ship.toString().split('.')[0]}`;
+    // Cost depends on the module layout (first segment) and on engineering
+    // modifications (last segment) — Merc Coin costs change with engineering
+    // grade — but not on power enable/priority (the two middle segments), so
+    // build the marker from the layout and modifications segments only.
+    const shipCode = ship.toString().split('.');
+    const costMarker = `${shipCode[0]}.${shipCode[shipCode.length - 1]}`;
 
     return <div>
       <PowerManagement ship={ship} code={powerMarker} onChange={onChange} />

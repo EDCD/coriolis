@@ -4,16 +4,16 @@ import * as Serializer from '../src/app/shipyard/Serializer';
 import jsen from 'jsen';
 
 describe("Serializer", function() {
-  const anacondaTestExport = require.requireActual('./fixtures/anaconda-test-detailed-export-v4');
+  const anacondaTestExport = jest.requireActual('./fixtures/anaconda-test-detailed-export-v5');
   const code = anacondaTestExport.references[0].code;
   const anaconda = Ships.anaconda;
-  const validate = jsen(require('../src/schemas/ship-loadout/4'));
+  const validate = jsen(require('../src/schemas/ship-loadout/5'));
 
   describe("To Detailed Build", function() {
     let testBuild = new Ship('anaconda', anaconda.properties, anaconda.slots).buildFrom(code);
     let exportData = Serializer.toDetailedBuild('Test My Ship', testBuild);
 
-    it("conforms to the v4 ship-loadout schema", function() {
+    it("conforms to the v5 ship-loadout schema", function() {
       expect(validate(exportData)).toBe(true);
     });
 
@@ -31,7 +31,7 @@ describe("Serializer", function() {
     const builds = require('./fixtures/expected-builds');
     const exportData = Serializer.toDetailedExport(builds);
 
-    it("conforms to the v4 ship-loadout schema", function() {
+    it("conforms to the v5 ship-loadout schema", function() {
       expect(exportData instanceof Array).toBe(true);
 
       for (let detailedBuild of exportData) {

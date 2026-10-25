@@ -1,0 +1,6555 @@
+{
+  "_ShipSlots": {
+    "version": "0.1",
+    "released": "23/10/2026",
+    "collated_by": "Robert Maynard",
+    "based_on": "Coriolis-Data Alpha 20/10/2026"
+  },
+  "adder": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot02_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot03_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 3,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 3,
+          "name": "MainEngines"
+        },
+        {
+          "class": 3,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 2,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 3,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "anaconda": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 4,
+          "name": "HugeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint7"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint8"
+        }
+      ],
+      "internal": [
+        {
+          "class": 7,
+          "name": "Slot01_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot04_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot07_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "name": "Slot08_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot09_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot10_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot13_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot14_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 6,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 8,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 8,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "anacondamkii": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 4,
+          "name": "HugeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint4"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint7"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint8"
+        }
+      ],
+      "internal": [
+        {
+          "class": 8,
+          "name": "Slot01_Size8"
+        },
+        {
+          "class": 7,
+          "name": "Slot02_Size7"
+        },
+        {
+          "class": 7,
+          "name": "Slot03_Size7"
+        },
+        {
+          "class": 6,
+          "eligible": {
+            "cr": 1,
+            "crl": 1,
+            "ft": 1
+          },
+          "name": "Cargo01"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "name": "Slot07_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot08_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot09_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot10_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot11_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 8,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 8,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 8,
+          "name": "Radar"
+        },
+        {
+          "class": 6,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "asp": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 4,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "asp_scout": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 4,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "belugaliner": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot04_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot07_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot08_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot09_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot10_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot11_Size3"
+        },
+        {
+          "class": 1,
+          "name": "Slot12_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 7,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 8,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 7,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "cobramkiii": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 4,
+          "name": "Slot01_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "cobramkiv": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 4,
+          "name": "Slot01_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "cobramkv": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 4,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "cutter": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 4,
+          "name": "HugeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint7"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint8"
+        }
+      ],
+      "internal": [
+        {
+          "class": 8,
+          "name": "Slot01_Size8"
+        },
+        {
+          "class": 8,
+          "name": "Slot02_Size8"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot04_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot05_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot07_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "name": "Slot08_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot09_Size3"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 8,
+          "name": "MainEngines"
+        },
+        {
+          "class": 7,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 7,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 7,
+          "name": "Radar"
+        },
+        {
+          "class": 6,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "diamondback": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot02_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 2,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "diamondbackxl": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 4,
+          "name": "Slot01_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 4,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "dolphin": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "eagle": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot02_Size2"
+        },
+        {
+          "class": 2,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 1,
+          "name": "Slot03_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot04_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 2,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 3,
+          "name": "MainEngines"
+        },
+        {
+          "class": 3,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 2,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 2,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "empire_courier": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot02_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot03_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 3,
+          "name": "MainEngines"
+        },
+        {
+          "class": 3,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 3,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "empire_eagle": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot02_Size2"
+        },
+        {
+          "class": 2,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 1,
+          "name": "Slot03_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot04_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 3,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 3,
+          "name": "MainEngines"
+        },
+        {
+          "class": 3,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 2,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 2,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "empire_trader": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 7,
+          "name": "Slot00_Size7"
+        },
+        {
+          "class": 7,
+          "name": "Slot01_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "explorer_nx": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint5"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint6"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        }
+      ],
+      "internal": [
+        {
+          "class": 7,
+          "name": "Slot01_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot07_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot08_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot09_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot10_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot11_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot12_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot13_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot14_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 8,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 8,
+          "name": "Radar"
+        },
+        {
+          "class": 7,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "federation_corvette": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 4,
+          "name": "HugeHardpoint1"
+        },
+        {
+          "class": 4,
+          "name": "HugeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint7"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint8"
+        }
+      ],
+      "internal": [
+        {
+          "class": 7,
+          "name": "Slot01_Size7"
+        },
+        {
+          "class": 7,
+          "name": "Slot02_Size7"
+        },
+        {
+          "class": 7,
+          "name": "Slot03_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot04_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot05_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot07_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "name": "Slot08_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot09_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot10_Size3"
+        },
+        {
+          "class": 1,
+          "name": "Slot11_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 6,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 8,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 8,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "federation_dropship": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot00_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot03_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot09_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "federation_dropship_mkii": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "federation_gunship": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot03_Size5"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military03"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "ferdelance": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 4,
+          "name": "HugeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 3,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "hauler": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot02_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot03_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot04_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 2,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 2,
+          "name": "MainEngines"
+        },
+        {
+          "class": 2,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 1,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 1,
+          "name": "Radar"
+        },
+        {
+          "class": 2,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "imperial_corsair": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot07_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot08_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot09_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 7,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 6,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "independant_trader": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "smallcombat01_nx": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 5,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "krait_light": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot03_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 7,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 6,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "krait_mkii": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot03_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot05_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 7,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 6,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "lakonminer": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "eligible": {
+            "abl": 1,
+            "ml": 1,
+            "mvr": 1,
+            "pwa": 1,
+            "scl": 1,
+            "sdm": 1
+          },
+          "name": "LargeMiningHardpoint1"
+        },
+        {
+          "class": 2,
+          "eligible": {
+            "abl": 1,
+            "ml": 1,
+            "pwa": 1,
+            "scl": 1,
+            "sdm": 1
+          },
+          "name": "MediumMiningHardpoint1"
+        },
+        {
+          "class": 2,
+          "eligible": {
+            "abl": 1,
+            "ml": 1,
+            "pwa": 1,
+            "scl": 1,
+            "sdm": 1
+          },
+          "name": "MediumMiningHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "abl": 1,
+            "ml": 1,
+            "pwa": 1,
+            "scl": 1,
+            "sdm": 1
+          },
+          "name": "SmallMiningHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "cc": 1,
+            "dtl": 1,
+            "fx": 1,
+            "hb": 1,
+            "mlc": 1,
+            "pc": 1,
+            "rcpl": 1,
+            "rpl": 1,
+            "rsl": 1
+          },
+          "name": "LimpetController01"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "fh": 1,
+            "fhmkii": 1,
+            "pv": 1,
+            "lpv": 1,
+            "lpvmkii": 1
+          },
+          "name": "FighterBay01"
+        },
+        {
+          "class": 4,
+          "name": "Slot06_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "mamba": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 4,
+          "name": "HugeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 3,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "mandalay": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 5,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "mediumtransport01": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "eligible": {
+            "pce": 1,
+            "pcemkii": 1,
+            "pci": 1,
+            "pcimkii": 1
+          },
+          "name": "Passenger01"
+        },
+        {
+          "class": 6,
+          "eligible": {
+            "pce": 1,
+            "pcemkii": 1,
+            "pci": 1,
+            "pcimkii": 1
+          },
+          "name": "Passenger02"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "pce": 1,
+            "pcemkii": 1,
+            "pci": 1,
+            "pcimkii": 1
+          },
+          "name": "Passenger03"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 6,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 5,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "orca": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot03_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot05_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot06_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 6,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 5,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "panthermkii": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint4"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        }
+      ],
+      "internal": [
+        {
+          "class": 8,
+          "eligible": {
+            "cr": 1,
+            "crl": 1,
+            "ft": 1
+          },
+          "name": "Cargo01"
+        },
+        {
+          "class": 8,
+          "name": "Slot01_Size8"
+        },
+        {
+          "class": 7,
+          "eligible": {
+            "cr": 1,
+            "crl": 1,
+            "ft": 1
+          },
+          "name": "Cargo02"
+        },
+        {
+          "class": 7,
+          "name": "Slot02_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot04_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot05_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot07_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot08_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot09_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 8,
+          "name": "MainEngines"
+        },
+        {
+          "class": 7,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 7,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "python": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot06_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot08_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot09_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 7,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 6,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "python_nx": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint4"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 5,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "sidewinder": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 2,
+          "name": "Slot01_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot02_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot03_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot04_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 2,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 2,
+          "name": "MainEngines"
+        },
+        {
+          "class": 2,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 1,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 1,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 1,
+          "name": "Radar"
+        },
+        {
+          "class": 1,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "type6": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot00_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot04_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot05_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 3,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 2,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 2,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "type7": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 7,
+          "name": "Slot00_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot00_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size4"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size2"
+        },
+        {
+          "class": 3,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot09_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot10_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 4,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 4,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "type8": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint4"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 7,
+          "name": "Slot01_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot04_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot05_Size5"
+        },
+        {
+          "class": 5,
+          "name": "Slot06_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot07_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot08_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot09_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 5,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 4,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 5,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "type9": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 8,
+          "name": "Slot00_Size8"
+        },
+        {
+          "class": 8,
+          "name": "Slot01_Size8"
+        },
+        {
+          "class": 7,
+          "name": "Slot02_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot05_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot06_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot08_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot11_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot12_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 6,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 6,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "type9_military": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint3"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint4"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint5"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint6"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint7"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint8"
+        }
+      ],
+      "internal": [
+        {
+          "class": 8,
+          "name": "Slot01_Size8"
+        },
+        {
+          "class": 7,
+          "name": "Slot02_Size7"
+        },
+        {
+          "class": 6,
+          "name": "Slot03_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot04_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot05_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot06_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot07_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot08_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot11_Size2"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 1,
+          "name": "Slot12_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 8,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 7,
+          "name": "MainEngines"
+        },
+        {
+          "class": 7,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 7,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 6,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "typex": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 4,
+          "name": "Slot03_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military03"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "typex_2": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 5,
+          "name": "Slot02_Size5"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military03"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "typex_3": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint3"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 6,
+          "name": "Slot01_Size6"
+        },
+        {
+          "class": 6,
+          "name": "Slot02_Size6"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot04_Size3"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot06_Size2"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military02"
+        },
+        {
+          "class": 4,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military03"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 6,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 6,
+          "name": "MainEngines"
+        },
+        {
+          "class": 5,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 5,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 6,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "viper": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 3,
+          "name": "Slot01_Size3"
+        },
+        {
+          "class": 3,
+          "name": "Slot02_Size3"
+        },
+        {
+          "class": 3,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 2,
+          "name": "Slot03_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot04_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 3,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 3,
+          "name": "MainEngines"
+        },
+        {
+          "class": 3,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 2,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 2,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "viper_mkiv": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 2,
+          "name": "MediumHardpoint1"
+        },
+        {
+          "class": 2,
+          "name": "MediumHardpoint2"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint1"
+        },
+        {
+          "class": 1,
+          "name": "SmallHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        }
+      ],
+      "internal": [
+        {
+          "class": 4,
+          "name": "Slot01_Size4"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 3,
+          "name": "Slot03_Size3"
+        },
+        {
+          "class": 3,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 2,
+          "name": "Slot04_Size2"
+        },
+        {
+          "class": 2,
+          "name": "Slot05_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 4,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 2,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 3,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 3,
+          "name": "Radar"
+        },
+        {
+          "class": 4,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  },
+  "vulture": {
+    "slots": {
+      "hardpoints": [
+        {
+          "class": 3,
+          "name": "LargeHardpoint1"
+        },
+        {
+          "class": 3,
+          "name": "LargeHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint1"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint2"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint3"
+        },
+        {
+          "class": 0,
+          "name": "TinyHardpoint4"
+        }
+      ],
+      "internal": [
+        {
+          "class": 5,
+          "name": "Slot01_Size5"
+        },
+        {
+          "class": 5,
+          "eligible": {
+            "ghrp": 1,
+            "gmrp": 1,
+            "gsrp": 1,
+            "hr": 1,
+            "mahr": 1,
+            "mrp": 1,
+            "scb": 1
+          },
+          "name": "Military01"
+        },
+        {
+          "class": 4,
+          "name": "Slot02_Size4"
+        },
+        {
+          "class": 2,
+          "name": "Slot03_Size2"
+        },
+        {
+          "class": 1,
+          "name": "Slot05_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot06_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot07_Size1"
+        },
+        {
+          "class": 1,
+          "name": "Slot08_Size1"
+        },
+        {
+          "class": 1,
+          "eligible": {
+            "pas": 1
+          },
+          "name": "PlanetaryApproachSuite"
+        }
+      ],
+      "standard": [
+        {
+          "class": 1,
+          "name": "Armour"
+        },
+        {
+          "class": 4,
+          "name": "PowerPlant"
+        },
+        {
+          "class": 5,
+          "name": "MainEngines"
+        },
+        {
+          "class": 4,
+          "name": "FrameShiftDrive"
+        },
+        {
+          "class": 3,
+          "name": "LifeSupport"
+        },
+        {
+          "class": 5,
+          "name": "PowerDistributor"
+        },
+        {
+          "class": 4,
+          "name": "Radar"
+        },
+        {
+          "class": 3,
+          "name": "FuelTank"
+        },
+        {
+          "class": 1,
+          "name": "CargoHatch"
+        }
+      ]
+    }
+  }
+}

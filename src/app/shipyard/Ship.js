@@ -8,6 +8,8 @@ import * as _ from 'lodash';
 import isEqual from 'lodash/lang';
 import { Ships, Modifications } from 'coriolis-data/dist';
 import { chain } from 'lodash';
+import { needsInternalMigration, OLD_INTERNAL_LAYOUTS, remapInternalArray, remapInternalParallel,
+         needsHardpointMigration, OLD_HARDPOINT_LAYOUTS, remapHardpointArray, remapHardpointParallel } from './LinkMigration';
 const zlib = require('zlib');
 
 const UNIQUE_MODULES = ['psg', 'sg', 'bsg', 'rf', 'fs', 'fh', 'gfsb', 'dc', 'ews', 'mlc'];
@@ -85,11 +87,6 @@ export default class Ship {
 
     for (let p in properties) { this[p] = properties[p]; }  // Copy all base properties from shipData
 
-    // DEBUG
-    if (id === 'imperial_courier') {
-      console.log('Imperial Courier constructor - minthrust:', this.minthrust, 'properties.minthrust:', properties.minthrust);
-    }
-
     for (let slotType in slots) {   // Initialize all slots
       // small counter to keep track of the slot indexes
       const slotCounter = new Map();
@@ -126,6 +123,10 @@ export default class Ship {
               slotIndex: slotCounter.get(currentSlotType).length,
               maxClass: slot.class,
               eligible: slot.eligible,
+              // Pass through the optional MVR opt-in flag so slot-specific
+              // Mining Volley Repeater eligibility (e.g. the Anaconda Mk II's
+              // two lower Large hardpoints) survives onto the slot object.
+              mvr: slot.mvr,
             });
           }
         } else {
@@ -364,7 +365,7 @@ export default class Ship {
    */
   toString() {
     return [
-      'A',
+      'B',
       this.getStandardString(),
       this.getHardpointsString(),
       this.getInternalString(),
@@ -446,13 +447,18 @@ export default class Ship {
    * Recalculate all item costs and total based on discounts.
    * @param  {Number} shipDiscount      Ship cost discount (e.g. 0.1 === 10% discount)
    * @param  {Number} moduleDiscount    Module cost discount (e.g. 0.75 === 25% discount)
+   * @param  {Object} [rolls]           Map of engineering grade -> rolls (matsPerGrade)
+   *                                     used to cost Merc Coin engineering. Defaults to
+   *                                     one roll per grade when omitted.
    * @return {this} The current ship instance for chaining
    */
-  applyDiscounts(shipDiscount, moduleDiscount) {
+  applyDiscounts(shipDiscount, moduleDiscount, rolls) {
     let shipCostMultiplier = 1 - shipDiscount;
     let moduleCostMultiplier = 1 - moduleDiscount;
     let total = 0;
+    let totalMercCoin = 0;
     let costList = this.costList;
+    this.mercCoinRolls = rolls;
 
     for (let i = 0, l = costList.length; i < l; i++) {
       let item = costList[i];
@@ -462,9 +468,17 @@ export default class Ship {
           total += item.discountedCost;
         }
       }
+      // Merc Coin is a separate in-game currency with no discount concept.
+      // It covers both the module's purchase price and any Merc Coin spent
+      // engineering it. Merc Coin modules typically have a credit cost of 0,
+      // so they are handled independently of the credit total above.
+      if (item.m && item.incCost && item.type !== 'SHIP' && item.m.getTotalMercCoin) {
+        totalMercCoin += item.m.getTotalMercCoin(rolls);
+      }
     }
     this.moduleCostMultiplier = moduleCostMultiplier;
     this.totalCost = total;
+    this.totalMercCoin = totalMercCoin;
     return this;
   }
 
@@ -808,6 +822,7 @@ export default class Ship {
     this.shield = this.baseShieldStrength;
     this.shieldCells = 0;
     this.totalCost = this.m.incCost ? this.m.discountedCost : 0;
+    this.totalMercCoin = 0;
     this.dryMass = this.hullMass;
     this.unladenMass = this.hullMass;
     this.totalDpe = 0;
@@ -995,28 +1010,56 @@ export default class Ship {
       return this;
     }
 
-    let standard = new Array(this.standard.length),
-        hardpoints = new Array(this.hardpoints.length),
-        internal = new Array(this.internal.length),
-        modifications = new Array(1 + this.standard.length + this.hardpoints.length + this.internal.length),
-        blueprints = new Array(1 + this.standard.length + this.hardpoints.length + this.internal.length),
-        parts = serializedString.split('.'),
+    let parts = serializedString.split('.'),
         priorities = null,
         enabled = null,
         code = parts[0];
 
-    // Code has a version ID embedded as the first character (if it is alphabetic)
+    // The first character identifies the link version:
+    //   '0'-'4' (digit) -> v1 (legacy, pre-military-slots)
+    //   'A'            -> v2 (legacy positional, coriolis-data pre-new-slots order)
+    //   'B'            -> v3 (positional against ship-slots.json authoritative order)
+    // See coriolis/docs/link-format-v3.md.
     let version;
     if (code && code.match(/^[0-4]/)) {
-      // Starting with bulkhead number is version 1
       version = 1;
+    } else if (code && code.charAt(0) === 'B') {
+      version = 3;
+      code = code.substring(1);
     } else {
-      // Version 2 (current version)
+      // 'A' (or any other alpha marker) -> v2
       version = 2;
       if (code) {
         code = code.substring(1);
       }
     }
+
+    // A v1/v2 link for a ship that has since gained/re-sized internal slots is
+    // positional against the ship's OLD internal layout. Decode using that OLD
+    // length, then remap onto the current (new) layout so modules land in their
+    // original slots and new slots stay empty. v3 links are already in current
+    // order, so no migration.
+    const migrateInternal = version !== 3 && needsInternalMigration(this.id);
+    const oldInternalLen = migrateInternal
+      ? OLD_INTERNAL_LAYOUTS[this.id].length
+      : this.internal.length;
+
+    // A v1/v2 link for a ship that has since gained a HARDPOINT slot (e.g. the
+    // Asp Scout's 3rd utility mount) encodes only the OLD number of hardpoints.
+    // Decode using that OLD length so the positional stream (and the global
+    // mod/blueprint/priority/enabled indices, which run
+    // [bulkhead, ...standard, ...hardpoints, ...internal]) stay aligned, then
+    // remap onto the current hardpoint array. v3 links are already current.
+    const migrateHardpoint = version !== 3 && needsHardpointMigration(this.id);
+    const oldHardpointLen = migrateHardpoint
+      ? OLD_HARDPOINT_LAYOUTS[this.id].length
+      : this.hardpoints.length;
+
+    let standard = new Array(this.standard.length),
+        hardpoints = new Array(oldHardpointLen),
+        internal = new Array(oldInternalLen),
+        modifications = new Array(1 + this.standard.length + oldHardpointLen + oldInternalLen),
+        blueprints = new Array(1 + this.standard.length + oldHardpointLen + oldInternalLen);
 
     if (parts[1]) {
       enabled = LZString.decompressFromBase64(Utils.fromUrlSafe(parts[1])).split('');
@@ -1041,9 +1084,56 @@ export default class Ship {
 
     decodeToArray(code, internal, decodeToArray(code, hardpoints, decodeToArray(code, standard, 1)));
 
-    if (version != 2) {
+    if (version == 1) {
       // Alter as required due to changes in the (build) code from one version to the next
-      this.upgradeInternals(internal, 1 + this.standard.length + this.hardpoints.length, priorities, enabled, modifications, blueprints, version);
+      this.upgradeInternals(internal, 1 + this.standard.length + oldHardpointLen, priorities, enabled, modifications, blueprints, version);
+    }
+
+    // The global parallel arrays (priorities/enabled/modifications/blueprints)
+    // run [bulkhead, ...standard, ...hardpoints, ...internal]. Migrate the
+    // hardpoint region FIRST (it sits before internal, so remapping it changes
+    // the internal region's offset), then the internal region.
+    if (migrateHardpoint) {
+      const preHardpoint = 1 + this.standard.length;
+
+      hardpoints = remapHardpointArray(this.id, hardpoints);
+
+      const remapHpRegion = (arr, fill) => {
+        if (!arr) return arr;
+        const head = arr.slice(0, preHardpoint);
+        const oldHp = arr.slice(preHardpoint, preHardpoint + oldHardpointLen);
+        const tail = arr.slice(preHardpoint + oldHardpointLen); // the internal region
+        const newHp = remapHardpointParallel(this.id, oldHp, fill);
+        return head.concat(newHp, tail);
+      };
+      priorities = remapHpRegion(priorities, '0');
+      enabled = remapHpRegion(enabled, '1');
+      modifications = remapHpRegion(modifications, undefined);
+      blueprints = remapHpRegion(blueprints, undefined);
+    }
+
+    if (migrateInternal) {
+      // Remap the decoded OLD-order internal slots (and their parallel arrays)
+      // onto the current layout. modifications/blueprints are global-indexed:
+      // [bulkhead, ...standard, ...hardpoints, ...internal], so the internal
+      // portion is remapped in place at the internal offset. priorities/enabled
+      // share that same global layout. Use the CURRENT hardpoints length here —
+      // if hardpoints were just migrated above, the arrays are already widened.
+      const preInternal = 1 + this.standard.length + this.hardpoints.length;
+
+      internal = remapInternalArray(this.id, internal);
+
+      const remapTail = (arr, fill) => {
+        if (!arr) return arr;
+        const head = arr.slice(0, preInternal);
+        const oldTail = arr.slice(preInternal, preInternal + oldInternalLen);
+        const newTail = remapInternalParallel(this.id, oldTail, fill);
+        return head.concat(newTail);
+      };
+      priorities = remapTail(priorities, '0');
+      enabled = remapTail(enabled, '1');
+      modifications = remapTail(modifications, undefined);
+      blueprints = remapTail(blueprints, undefined);
     }
 
     return this.buildWith(
@@ -1127,6 +1217,10 @@ export default class Ship {
   setCostIncluded(item, included) {
     if (item.incCost != included && item.m) {
       this.totalCost += included ? item.discountedCost : -item.discountedCost;
+      if (item.m.getTotalMercCoin) {
+        const mc = item.m.getTotalMercCoin(this.mercCoinRolls);
+        this.totalMercCoin = (this.totalMercCoin || 0) + (included ? mc : -mc);
+      }
     }
     item.incCost = included;
     return this;
@@ -1507,25 +1601,9 @@ export default class Ship {
     const reserveFuelMass = this.reserveFuelCapacity || 0;
     const movementMass = this.dryMass + this.fuelCapacity + reserveFuelMass;
 
-    // DEBUG for Imperial Courier
-    if (this.id === 'imperial_courier' && this.standard && this.standard[1] && this.standard[1].m) {
-      console.log('updateMovement():');
-      console.log('  dryMass:', this.dryMass);
-      console.log('  fuelCapacity:', this.fuelCapacity);
-      console.log('  reserveFuelCapacity:', this.reserveFuelCapacity || 0);
-      console.log('  movementMass:', movementMass);
-      console.log('  thrusters:', this.standard[1].m.name, this.standard[1].m.class + this.standard[1].m.rating);
-    }
-
     this.speeds = Calc.speed(movementMass, this.speed, this.standard[1].m, this.minthrust);
     this.topSpeed = this.speeds[4];
     this.topBoost = this.canBoost(0, this.fuelCapacity) ? this.speeds[4] * this.boost / this.speed : 0;
-
-    // DEBUG for Imperial Courier
-    if (this.id === 'imperial_courier') {
-      console.log('  topSpeed:', this.topSpeed.toFixed(1), 'm/s');
-      console.log('  topBoost:', this.topBoost.toFixed(1), 'm/s');
-    }
 
     this.pitches = Calc.pitch(movementMass, this.pitch, this.standard[1].m, this.pipSpeed);
     this.topPitch = this.pitches[4];

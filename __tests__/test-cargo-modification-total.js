@@ -24,7 +24,7 @@ describe('Cargo modification updates ship total', function() {
     // Start from the ship's stock build so all standard slots are populated
     ship.buildWith(shipData.defaults);
 
-    // Class-7 E-rated cargo rack (id '06', base cargo 64)
+    // Class-7 E-rated cargo rack (id '06', base cargo 128 = 2^7)
     const template = Modules.internal.cr.find(m => m.id === '06');
     const rack = new Module({ template });
 
@@ -37,9 +37,9 @@ describe('Cargo modification updates ship total', function() {
 
   it('places the unmodified rack and counts its base cargo in the total', function() {
     const { ship, slot } = shipWithCargoRack();
-    expect(slot.m.get('cargo')).toBe(64);
-    // The ship total should include this rack's 64t
-    expect(ship.cargoCapacity).toBeGreaterThanOrEqual(64);
+    expect(slot.m.get('cargo')).toBe(128);
+    // The ship total should include this rack's 128t
+    expect(ship.cargoCapacity).toBeGreaterThanOrEqual(128);
   });
 
   it('updates ship.cargoCapacity when a cargo modification is applied', function() {
@@ -52,9 +52,9 @@ describe('Cargo modification updates ship total', function() {
 
     const slotCargo = slot.m.get('cargo');
     // Slot must reflect the increase (this always worked)
-    expect(slotCargo).toBeGreaterThan(64);
+    expect(slotCargo).toBeGreaterThan(128);
     // The ship total must have grown by the same rounded per-module amount
-    expect(ship.cargoCapacity).toBe(before - 64 + Math.round(slotCargo));
+    expect(ship.cargoCapacity).toBe(before - 128 + Math.round(slotCargo));
   });
 
   it('updates ship.cargoCapacity when the blueprint grade is increased', function() {

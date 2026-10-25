@@ -1,4 +1,4 @@
-import { Modifications, Modules, Ships } from 'coriolis-data/dist';
+import { Modifications, Modules, Ships, ShipSlots } from 'coriolis-data/dist';
 import Module from '../shipyard/Module';
 import Ship from '../shipyard/Ship';
 import { getBlueprint } from '../utils/BlueprintFunctions';
@@ -77,6 +77,7 @@ export const CORIOLIS_TO_FD_BULKHEAD_NAME_MAPPING = BulkheadNames.reduce(
 export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'Adder': 'adder',
   'Anaconda': 'anaconda',
+  'AnacondaMkII': 'anaconda2',
   'Asp': 'asp',
   'Asp_Scout': 'asp_scout',
   'BelugaLiner': 'beluga',
@@ -124,6 +125,41 @@ export const SHIP_FD_NAME_TO_CORIOLIS_NAME = {
   'Viper_MkIV': 'viper_mk_iv',
   'Vulture': 'vulture'
 };
+
+/**
+ * Resolve a coriolis ship id to its key in ship-slots.json (ShipSlots), which is
+ * keyed by Frontier internal ship name (e.g. 'type7', 'empire_trader'). Either the
+ * coriolis id matches the ShipSlots key directly, or it is the lowercased FD name
+ * mapped to that id in SHIP_FD_NAME_TO_CORIOLIS_NAME.
+ * @param {String} shipId coriolis ship id
+ * @return {String|null} ship-slots key, or null if not found
+ */
+let _idToSsKey = null;
+export function shipSlotsKey(shipId) {
+  if (ShipSlots && ShipSlots[shipId]) return shipId;
+  if (!_idToSsKey) {
+    _idToSsKey = {};
+    for (const fdName in SHIP_FD_NAME_TO_CORIOLIS_NAME) {
+      _idToSsKey[SHIP_FD_NAME_TO_CORIOLIS_NAME[fdName]] = fdName.toLowerCase();
+    }
+  }
+  const key = _idToSsKey[shipId];
+  return (key && ShipSlots && ShipSlots[key]) ? key : null;
+}
+
+/**
+ * Get the authoritative ship-slots.json slot list for a ship group. Each entry is
+ * { class, name, eligible? } with name = the exact Frontier journal slot name.
+ * @param {String} shipId coriolis ship id
+ * @param {String} group 'internal' | 'hardpoints' | 'standard'
+ * @return {Array|null} the authoritative slot list, or null if unavailable
+ */
+export function shipSlots(shipId, group) {
+  const key = shipSlotsKey(shipId);
+  if (!key) return null;
+  const s = ShipSlots[key].slots;
+  return (s && s[group]) ? s[group] : null;
+}
 
 // Mapping from hardpoint class to name in companion API
 export const HARDPOINT_NUM_TO_CLASS = {
@@ -344,6 +380,8 @@ export function shipFromJson(json) {
   ship.standard[6].priority = 0;
 
   // Add hardpoints
+  const ssHardpoints = shipSlots(shipModel, 'hardpoints');
+  const useAuthoritativeHp = ssHardpoints && ssHardpoints.length === shipTemplate.slots.hardpoints.length;
   let hardpointClassNum = -1;
   let hardpointSlotNum = -1;
   let hardpointArrayNum = 0;
@@ -357,8 +395,12 @@ export function shipFromJson(json) {
       hardpointSlotNum = 1;
     }
 
-    // Now that we know what we're looking for, find it
-    const hardpointName = HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + 'Hardpoint' + hardpointSlotNum;
+    // Resolve the journal slot name: prefer the authoritative ship-slots.json name
+    // (handles named prefixes like LargeMiningHardpoint correctly); otherwise fall
+    // back to the legacy {Size}Hardpoint{N} reconstruction.
+    const hardpointName = useAuthoritativeHp
+      ? ssHardpoints[i].name
+      : HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + 'Hardpoint' + hardpointSlotNum;
     const hardpointSlot = json.modules[hardpointName];
     if (!hardpointSlot) {
       // This can happen with old imports that don't contain new hardpoints
@@ -376,7 +418,15 @@ export function shipFromJson(json) {
     hardpointArrayNum++;
   }
 
-  // Add internal compartments
+  // Add internal compartments.
+  // Preferred path: resolve each slot's journal name from the authoritative
+  // ship-slots.json index (ShipSlots), which lists slots in the same order as
+  // shipTemplate.slots.internal and carries the exact Frontier slot name. This
+  // removes the need to reconstruct SlotNN_SizeN names (whose _SizeN is no longer
+  // reliable) or to maintain per-ship skip rules.
+  const ssInternal = shipSlots(shipModel, 'internal');
+  const useAuthoritative = ssInternal && ssInternal.length === shipTemplate.slots.internal.length;
+
   let internalSlotNum = 1;
   let militarySlotNum = 1;
   let cargoSlotNum = 1;
@@ -388,9 +438,12 @@ export function shipFromJson(json) {
     const isNamedSlot = isNaN(slotDef);
     const slotName = isNamedSlot ? slotDef.name : null;
 
-    // Named slots have their own naming conventions separate from the standard SlotNN_SizeN pattern
     let internalSlot = null;
-    if (slotName === 'Military') {
+    if (useAuthoritative) {
+      // Direct lookup by the authoritative Frontier slot name.
+      internalSlot = json.modules[ssInternal[i].name];
+    } else if (slotName === 'Military') {
+      // Legacy fallback (ship not present in ship-slots.json)
       const internalName = 'Military0' + militarySlotNum;
       internalSlot = json.modules[internalName];
       militarySlotNum++;

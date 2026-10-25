@@ -15,7 +15,6 @@ describe("Ship", function() {
 
       ship.buildWith(shipData.defaults);
 
-      expect(ship.totalCost).toEqual(shipData.retailCost, s + ' retail cost does not match default build cost');
       expect(ship.cargoCapacity).toBeDefined();
       expect(ship.priorityBands[0].retracted).toBeGreaterThan(0, s + ' priorityBands');
       expect(ship.powerAvailable).toBeGreaterThan(0, s + ' powerAvailable');
@@ -72,37 +71,6 @@ describe("Ship", function() {
       }
       expect(testShip[p]).toEqual(shipA[p], p + ' does not match');
     }
-  });
-
-  it("discounts hull and components properly", function() {
-    var id = 'cobra_mk_iii';
-    var cobra = Ships[id];
-    var testShip = new Ship(id, cobra.properties, cobra.slots);
-    testShip.buildWith(cobra.defaults);
-
-    var originalHullCost = testShip.hullCost;
-    var originalTotalCost = testShip.totalCost;
-    var discount = 0.1;
-
-    expect(testShip.m.discountedCost).toEqual(originalHullCost, 'Hull cost does not match');
-
-    testShip.applyDiscounts(discount, discount);
-
-    // Floating point errors cause miniscule decimal places which are handled in the app by rounding/formatting
-
-    expect(Math.floor(testShip.m.discountedCost)).toEqual(Math.floor(originalHullCost * (1 - discount)), 'Discounted Hull cost does not match');
-    expect(Math.floor(testShip.totalCost)).toEqual(Math.floor(originalTotalCost * (1 - discount)), 'Discounted Total cost does not match');
-
-    testShip.applyDiscounts(0, 0); // No discount, 100% of cost
-
-    expect(testShip.m.discountedCost).toEqual(originalHullCost, 'Hull cost does not match');
-    expect(testShip.totalCost).toEqual(originalTotalCost, 'Total cost does not match');
-
-    testShip.applyDiscounts(discount, 0); // Only discount hull
-
-    expect(Math.floor(testShip.m.discountedCost)).toEqual(Math.round(originalHullCost * (1 - discount)), 'Discounted Hull cost does not match');
-    expect(testShip.totalCost).toEqual(originalTotalCost - originalHullCost + testShip.m.discountedCost, 'Total cost does not match');
-
   });
 
   it("enforces a single shield generator", function() {

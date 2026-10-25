@@ -1,5 +1,5 @@
 import Ship from '../shipyard/Ship';
-import { HARDPOINT_NUM_TO_CLASS, shipModelFromJson } from './CompanionApiUtils';
+import { HARDPOINT_NUM_TO_CLASS, shipModelFromJson, shipSlots } from './CompanionApiUtils';
 import { Ships } from 'coriolis-data/dist';
 import Module from '../shipyard/Module';
 import { Modules } from 'coriolis-data/dist';
@@ -235,6 +235,8 @@ export function shipFromLoadoutJSON(json) {
       let hardpoint;
       let hardpointArrayNum = 0;
       const classSlotCounters = {};
+      const ssHardpoints = shipSlots(shipModel, 'hardpoints');
+      const useAuthoritativeHp = ssHardpoints && ssHardpoints.length === shipTemplate.slots.hardpoints.length;
       for (let i in shipTemplate.slots.hardpoints) {
         const slotDef = shipTemplate.slots.hardpoints[i];
         const hardpointClassNum = typeof slotDef === 'object' ? slotDef.class : slotDef;
@@ -243,13 +245,16 @@ export function shipFromLoadoutJSON(json) {
         let hardpointSlotNum = classSlotCounters[hardpointClassNum];
 
         // If the ship is the T8, skip SmallHardpoint3
-        if (shipModel === 'type_8_transport' && hardpointClassNum === 1 && hardpointSlotNum === 3) {
+        if (!useAuthoritativeHp && shipModel === 'type_8_transport' && hardpointClassNum === 1 && hardpointSlotNum === 3) {
           classSlotCounters[hardpointClassNum]++;
           hardpointSlotNum = classSlotCounters[hardpointClassNum];
         }
 
-        // Construct the slot name (e.g. "LargeMiningHardpoint1" or "MediumHardpoint3")
-        const hardpointName = HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + slotNamePrefix + 'Hardpoint' + hardpointSlotNum;
+        // Prefer the authoritative ship-slots.json name; otherwise reconstruct
+        // (e.g. "LargeMiningHardpoint1" or "MediumHardpoint3").
+        const hardpointName = useAuthoritativeHp
+          ? ssHardpoints[i].name
+          : HARDPOINT_NUM_TO_CLASS[hardpointClassNum] + slotNamePrefix + 'Hardpoint' + hardpointSlotNum;
         const hardpointSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === hardpointName.toLowerCase());
         if (!hardpointSlot) {
           // This can happen with old imports that don't contain new hardpoints
@@ -282,6 +287,12 @@ export function shipFromLoadoutJSON(json) {
     }
   }
 
+  // Preferred path: resolve each internal slot's journal name from the authoritative
+  // ship-slots.json index (same order as shipTemplate.slots.internal). Falls back to
+  // the legacy reconstruction (incl. per-ship skip rules) when unavailable.
+  const ssInternal = shipSlots(shipModel, 'internal');
+  const useAuthoritative = ssInternal && ssInternal.length === shipTemplate.slots.internal.length;
+
   let internalSlotNum = 1;
   // If the ship is a T9, we have to start the internalSlotNum at 0
   if (shipModel === 'type_9_heavy') {
@@ -308,7 +319,10 @@ export function shipFromLoadoutJSON(json) {
 
     // Named slots have their own naming conventions separate from the standard SlotNN_SizeN pattern
     let internalSlot = null;
-    if (isMilitary) {
+    if (useAuthoritative) {
+        const internalName = ssInternal[i].name;
+        internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
+    } else if (isMilitary) {
         const internalName = 'Military0' + militarySlotNum;
         internalSlot = json.Modules.find(elem => elem.Slot.toLowerCase() === internalName.toLowerCase());
         militarySlotNum++;

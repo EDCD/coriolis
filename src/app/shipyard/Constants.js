@@ -42,6 +42,8 @@ export const ModuleGroupToName = {
   scb: 'Shield Cell Bank',
   sg: 'Shield Generator',
   pv: 'Planetary Vehicle Hangar',
+  lpv: 'Large Planetary Vehicle Hangar',
+  lpvmkii: 'Mk II Large Planetary Vehicle Hangar',
   psg: 'Prismatic Shield Generator',
   dc: 'Docking Computer',
   fx: 'Fuel Transfer Limpet Controller',

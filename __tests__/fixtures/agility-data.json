@@ -1,30 +1,162 @@
 {
   "adder": {
-    "t3": {"speed": 205, "boost": 298, "pitch": 35.37, "roll": 93.09, "yaw": 13.03},
-    "t2": {"speed": 209, "boost": 304, "pitch": 36.06, "roll": 94.90, "yaw": 13.29},
-    "t1": {"speed": 213, "boost": 310, "pitch": 36.80, "roll": 96.84, "yaw": 13.56},
-    "t0": {"speed": 218, "boost": 317, "pitch": 37.70, "roll": 99.20, "yaw": 13.89},
-    "t9": {"speed": 220, "boost": 321, "pitch": 38.08, "roll": 100.21, "yaw": 14.03},
-    "t8": {"speed": 225, "boost": 327, "pitch": 38.86, "roll": 102.26, "yaw": 14.32},
-    "t7": {"speed": 230, "boost": 334, "pitch": 39.69, "roll": 104.44, "yaw": 14.62},
-    "t6": {"speed": 234, "boost": 340, "pitch": 40.41, "roll": 106.34, "yaw": 14.89},
-    "t5": {"speed": 242, "boost": 351, "pitch": 41.71, "roll": 109.78, "yaw": 15.37}
+    "t3": {
+      "speed": 207,
+      "boost": 300,
+      "pitch": 35.67,
+      "roll": 93.88,
+      "yaw": 13.14
+    },
+    "t2": {
+      "speed": 210,
+      "boost": 305,
+      "pitch": 36.27,
+      "roll": 95.45,
+      "yaw": 13.36
+    },
+    "t1": {
+      "speed": 214,
+      "boost": 311,
+      "pitch": 36.97,
+      "roll": 97.28,
+      "yaw": 13.62
+    },
+    "t0": {
+      "speed": 219,
+      "boost": 319,
+      "pitch": 37.84,
+      "roll": 99.58,
+      "yaw": 13.94
+    },
+    "t9": {
+      "speed": 221,
+      "boost": 321,
+      "pitch": 38.14,
+      "roll": 100.37,
+      "yaw": 14.05
+    },
+    "t8": {
+      "speed": 225,
+      "boost": 328,
+      "pitch": 38.95,
+      "roll": 102.49,
+      "yaw": 14.35
+    },
+    "t7": {
+      "speed": 230,
+      "boost": 335,
+      "pitch": 39.81,
+      "roll": 104.77,
+      "yaw": 14.67
+    },
+    "t6": {
+      "speed": 235,
+      "boost": 342,
+      "pitch": 40.56,
+      "roll": 106.74,
+      "yaw": 14.94
+    },
+    "t5": {
+      "speed": 243,
+      "boost": 353,
+      "pitch": 41.91,
+      "roll": 110.29,
+      "yaw": 15.44
+    }
   },
   "eagle": {
-    "t2": {"speed": 223, "boost": 325, "pitch": 46.45, "roll": 111.48, "yaw": 16.72},
-    "t1": {"speed": 229, "boost": 334, "pitch": 47.69, "roll": 114.46, "yaw": 17.17},
-    "t0": {"speed": 235, "boost": 343, "pitch": 49.00, "roll": 117.60, "yaw": 17.64},
-    "t9": {"speed": 239, "boost": 349, "pitch": 49.80, "roll": 119.53, "yaw": 17.93},
-    "t8": {"speed": 243, "boost": 355, "pitch": 50.70, "roll": 121.69, "yaw": 18.25},
-    "t7": {"speed": 248, "boost": 361, "pitch": 51.62, "roll": 123.89, "yaw": 18.58},
-    "t6": {"speed": 252, "boost": 367, "pitch": 52.46, "roll": 125.91, "yaw": 18.89},
-    "t5": {"speed": 259, "boost": 378, "pitch": 53.99, "roll": 129.56, "yaw": 19.43}
+    "t2": {
+      "speed": 224,
+      "boost": 327,
+      "pitch": 46.73,
+      "roll": 112.14,
+      "yaw": 16.82
+    },
+    "t1": {
+      "speed": 230,
+      "boost": 335,
+      "pitch": 47.88,
+      "roll": 114.91,
+      "yaw": 17.24
+    },
+    "t0": {
+      "speed": 236,
+      "boost": 344,
+      "pitch": 49.15,
+      "roll": 117.96,
+      "yaw": 17.69
+    },
+    "t9": {
+      "speed": 239,
+      "boost": 349,
+      "pitch": 49.89,
+      "roll": 119.74,
+      "yaw": 17.96
+    },
+    "t8": {
+      "speed": 244,
+      "boost": 356,
+      "pitch": 50.82,
+      "roll": 121.98,
+      "yaw": 18.3
+    },
+    "t7": {
+      "speed": 249,
+      "boost": 363,
+      "pitch": 51.79,
+      "roll": 124.29,
+      "yaw": 18.64
+    },
+    "t6": {
+      "speed": 253,
+      "boost": 369,
+      "pitch": 52.66,
+      "roll": 126.38,
+      "yaw": 18.96
+    },
+    "t5": {
+      "speed": 260,
+      "boost": 380,
+      "pitch": 54.23,
+      "roll": 130.15,
+      "yaw": 19.52
+    }
   },
   "hauler": {
-    "t4": {"speed": 203, "boost": 305, "pitch": 36.61, "roll": 101.71, "yaw": 14.24},
-    "t3": {"speed": 209, "boost": 314, "pitch": 37.63, "roll": 104.54, "yaw": 14.64},
-    "t2": {"speed": 216, "boost": 324, "pitch": 38.89, "roll": 108.03, "yaw": 15.12},
-    "t1": {"speed": 222, "boost": 333, "pitch": 39.97, "roll": 111.02, "yaw": 15.54},
-    "t0": {"speed": 232, "boost": 348, "pitch": 41.76, "roll": 116.00, "yaw": 16.24}
+    "t4": {
+      "speed": 204,
+      "boost": 306,
+      "pitch": 36.69,
+      "roll": 101.92,
+      "yaw": 14.27
+    },
+    "t3": {
+      "speed": 210,
+      "boost": 315,
+      "pitch": 37.76,
+      "roll": 104.89,
+      "yaw": 14.69
+    },
+    "t2": {
+      "speed": 217,
+      "boost": 326,
+      "pitch": 39.1,
+      "roll": 108.62,
+      "yaw": 15.21
+    },
+    "t1": {
+      "speed": 224,
+      "boost": 335,
+      "pitch": 40.25,
+      "roll": 111.8,
+      "yaw": 15.65
+    },
+    "t0": {
+      "speed": 232,
+      "boost": 348,
+      "pitch": 41.76,
+      "roll": 116,
+      "yaw": 16.24
+    }
   }
 }

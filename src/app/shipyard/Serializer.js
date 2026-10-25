@@ -45,8 +45,11 @@ function standardToSchema(standard) {
  * @return {Object}           JSON Schema Bulkhead
  */
 function bulkheadToSchema(bulkheads) {
+  // Prefer the fitted bulkhead's own name (ships like the Caspian Explorer and
+  // Anaconda Mk II carry ship-specific 'Mk II Ablative ...' armours at indices
+  // beyond the 5 standard grades, for which BulkheadNames has no entry).
   let o = {
-    name: BulkheadNames[bulkheads.m.index]
+    name: (bulkheads.m && bulkheads.m.name) || BulkheadNames[bulkheads.m.index]
   };
 
   if (bulkheads.m.mods && Object.keys(bulkheads.m.mods).length > 0) {
@@ -109,7 +112,7 @@ export function toDetailedBuild(buildName, ship) {
       code = ship.toString();
 
   let data = {
-    $schema: 'https://coriolis.io/schemas/ship-loadout/4.json#',
+    $schema: 'https://coriolis.io/schemas/ship-loadout/5.json#',
     name: buildName,
     ship: ship.name,
     references: [{

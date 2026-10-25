@@ -9,5 +9,4 @@ env
 *.swp
 .project
 .vscode/
-docs/
 src/ship-mappings.json

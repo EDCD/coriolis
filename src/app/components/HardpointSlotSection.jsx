@@ -157,7 +157,7 @@ export default class HardpointSlotSection extends SlotSection {
         slots.push(<HardpointSlot
           key={i}
           maxClass={h.maxClass}
-          availableModules={() => availableModules.getHps(ship, h.maxClass, h.eligible)}
+          availableModules={() => availableModules.getHps(ship, h.maxClass, h.eligible, h)}
           onOpen={this._openMenu.bind(this, h)}
           onSelect={this._selectModule.bind(this, h)}
           onChange={this.props.onChange}
